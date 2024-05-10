@@ -51,24 +51,30 @@
                     <div>
                       <div class="flex items-center justify-between">
                         <span class="text-2xl font-semibold text-gray-800">{{ stat.value }}</span>
-                        <component :is="stat.icon" :class="`h-6 w-6 text-${stat.iconColor}`" />
+                        <component v-if="stat.label == 'Dispatch Status'"
+                          :is="stat.progress >= 50 ? CheckCircleIcon : ExclamationCircleIcon"
+                          :class="`h-6 w-6 text-${stat.progress >= 50 ? 'green-500' : 'red-500'}`" />
+                        <component v-else :is="stat.icon" :class="`h-6 w-6 text-${stat.iconColor}`" />
                       </div>
+
                       <div class="text-sm font-medium text-gray-600 mt-2">{{ stat.label }}</div>
                     </div>
                     <div v-if="stat.percentageText" class="mt-4">
+
                       <div class="flex items-center justify-between">
-                        <span :class="`text-${stat.textColor}`">{{ stat.percentageText }}</span>
+                        <span :class="stat.progress >= 50 ? 'text-green-500' : 'text-red-500'">{{ stat.percentageText
+                          }}</span>
                         <component :is="stat.progress >= 50 ? ArrowUpIcon : ArrowDownIcon" class="h-5 w-5"
-                          :class="`text-${stat.textColor}`" />
+                          :class="stat.progress >= 50 ? 'text-green-500' : 'text-red-500'" />
                       </div>
+
+
                       <div class="w-full bg-gray-200 rounded-full h-2 mt-2">
-                        <div v-if="stat.progress > 50" :class="`bg-green-500 h-2 rounded-full`"
+                        <div :class="stat.progress >= 50 ? 'bg-green-500' : 'bg-red-500'" class="h-2 rounded-full"
                           :style="{ width: stat.progress + '%' }">
                         </div>
-
-                        <div v-else :class="`bg-red-500 h-2 rounded-full`" :style="{ width: stat.progress + '%' }">
-                        </div>
                       </div>
+
                     </div>
 
                   </div>
@@ -393,33 +399,41 @@ const getLoadingPlans = async () => {
   loadingPlanStore
     .get()
     .then(result => {
-      // Assuming `result` is an array of dispatches and each dispatch has a `createdOn` field
-      const sortedDispatches = [...result].sort((a, b) => {
-        // Convert the `createdOn` field to a Date object and compare
+      // Filter out loading plans without districtId and projectId
+      const filteredLoadingPlans = result.filter(plan => plan.districtId && plan.projectId);
+
+      // Sort the filtered loading plans by the `createdOn` date
+      const sortedDispatches = filteredLoadingPlans.sort((a, b) => {
         return new Date(b.createdon) - new Date(a.createdon);
       });
 
-      // Clear the existing dispatches and push the sorted results
+      // Clear the existing loading plans and push the sorted and filtered results
       loadingplans.length = 0;
 
+      // Assuming you want them in reverse chronological order
+      let sortedData = sortedDispatches.reverse();
 
-      let sorteddata = sortedDispatches.reverse()
 
-      loadingplans.push(...sorteddata);
-    })
+      const filterByDistrict = sortedData.filter(plan => plan.district?.Name == user.value.district)
+
+
+
+      loadingplans.push(...filterByDistrict);
+    });
 }
+
 
 const pendingplans = ref(0)
 
 const totalBalance = ref(0)
 
-const totalStockPlanned = ref("")
+const totalStockPlanned = ref(0)
 const dispatchPercentageFormated = ref("")
-const totalDispatched = ref("")
-const totalReceived = ref("")
+const totalDispatched = ref(0)
+const totalReceived = ref(0)
 const receivedPercentageFormated = ref("")
-const receivedPercentage = ref("")
-const dispatchPercentage = ref("")
+const receivedPercentage = ref(0)
+const dispatchPercentage = ref(0)
 
 const getLoadingPlansPending = async () => {
   // isLoading.value = true;
@@ -443,7 +457,7 @@ const getdispatchSummary = async () => {
       totalReceived.value = result.totalReceived
       receivedPercentageFormated.value = result.dispatchPercentage.toFixed(2) + '% received'
 
-      receivedPercentage.value = result.dispatchPercentage.toFixed(2)
+      receivedPercentage.value = parseFloat(result.dispatchPercentage.toFixed(2))
     })
 }
 
@@ -573,7 +587,7 @@ const stats = ref([
     label: 'Dispatches Done',
     value: dispatchcount,
     icon: ClipboardListIcon,
-    iconColor: 'green-500',
+    iconColor: 'indigo-500',
     percentageText: null
   },
   {
@@ -619,7 +633,7 @@ const dispatchstatus = ref(0)
 
 
 </script>
-<style>
+<style scoped>
 .rounded-table {
   border-radius: 10px;
   /* Adjust the radius as needed */

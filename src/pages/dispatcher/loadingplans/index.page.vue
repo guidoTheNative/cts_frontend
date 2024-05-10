@@ -51,7 +51,8 @@
         </vue-good-table>
 
         <!-- Edit Loading Plan Dialog -->
-        <EditLoadingPlanDialog :isOpen="isEditDialogOpen" :loadingPlan="selectedLoadingPlan" @close="closeEditDialog"  v-on:update="reloadPage"/>
+        <EditLoadingPlanDialog :isOpen="isEditDialogOpen" :loadingPlan="selectedLoadingPlan" @close="closeEditDialog"
+          v-on:update="reloadPage" />
 
         <DispatchLoadingPlanDialog :isOpen="isDispatchDialogOpen" :loadingPlan="selectedLoadingPlan"
           @close="closeDispatchDialog" v-on:update="reloadPage" />
@@ -219,20 +220,31 @@ const getLoadingplans = async () => {
   try {
     const result = await loadingPlanStore.get();
 
-    // Reverse the order of the results
-    const reversedLoadingPlans = result.reverse();
+    // Filter out loading plans without districtId and projectId
 
-    // Empty the loadingplans array and then push the reversed results
+    const filteredLoadingPlans = result.filter(plan => plan.districtId && plan.projectId);
+
+    // Reverse the order of the filtered results
+    const reversedFilteredLoadingPlans = filteredLoadingPlans.reverse();
+
+
+
+    // Empty the loadingplans array and then push the reversed and filtered results
     loadingplans.length = 0;
-    loadingplans.push(...reversedLoadingPlans);
+
+
+    const filterByDistrict = reversedFilteredLoadingPlans.filter(plan => plan.district?.Name == user.value.district)
+
+    loadingplans.push(...filterByDistrict);
 
   } catch (error) {
-    // Handle any errors that occur during the get or reverse
-    console.error('Failed to fetch and reverse loading plans:', error);
+    // Handle any errors that occur during the get, filter, or reverse
+    console.error('Failed to fetch, filter, and reverse loading plans:', error);
   } finally {
     isLoading.value = false;
   }
 };
+
 
 const generateExcel = () => {
   const wb = XLSX.utils.book_new();
@@ -301,43 +313,10 @@ const createReport = async (model) => {
 
 
 
-const deleteItem = async (id) => {
-  // First, ask for confirmation
-  try {
-    const result = await Swal.fire({
-      title: "Are you sure?",
-      text: "You won't be able to revert this!",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, delete it!"
-    });
 
-    // If confirmed, proceed to delete
-    if (result.isConfirmed) {
-      isLoading.value = true;
 
-      await loadingPlanStore.remove(id);
 
-      // Show success message
-      await Swal.fire("Deleted!", "Your loading plan has been deleted.", "success");
 
-      // Refresh the loading plans
-      await getLoadingplans();
-    }
-  } catch (error) {
-    // Handle errors here
-    Swal.fire({
-      title: "Failed",
-      text: "Failed to remove Loading plan (" + error.message + ")",
-      icon: "error",
-      confirmButtonText: "Ok"
-    });
-  } finally {
-    isLoading.value = false;
-  }
-};
 
 
 </script>

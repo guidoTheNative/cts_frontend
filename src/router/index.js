@@ -167,6 +167,90 @@ const routes = [
 
 
       {
+        path: "/admin/logs",
+        name: "admin-logs",
+        component: () => import("../pages/admin/logs/index.page.vue"),
+      },
+
+      {
+        path: "/admin/userroles",
+        name: "admin-userroles",
+        component: () => import("../pages/admin/usersroles/index.page.vue"),
+      },
+
+      {
+        path: "/admin/districts",
+        name: "admin-districts",
+        component: () => import("../pages/admin/districts/index.page.vue"),
+      },
+
+      {
+        path: "/admin/organisations",
+        name: "admin-organisations",
+        component: () => import("../pages/admin/organisations/index.page.vue"),
+      },
+
+      {
+        path: "/admin/stock-management",
+        name: "admin-stock-management",
+        component: () => import("../pages/admin/stock/index.page.vue"),
+      },
+
+
+      {
+        path: "/admin/stock-management/manage/:id",
+        name: "admin-manage-stock",
+        component: () => import("../pages/admin/stock/manage.page.vue"),
+      },
+
+
+      {
+        path: "/admin/warehouse-management",
+        name: "admin-warehouse-management",
+        component: () => import("../pages/admin/warehouses/index.page.vue"),
+      },
+
+
+      {
+        path: "/admin/warehouse-management/manage/:id",
+        name: "admin-manage-warehouse",
+        component: () => import("../pages/admin/warehouses/manage.page.vue"),
+      },
+
+
+
+      {
+        path: "/admin/commodity-types",
+        name: "admin-commodity-types",
+        component: () => import("../pages/admin/commoditytypes/index.page.vue"),
+      },
+
+      {
+        path: "/admin/commodity-types/manage/:id",
+        name: "admin-manage-commodity-types",
+        component: () => import("../pages/admin/commoditytypes/manage.page.vue"),
+      },
+
+      {
+        path: "/admin/commodity-management",
+        name: "admin-commodity-management",
+        component: () => import("../pages/admin/commoditymanagement/index.page.vue"),
+      },
+
+      {
+        path: "/admin/commodity-management/manage/:id",
+        name: "admin-manage-commodity-management",
+        component: () => import("../pages/admin/commoditymanagement/manage.page.vue"),
+      },
+
+
+      {
+        path: "/admin/organisations/manage/:id",
+        name: "admin-manage-organisations",
+        component: () => import("../pages/admin/organisations/manage.page.vue"),
+      },
+
+      {
         path: "/admin/project-management",
         name: "admin-project-management",
         component: () => import("../pages/admin/projects/index.page.vue"),
@@ -690,6 +774,463 @@ const routes = [
       let role = JSON.parse(sessionStorage.getItem("RLE"));
       if (role != null && typeof role.name != "undefined") {
         if (role.name == "recipient") {
+          next();
+        } else {
+          next({ name: "portal-signin" });
+        }
+      } else {
+        next({ name: "portal-signin" });
+      }
+    },
+  },
+
+
+
+
+  //Manager
+  {
+    path: "/warehouse",
+    name: "warehouse",
+    component: () => import("../components/layouts/warehouse.layout.vue"),
+    children: [
+      //Dashboard
+      {
+        path: "",
+        name: "warehouse-home",
+        redirect: { name: "warehouse-dashboard" },
+      },
+      {
+        path: "/warehouse/dashboard",
+        name: "warehouse-dashboard",
+        component: () => import("../pages/warehouse/dashboard/index.page.vue"),
+      },
+      //Users
+      {
+        path: "/warehouse/users",
+        name: "warehouse-users",
+        component: () => import("../pages/warehouse/users/index.page.vue"),
+      },
+      {
+        path: "/warehouse/users/manage/:id",
+        name: "warehouse-manage-user",
+        component: () => import("../pages/warehouse/users/manage.page.vue"),
+      },
+
+      {
+        path: "/warehouse/dispatch-management",
+        name: "warehouse-dispatch-management",
+        component: () => import("../pages/warehouse/dispatch/index.page.vue"),
+      },
+
+      {
+        path: "/warehouse/dispatches",
+        name: "warehouse-dispatches",
+        component: () => import("../pages/warehouse/dispatch/dispatches.page.vue"),
+      },
+
+      {
+        path: "/warehouse/loadingplans",
+        name: "warehouse-loadingplans",
+        component: () => import("../pages/warehouse/loadingplans/index.page.vue"),
+      },
+      {
+        path: "/warehouse/dispatch-management/manage/:id",
+        name: "warehouse-manage-catalogue",
+        component: () => import("../pages/warehouse/dispatch/manage.page.vue"),
+      },
+
+      {
+        path: "/warehouse/commodity-tracking",
+        name: "warehouse-commodity-tracking",
+        component: () => import("../pages/warehouse/commodities/index.page.vue"),
+      },
+      {
+        path: "/warehouse/commodity-tracking/manage/:id",
+        name: "warehouse-manage-commodity-tracking",
+        component: () => import("../pages/warehouse/commodities/manage.page.vue"),
+      },
+
+
+      {
+        path: "/warehouse/receipt-management",
+        name: "warehouse-receipt-management",
+        component: () => import("../pages/warehouse/receipts/index.page.vue"),
+      },
+
+
+      {
+        path: "/warehouse/receipts",
+        name: "warehouse-receipts",
+        component: () => import("../pages/warehouse/receipts/receipts.page.vue"),
+      },
+
+      {
+        path: "/warehouse/receipt-management/manage/:id",
+        name: "warehouse-manage-receipt-management",
+        component: () => import("../pages/warehouse/receipts/manage.page.vue"),
+      },
+
+      {
+        path: "/warehouse/requisition-management",
+        name: "warehouse-requisition-management",
+        component: () => import("../pages/warehouse/requisitions/index.page.vue"),
+      },
+      {
+        path: "/warehouse/receipt-management/manage/:id",
+        name: "warehouse-manage-requisition-management",
+        component: () => import("../pages/warehouse/requisitions/manage.page.vue"),
+      },
+
+
+      {
+        path: "/warehouse/instruction-management",
+        name: "warehouse-instruction-management",
+        component: () => import("../pages/warehouse/instruction/index.page.vue"),
+      },
+      {
+        path: "/warehouse/instruction-management/manage/:id",
+        name: "warehouse-manage-instruction-management",
+        component: () => import("../pages/warehouse/instruction/manage.page.vue"),
+      },
+
+
+
+
+      {
+        path: "/warehouse/system",
+        name: "warehouse-system",
+        component: () => import("../pages/warehouse/system/index.page.vue"),
+      },
+
+
+      {
+        path: "/warehouse/project-management",
+        name: "warehouse-project-management",
+        component: () => import("../pages/warehouse/projects/index.page.vue"),
+      },
+
+
+
+      {
+        path: "/warehouse/report-management",
+        name: "warehouse-report-management",
+        component: () => import("../pages/warehouse/reports/index.page.vue"),
+      },
+
+
+    ],
+    beforeEnter: (to, from, next) => {
+      let role = JSON.parse(sessionStorage.getItem("RLE"));
+      if (role != null && typeof role.name != "undefined") {
+        if (role.name == "warehouse officer") {
+          next();
+        } else {
+          next({ name: "portal-signin" });
+        }
+      } else {
+        next({ name: "portal-signin" });
+      }
+    },
+  },
+
+
+  //Dodma
+  {
+    path: "/dodma",
+    name: "dodma",
+    component: () => import("../components/layouts/dodma.layout.vue"),
+    children: [
+      //Dashboard
+      {
+        path: "",
+        name: "dodma-home",
+        redirect: { name: "dodma-dashboard" },
+      },
+      {
+        path: "/dodma/dashboard",
+        name: "dodma-dashboard",
+        component: () => import("../pages/dodma/dashboard/index.page.vue"),
+      },
+      //Users
+      {
+        path: "/dodma/users",
+        name: "dodma-users",
+        component: () => import("../pages/dodma/users/index.page.vue"),
+      },
+      {
+        path: "/dodma/users/manage/:id",
+        name: "dodma-manage-user",
+        component: () => import("../pages/dodma/users/manage.page.vue"),
+      },
+
+      {
+        path: "/dodma/dispatch-management",
+        name: "dodma-dispatch-management",
+        component: () => import("../pages/dodma/dispatch/index.page.vue"),
+      },
+
+      {
+        path: "/dodma/dispatches",
+        name: "dodma-dispatches",
+        component: () => import("../pages/dodma/dispatch/dispatches.page.vue"),
+      },
+
+      {
+        path: "/dodma/loadingplans",
+        name: "dodma-loadingplans",
+        component: () => import("../pages/dodma/loadingplans/index.page.vue"),
+      },
+      {
+        path: "/dodma/dispatch-management/manage/:id",
+        name: "dodma-manage-catalogue",
+        component: () => import("../pages/dodma/dispatch/manage.page.vue"),
+      },
+
+      {
+        path: "/dodma/commodity-tracking",
+        name: "dodma-commodity-tracking",
+        component: () => import("../pages/dodma/commodities/index.page.vue"),
+      },
+      {
+        path: "/dodma/commodity-tracking/manage/:id",
+        name: "dodma-manage-commodity-tracking",
+        component: () => import("../pages/dodma/commodities/manage.page.vue"),
+      },
+
+
+      {
+        path: "/dodma/receipt-management",
+        name: "dodma-receipt-management",
+        component: () => import("../pages/dodma/receipts/index.page.vue"),
+      },
+
+
+      {
+        path: "/dodma/receipts",
+        name: "dodma-receipts",
+        component: () => import("../pages/dodma/receipts/receipts.page.vue"),
+      },
+
+      {
+        path: "/dodma/receipt-management/manage/:id",
+        name: "dodma-manage-receipt-management",
+        component: () => import("../pages/dodma/receipts/manage.page.vue"),
+      },
+
+      {
+        path: "/dodma/requisition-management",
+        name: "dodma-requisition-management",
+        component: () => import("../pages/dodma/requisitions/index.page.vue"),
+      },
+      {
+        path: "/dodma/receipt-management/manage/:id",
+        name: "dodma-manage-requisition-management",
+        component: () => import("../pages/dodma/requisitions/manage.page.vue"),
+      },
+
+
+
+      {
+        path: "/dodma/system",
+        name: "dodma-system",
+        component: () => import("../pages/dodma/system/index.page.vue"),
+      },
+
+
+      {
+        path: "/dodma/project-management",
+        name: "dodma-project-management",
+        component: () => import("../pages/dodma/projects/index.page.vue"),
+      },
+
+      {
+        path: "/dodma/instruction-management",
+        name: "dodma-instruction-management",
+        component: () => import("../pages/dodma/instruction/index.page.vue"),
+      },
+
+      {
+        path: "/dodma/instruction-management/manage/:id",
+        name: "dodma-manage-instruction-management",
+        component: () => import("../pages/dodma/instruction/manage.page.vue"),
+      },
+
+
+
+      {
+        path: "/dodma/report-management",
+        name: "dodma-report-management",
+        component: () => import("../pages/dodma/reports/index.page.vue"),
+      },
+
+
+    ],
+    beforeEnter: (to, from, next) => {
+      let role = JSON.parse(sessionStorage.getItem("RLE"));
+      if (role != null && typeof role.name != "undefined") {
+        if (role.name == "central user (DoDMA)") {
+          next();
+        } else {
+          next({ name: "portal-signin" });
+        }
+      } else {
+        next({ name: "portal-signin" });
+      }
+    },
+  },
+
+
+  //Dodma
+  {
+    path: "/field",
+    name: "field",
+    component: () => import("../components/layouts/field.layout.vue"),
+    children: [
+      //Dashboard
+      {
+        path: "",
+        name: "field-home",
+        redirect: { name: "field-dashboard" },
+      },
+      {
+        path: "/field/dashboard",
+        name: "field-dashboard",
+        component: () => import("../pages/field/dashboard/index.page.vue"),
+      },
+      //Users
+      {
+        path: "/field/users",
+        name: "field-users",
+        component: () => import("../pages/field/users/index.page.vue"),
+      },
+      {
+        path: "/field/users/manage/:id",
+        name: "field-manage-user",
+        component: () => import("../pages/field/users/manage.page.vue"),
+      },
+
+      {
+        path: "/field/dispatch-management",
+        name: "field-dispatch-management",
+        component: () => import("../pages/field/dispatch/index.page.vue"),
+      },
+
+      {
+        path: "/field/dispatches",
+        name: "field-dispatches",
+        component: () => import("../pages/field/dispatch/dispatches.page.vue"),
+      },
+
+      {
+        path: "/field/loadingplans",
+        name: "field-loadingplans",
+        component: () => import("../pages/field/loadingplans/index.page.vue"),
+      },
+      {
+        path: "/field/dispatch-management/manage/:id",
+        name: "field-manage-catalogue",
+        component: () => import("../pages/field/dispatch/manage.page.vue"),
+      },
+
+      {
+        path: "/field/commodity-tracking",
+        name: "field-commodity-tracking",
+        component: () => import("../pages/field/commodities/index.page.vue"),
+      },
+      {
+        path: "/field/commodity-tracking/manage/:id",
+        name: "field-manage-commodity-tracking",
+        component: () => import("../pages/field/commodities/manage.page.vue"),
+      },
+
+
+      {
+        path: "/field/receipt-management",
+        name: "field-receipt-management",
+        component: () => import("../pages/field/receipts/index.page.vue"),
+      },
+
+
+      {
+        path: "/field/receipts",
+        name: "field-receipts",
+        component: () => import("../pages/field/receipts/receipts.page.vue"),
+      },
+
+      {
+        path: "/field/receipt-management/manage/:id",
+        name: "field-manage-receipt-management",
+        component: () => import("../pages/field/receipts/manage.page.vue"),
+      },
+
+      {
+        path: "/field/requisition-management",
+        name: "field-requisition-management",
+        component: () => import("../pages/field/requisitions/index.page.vue"),
+      },
+
+
+      {
+        path: "/field/requisition-management/requisitions",
+        name: "field-requisition-management-rq",
+        component: () => import("../pages/field/requisitions/manage.page.vue"),
+      },
+
+      {
+        path: "/field/requisition-management/requisitions/manage/:id",
+        name: "field-manage-requisitions-management-id",
+        component: () => import("../pages/field/requisitions/edit.page.vue"),
+      },
+
+      {
+        path: "/field/receipt-management/manage/:id",
+        name: "field-manage-requisition-management",
+        component: () => import("../pages/field/requisitions/manage.page.vue"),
+      },
+
+      {
+        path: "/field/emergency-management",
+        name: "field-emergency-management",
+        component: () => import("../pages/field/emergency/index.page.vue"),
+      },
+
+      {
+        path: "/field/emergency-management/manage/:id",
+        name: "field-manage-emergency-management",
+        component: () => import("../pages/field/emergency/manage.page.vue"),
+      },
+
+
+
+
+
+      {
+        path: "/field/system",
+        name: "field-system",
+        component: () => import("../pages/field/system/index.page.vue"),
+      },
+
+
+      {
+        path: "/field/project-management",
+        name: "field-project-management",
+        component: () => import("../pages/field/projects/index.page.vue"),
+      },
+
+
+
+      {
+        path: "/field/report-management",
+        name: "field-report-management",
+        component: () => import("../pages/field/reports/index.page.vue"),
+      },
+
+
+    ],
+    beforeEnter: (to, from, next) => {
+      let role = JSON.parse(sessionStorage.getItem("RLE"));
+      if (role != null && typeof role.name != "undefined") {
+        if (role.name == "field officer") {
           next();
         } else {
           next({ name: "portal-signin" });

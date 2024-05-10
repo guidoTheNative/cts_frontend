@@ -139,6 +139,22 @@ export const useDispatcherStore = defineStore({
         });
     },
 
+ 
+    async removeWithComments(data) {
+      return await dispatcherService
+        .removeWithComments(data)
+        .then((result) => {
+          if (result) {
+            return result;
+          }
+        })
+        .catch((error) => {
+
+          throw error.message;
+
+        });
+    },
+
     async count() {
       return await dispatcherService
         .count()

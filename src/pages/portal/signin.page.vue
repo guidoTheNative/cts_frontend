@@ -5,15 +5,17 @@
 
 
 
-<div class="hidden lg:block relative w-0 flex-1 flex flex-col col-span-6"  style="display: flex; justify-content: center; align-items: center; flex-direction: column; background-color: #096eb4; text-align: center; padding: 20px;">
-    <div style="display: flex; justify-content: center; align-items: center;">
-        <img class="img-fluid" style="height: 100px; margin-right: 10px;" src="../../assets/images/images.png" alt="MW-Govt" />
+    <div class="hidden lg:block relative w-0 flex-1 flex flex-col col-span-6"
+      style="display: flex; justify-content: center; align-items: center; flex-direction: column; background-color: #096eb4; text-align: center; padding: 20px;">
+      <div style="display: flex; justify-content: center; align-items: center;">
+        <img class="img-fluid" style="height: 100px; margin-right: 10px;" src="../../assets/images/images.png"
+          alt="MW-Govt" />
         <img class="img-fluid" style="height: 100px;" src="../../assets/images/wfp-logo-emblem-white.png" alt="WFP" />
-    </div>
-    <h2 class="mt-6 text-3xl font-extrabold text-white">
+      </div>
+      <h2 class="mt-6 text-3xl font-extrabold text-white">
         DoDMA Commodity Tracking System
-    </h2>
-</div>
+      </h2>
+    </div>
 
 
 
@@ -22,11 +24,11 @@
     <div class="flex-1 flex flex-col col-span-6 justify-center py-12 px-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
       <div class="mx-auto w-full max-w-sm lg:w-96">
         <div>
-       
+
           <h2 class="mt-6 text-3xl font-extrabold text-gray-900">
             Sign in to your account
           </h2>
-       
+
         </div>
 
         <div class="mt-8">
@@ -61,8 +63,8 @@
                   Password
                 </label>
                 <div class="mt-1">
-                  <input id="password" name="password" :type="isPwd ? 'text'  : 'password' " autocomplete="current-password"
-                    v-model="password"
+                  <input id="password" name="password" :type="isPwd ? 'text' : 'password'"
+                    autocomplete="current-password" v-model="password"
                     class="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-400 focus:border-blue-400 sm:text-sm" />
                   <p class="text-red-500 text-xs italic pt-1">
                     {{ passwordError }}
@@ -95,7 +97,7 @@
                 </button>
               </div>
             </form>
-         
+
             <div class="mt-10">
               <p class="text-sm text-gray-600 text-re">
                 &copy; {{ moment().format('YYYY') }} {{ system.name }} . All
@@ -166,34 +168,32 @@ const onSubmit = useSubmitForm((values, actions) => {
   sessionStore
     .signIn(model)
     .then(result => {
-      if (result == 'admin') {
-        Swal.fire({
-          text: 'Succesfully signed in',
-          icon: 'success',
-          toast: true,
-          position: 'top-right',
-          showConfirmButton: false,
-          timer: 1500,
-          timerProgressBar: true,
-        });
-        // redirect
+      // Display success toast
+      Swal.fire({
+        text: 'Successfully signed in',
+        icon: 'success',
+        toast: true,
+        position: 'top-right',
+        showConfirmButton: false,
+        timer: 1500,
+        timerProgressBar: true,
+      });
 
-        $router.push({ path: '/' + result.role });
-      } else {
-        Swal.fire({
-          text: 'Succesfully signed in',
-          icon: 'success',
-          toast: true,
-          position: 'top-right',
-          showConfirmButton: false,
-          timer: 1500,
-          timerProgressBar: true,
-        });
-        // changed
-        //  const myresult = "user"
-
-        //   console.log("route",  $router.push({ path: "/" + myresult}))
-        // redirect
+      // Check the role and redirect accordingly
+      if (result.role === 'warehouse officer') {
+        // Specific redirection for warehouse officer
+        $router.push({ path: '/warehouse' });
+      }
+      else if (result.role === 'central user (DoDMA)') {
+        // Specific redirection for warehouse officer
+        $router.push({ path: '/dodma' });
+      }
+      else if (result.role === 'field officer') {
+        // Specific redirection for warehouse officer
+        $router.push({ path: '/field' });
+      }
+      else {
+        // General redirection for other roles
         $router.push({ path: '/' + result.role });
       }
     })
@@ -213,6 +213,7 @@ const onSubmit = useSubmitForm((values, actions) => {
       actions.resetForm();
     });
 });
+
 
 function checkSession() {
   sessionStore.check().then(result => {

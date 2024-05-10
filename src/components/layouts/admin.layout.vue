@@ -232,22 +232,21 @@ function navigation() {
     { name: "System", href: "/admin/system", icon: AdjustmentsIcon, current: false },
 
 
-
-
-
   ];
 
   const currentRouteBase = $router.currentRoute.value.fullPath.split("/").slice(0, 3).join("/");
-
-
   navList.forEach(navItem => {
-    // Check if the current route base matches the nav item's href
-    // Or if it's the "Loading Plans" item and the current route base starts with /planner/loadingplans or /planner/dispatches
     const isMatched = currentRouteBase === navItem.href ||
       (navItem.name === "Plan & Dispatch" && (currentRouteBase.startsWith("/admin/loadingplans") || currentRouteBase.startsWith("/admin/dispatches")))
       ||
-      (navItem.name === "Receipts" && currentRouteBase.startsWith("/admin/receipts")); // Added condition for Receipts
-    ;
+      (navItem.name === "Receipts" && currentRouteBase.startsWith("/admin/receipts"))
+      ||
+      (navItem.name === "System" && (currentRouteBase.startsWith("/admin/userroles") || currentRouteBase.startsWith("/admin/users") || currentRouteBase.startsWith("/admin/logs")
+        || currentRouteBase.startsWith("/admin/districts")
+        || currentRouteBase.startsWith("/admin/organisations")
+        || currentRouteBase.startsWith("/admin/commodity-types")
+        || currentRouteBase.startsWith("/admin/commodity-management")
+      ));
     navItem.current = isMatched;
   });
 

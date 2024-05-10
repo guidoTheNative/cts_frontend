@@ -40,66 +40,120 @@
                       </p>
                     </div>
                   </div>
-                  <!-- <div class="mt-5 flex justify-center sm:mt-0">
-                    <create-report-form v-on:create="createReport" />
-                  </div> -->
+
+
+                  <div class="mt-1 flex justify-right gap-x-2 sm:mt-0">
+
+                    <button @click="toggleView('dashboard')" type="button" style="background-color: #248cd6;"
+                      class="font-body inline-flex items-center px-6 py-2.5 text-white font-medium text-xs leading-tight rounded shadow-md hover:bg-gray-600 hover:shadow-lg focus:bg-gray-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-500 active:shadow-lg transition duration-100 ease-in-out capitalize"
+                      :class="{ 'hidden': currentView === 'dashboard' }">
+                      <TemplateIcon class="h-5 w-5 mr-2" />
+
+                      Dashboard View
+                    </button>
+
+                    <button @click="toggleView('charts')" type="button" style="background-color: #248cd6;"
+                      class="font-body inline-flex items-center px-6 py-2.5 text-white font-medium text-xs leading-tight rounded shadow-md hover:bg-gray-600 hover:shadow-lg focus:bg-gray-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-500 active:shadow-lg transition duration-100 ease-in-out capitalize"
+                      :class="{ 'hidden': currentView === 'charts' }">
+                      <ChartBarIcon class="h-5 w-5 mr-2" />
+
+                      Chart View
+                    </button>
+
+
+
+                    <button @click="exportToExcel" v-if="!showCharts" style="background-color: #399dcd;"
+                      class="font-body inline-flex items-center px-6 py-2.5 text-white font-medium text-xs leading-tight rounded shadow-md hover:bg-gray-600 hover:shadow-lg focus:bg-gray-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-500 active:shadow-lg transition duration-100 ease-in-out capitalize"
+                      :class="{ 'hidden': currentView === 'dashboard' }">
+                      <DocumentDownloadIcon class="h-5 w-5 mr-2" /> <!-- Assuming DocumentDownloadIcon is available -->
+
+                      Export to Excel
+                    </button>
+
+                    <button @click="takeScreenshot" v-if="!showCharts" style="background-color: #0f6c97;"
+                      class="font-body inline-flex items-center px-6 py-2.5 text-white font-medium text-xs leading-tight rounded shadow-md hover:bg-gray-600 hover:shadow-lg focus:bg-gray-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-500 active:shadow-lg transition duration-100 ease-in-out capitalize"
+                      :class="{ 'hidden': currentView === 'dashboard' }">
+                      <CameraIcon class="h-5 w-5 mr-2" /> <!-- Assuming CameraIcon is available -->
+                      Take Screenshot
+                    </button>
+
+                  </div>
                 </div>
+
               </div>
-              <div class="bg-gray-100 p-5">
+
+              <section ref="maizeTable">
+                <!-- Chart and image container -->
+                <div class="bg-gray-100 p-5" v-show="currentView === 'charts'">
+                  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <!-- Aligned images in the center -->
+                    <div v-show="screenshotMode"
+                      class="col-span-3 flex flex-col justify-center items-center bg-blue-500 text-white p-5">
+                      <div class="flex justify-center items-center">
+                        <img class="mr-4 h-20" src="../../../assets/images/images.png" alt="MW-Govt" />
+                        <img class="h-20" src="../../../assets/images/wfp-logo-emblem-white.png" alt="WFP" />
+                      </div>
+                      <div class="text-center mt-4 ml-6">
+                        <h1 class="text-lg font-bold">Commodity Tracking Dashboard</h1>
+                      </div>
+                    </div>
+
+
+                    <!-- Instance of chart components -->
+                    <div class="mx-4">
+                      <chart-component />
+                    </div>
+                    <div class="mx-4">
+                      <chart-component />
+                    </div>
+                    <div class="mx-4">
+                      <chart-component />
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Maize distribution table view -->
+                <div class="bg-gray-100 p-5" v-show="currentView === 'charts'">
+                  <!-- New table component -->
+                  <maize-distribution-table :data="maizeDistributionData" />
+                  <!-- Other components for stats, etc... -->
+                </div>
+              </section>
+
+              <div class="bg-gray-100 p-5" v-show="currentView === 'dashboard'">
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+
+
                   <!-- Stats Cards -->
                   <div v-for="stat in stats" :key="stat.label"
                     class="bg-white border border-gray-200 rounded-lg shadow-sm p-4 flex flex-col justify-between">
                     <div>
                       <div class="flex items-center justify-between">
                         <span class="text-2xl font-semibold text-gray-800">{{ stat.value }}</span>
-                        <component :is="stat.icon" :class="`h-6 w-6 text-${stat.iconColor}`" />
+                        <component v-if="stat.label == 'Dispatch Status'"
+                          :is="stat.progress >= 50 ? CheckCircleIcon : ExclamationCircleIcon"
+                          :class="`h-6 w-6 text-${stat.progress >= 50 ? 'green-500' : 'red-500'}`" />
+                        <component v-else :is="stat.icon" :class="`h-6 w-6 text-${stat.iconColor}`" />
                       </div>
+
                       <div class="text-sm font-medium text-gray-600 mt-2">{{ stat.label }}</div>
                     </div>
                     <div v-if="stat.percentageText" class="mt-4">
+
                       <div class="flex items-center justify-between">
-                        <span :class="`text-${stat.textColor}`">{{ stat.percentageText }}</span>
+                        <span :class="stat.progress >= 50 ? 'text-green-500' : 'text-red-500'">{{ stat.percentageText
+                          }}</span>
                         <component :is="stat.progress >= 50 ? ArrowUpIcon : ArrowDownIcon" class="h-5 w-5"
-                          :class="`text-${stat.textColor}`" />
+                          :class="stat.progress >= 50 ? 'text-green-500' : 'text-red-500'" />
                       </div>
+
+
                       <div class="w-full bg-gray-200 rounded-full h-2 mt-2">
-                        <div v-if="stat.progress > 50" :class="`bg-green-500 h-2 rounded-full`"
+                        <div :class="stat.progress >= 50 ? 'bg-green-500' : 'bg-red-500'" class="h-2 rounded-full"
                           :style="{ width: stat.progress + '%' }">
                         </div>
-
-                        <div v-else :class="`bg-red-500 h-2 rounded-full`" :style="{ width: stat.progress + '%' }">
-                        </div>
                       </div>
-                    </div>
 
-                    <div class="relative flex justify-center mt-3" v-if="stat.moreInfo">
-                      <span class="cursor-pointer text-blue-400 text-xs" @mouseover="showTooltip = true"
-                        @mouseleave="showTooltip = false">
-                        <InformationCircleIcon class="h-6 w-6 text-blue-500 inline-block align-middle mr-1" />
-                        <span class="align-middle">More Info</span>
-                      </span>
-
-                      <div v-if="showTooltip"
-                        class="absolute bottom-full mb-2 w-64 p-4 bg-white border border-gray-200 rounded shadow-lg z-10">
-                        <div v-for="(summary, index) in loadingPlanSummary" :key="index" class="mb-4 last:mb-0">
-                          <h5 class="font-bold text-lg text-capitalize flex text-gray-600 items-center">
-                            {{ summary.commodityName }}
-                          </h5>
-                          <div class="font-medium text-sm mt-2">
-                            <div>
-                              <ClipboardListIcon class="h-4 w-4 text-green-500 inline-block mr-1 align-text-top" />
-                              <b>Total Stock Planned:</b> <br> &nbsp; &nbsp; &nbsp; &nbsp;{{
-                                summary.totalStockPlanned.toLocaleString() }} MT
-                            </div>
-                            <div>
-                              <ExclamationCircleIcon class="h-4 w-4 text-red-500 inline-block mr-1 align-text-top" />
-                              <b> Total Balance: </b><br> &nbsp; &nbsp; &nbsp; &nbsp;{{
-                                summary.totalBalance.toLocaleString() }} MT
-                            </div>
-                          </div>
-                        </div>
-                      </div>
                     </div>
 
                   </div>
@@ -134,20 +188,25 @@ import { useSessionStore } from "../../../stores/session.store";
 
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import { saveAs } from 'file-saver';
+import * as XLSX from 'xlsx';
 
 import "jspdf-autotable";
 import breadcrumbWidget from "../../../components/widgets/breadcrumbs/admin.breadcrumb.vue";
 import { useUserStore } from "../../../stores/user.store";
 
 import { useDispatcherStore } from "../../../stores/dispatch.store";
+import ChartComponent from '../../../components/pages/charts/dashboardcharts.vue'; // Adjust path as needed
 
 
 import { useListingStore } from "../../../stores/catalogue.store";
 import { usebookingstore } from "../../../stores/booking.store";
 
+import MaizeDistributionTable from './MaizeDistributionTable.vue';
 
 
 import { useloadingplanstore } from "../../../stores/loadingplans.store";
+import html2canvas from 'html2canvas';
 
 
 import { usereceiptstore } from "../../../stores/receipt.store";
@@ -167,7 +226,11 @@ import {
 } from "@headlessui/vue";
 import {
   AcademicCapIcon,
+  TemplateIcon, // Assuming this is for Dashboard
+  ChartBarIcon, // Assuming this is for Charts
   BadgeCheckIcon,
+  DocumentDownloadIcon, // or an alternative if this specific icon doesn't exist
+  CameraIcon,
   BellIcon,
   CashIcon,
   CheckCircleIcon,
@@ -188,10 +251,303 @@ import {
 } from "@heroicons/vue/outline";
 import { SearchIcon } from "@heroicons/vue/solid";
 
+const screenshotMode = ref(false);
 
+
+// Example data structure for maize distribution
+const maizeDistributionData = ref([
+
+  {
+    "district": "Phalombe",
+    "required": 23,
+    "distributed": 4,
+    "balance": 19,
+    "percentage": 45
+
+  },
+  {
+    "district": "Mzuzu",
+    "required": 232,
+    "distributed": 4,
+    "balance": 19,
+    "percentage": 45
+
+  },
+  {
+    "district": "Mzuzu",
+    "required": 232,
+    "distributed": 4,
+    "balance": 19,
+    "percentage": 45
+
+  },
+  {
+    "district": "Mzuzu",
+    "required": 232,
+    "distributed": 4,
+    "balance": 19,
+    "percentage": 45
+
+  },
+  {
+    "district": "Mzuzu",
+    "required": 232,
+    "distributed": 4,
+    "balance": 19,
+    "percentage": 45
+
+  },
+  {
+    "district": "Mzuzu",
+    "required": 232,
+    "distributed": 4,
+    "balance": 19,
+    "percentage": 45
+
+  },
+  {
+    "district": "Mzuzu",
+    "required": 232,
+    "distributed": 4,
+    "balance": 19,
+    "percentage": 45
+
+  },
+  {
+    "district": "Mzuzu",
+    "required": 232,
+    "distributed": 4,
+    "balance": 19,
+    "percentage": 45
+
+  },
+  {
+    "district": "Mzuzu",
+    "required": 232,
+    "distributed": 4,
+    "balance": 19,
+    "percentage": 45
+
+  },
+  {
+    "district": "Mzuzu",
+    "required": 232,
+    "distributed": 4,
+    "balance": 19,
+    "percentage": 45
+
+  },
+  {
+    "district": "Mzuzu",
+    "required": 232,
+    "distributed": 4,
+    "balance": 19,
+    "percentage": 45
+
+  },
+  {
+    "district": "Mzuzu",
+    "required": 232,
+    "distributed": 4,
+    "balance": 19,
+    "percentage": 45
+
+  },
+  {
+    "district": "Mzuzu",
+    "required": 232,
+    "distributed": 4,
+    "balance": 19,
+    "percentage": 45
+
+  },
+  {
+    "district": "Mzuzu",
+    "required": 232,
+    "distributed": 4,
+    "balance": 19,
+    "percentage": 45
+
+  },
+  {
+    "district": "Mzuzu",
+    "required": 232,
+    "distributed": 4,
+    "balance": 19,
+    "percentage": 45
+
+  },
+  {
+    "district": "Mzuzu",
+    "required": 232,
+    "distributed": 4,
+    "balance": 19,
+    "percentage": 45
+
+  },
+  {
+    "district": "Mzuzu",
+    "required": 232,
+    "distributed": 4,
+    "balance": 19,
+    "percentage": 45
+
+  },
+  {
+    "district": "Mzuzu",
+    "required": 232,
+    "distributed": 4,
+    "balance": 19,
+    "percentage": 45
+
+  },
+  {
+    "district": "Mzuzu",
+    "required": 232,
+    "distributed": 4,
+    "balance": 19,
+    "percentage": 45
+
+  },
+  {
+    "district": "Mzuzu",
+    "required": 232,
+    "distributed": 4,
+    "balance": 19,
+    "percentage": 45
+
+  },
+  {
+    "district": "Mzuzu",
+    "required": 232,
+    "distributed": 4,
+    "balance": 19,
+    "percentage": 45
+
+  },
+  {
+    "district": "Mzuzu",
+    "required": 232,
+    "distributed": 4,
+    "balance": 19,
+    "percentage": 45
+
+  },
+  {
+    "district": "Mzuzu",
+    "required": 232,
+    "distributed": 4,
+    "balance": 19,
+    "percentage": 45
+
+  },
+  {
+    "district": "Mzuzu",
+    "required": 232,
+    "distributed": 4,
+    "balance": 19,
+    "percentage": 45
+
+  },
+  {
+    "district": "Mzuzu",
+    "required": 232,
+    "distributed": 4,
+    "balance": 19,
+    "percentage": 45
+
+  },
+  {
+    "district": "Mzuzu",
+    "required": 232,
+    "distributed": 4,
+    "balance": 19,
+    "percentage": 45
+
+  },
+  {
+    "district": "Mzuzu",
+    "required": 232,
+    "distributed": 4,
+    "balance": 19,
+    "percentage": 45
+
+  },
+  {
+    "district": "Mzuzu",
+    "required": 232,
+    "distributed": 4,
+    "balance": 19,
+    "percentage": 45
+
+  },
+  {
+    "district": "Mzuzu",
+    "required": 232,
+    "distributed": 4,
+    "balance": 19,
+    "percentage": 45
+
+  },
+  {
+    "district": "Mzuzu",
+    "required": 232,
+    "distributed": 4,
+    "balance": 19,
+    "percentage": 45
+
+  },
+  {
+    "district": "Mzuzu",
+    "required": 232,
+    "distributed": 4,
+    "balance": 19,
+    "percentage": 45
+
+  },
+  {
+    "district": "Mzuzu",
+    "required": 232,
+    "distributed": 4,
+    "balance": 19,
+    "percentage": 45
+
+  }
+]);
+
+
+const currentView = ref('dashboard'); // The initial view can be 'dashboard' or 'charts'
+
+const toggleView = (view) => {
+  currentView.value = view;
+};
 
 const showTooltip = ref(false);
 
+
+const maizeTable = ref(null);
+
+const takeScreenshot = () => {
+    screenshotMode.value = true;
+
+  if (maizeTable.value) {
+
+  
+    html2canvas(maizeTable.value.$el || maizeTable.value).then((canvas) => {
+      // Create an image from the canvas
+      const image = canvas.toDataURL('image/png').replace('image/png', 'image/octet-stream');
+      // Create a link element, set the download attribute, and trigger a click to download
+      const link = document.createElement('a');
+      link.download = 'maize-distribution.png';
+      link.href = image;
+      link.click();
+      //screenshotMode.value = false; // Hide screenshot specific content after taking the screenshot
+
+    }).catch(error => {
+      console.error('Error taking screenshot:', error);
+    });
+  }
+};
 const columns = ref([
 
   {
@@ -322,6 +678,18 @@ const getReceipts = async () => {
 };
 
 
+
+
+
+// Export to Excel method
+const exportToExcel = () => {
+  const worksheet = XLSX.utils.json_to_sheet(maizeDistributionData.value);
+  const workbook = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(workbook, worksheet, 'Maize Distribution');
+  const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+  const data = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8' });
+  saveAs(data, 'table.xlsx');
+};
 
 
 const getloadingplansSummaryByCommodity = async () => {
@@ -541,7 +909,6 @@ const stats = ref([
     progressColor: receivedPercentage > 50 ? 'green-500' : 'red-500',
     progressText: ''
   },
-
   {
     label: 'Dispatches Done',
     value: dispatchcount,
@@ -601,11 +968,32 @@ const dispatchstatus = ref(0)
 
 
 </script>
-<style>
+<style scoped>
 .rounded-table {
   border-radius: 10px;
   /* Adjust the radius as needed */
   overflow: hidden;
-  /* This is important to apply rounded corners to child elements */
+  /* This is impor23tant to apply rounded corners to child elements */
+}
+
+
+.bg-blue-500 {
+  background-color: #096eb4;
+  /* Tailwind CSS color, replace with your project's color if not using Tailwind */
+}
+
+.h-20 {
+  height: 80px;
+  /* Adjust according to your needs */
+}
+
+.mr-4 {
+  margin-right: 16px;
+  /* Adjust according to your needs */
+}
+
+img.img-fluid {
+  max-width: 100%;
+  height: auto;
 }
 </style>

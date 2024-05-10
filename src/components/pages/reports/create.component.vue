@@ -79,7 +79,7 @@
                       class="mt-2 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
                   </div>
 
-                  <div class="col-span-6 sm:col-span-3">
+                  <div class="col-span-6 sm:col-span-3 mb-5">
                     <label for="warehouse" class="block text-sm font-bold text-gray-700">Warehouse</label>
 
                     <select id="warehouse" name="warehouse" v-model="reports.warehouseId" autocomplete="warehouse-name"
@@ -88,8 +88,12 @@
                         {{ warehouse.Name }}
                       </option>
                     </select>
+                    <span class="text-md text-blue-500 mb-5 text-italic text-lg" v-if="reports.commodityId && reports.warehouseId"> Commodity Balance: {{ availableBalance }}</span>
+                  
                   </div>
                 </div>
+
+              
 
 
 
@@ -185,7 +189,7 @@ import {
   TransitionRoot,
 } from "@headlessui/vue";
 import { XIcon, PlusIcon } from "@heroicons/vue/outline";
-import { inject, ref, reactive, onMounted } from "vue";
+import { inject, ref, reactive, onMounted, computed, watch  } from "vue";
 import { useRouter } from "vue-router";
 import { useForm, useField, useSubmitForm, useIsFormValid } from "vee-validate";
 //COMPONENTS
@@ -196,6 +200,8 @@ import { useRoleStore } from "../../../stores/role.store";
 import { useUserStore } from "../../../stores/user.store";
 import { useloadingplanstore } from "../../../stores/loadingplans.store";
 import { usecommoditiestore } from "../../../stores/commodity.store";
+
+import { usecommodityinventoriestore } from "../../../stores/commodityinventories.store";
 import { usewarehousestore } from "../../../stores/warehouse.store";
 import { usedistrictstore } from "../../../stores/districts.store";
 import { usetransporterstore } from "../../../stores/transporter.store";
@@ -240,12 +246,18 @@ const transporterStore = usetransporterstore();
 const transporters = reactive([])
 const warehouseStore = usewarehousestore();
 const warehouses = reactive([])
+
+const availableBalance = ref(''); // Hold the available balance
+
+const commodityinventoriestore = usecommodityinventoriestore();
+const commodityinventories = reactive([])
+
 const userStore = useUserStore();
 const roles = reactive([]);
 const sessionStore = useSessionStore();
 
 //MOUNTED
-onMounted(() => { getActivities(); getCommodities(); getDistricts(); getLoadingplan(); getProjects(); getTransporters(); getWarehouses(); });
+onMounted(() => { getCommodityInventories(); getActivities(); getCommodities(); getDistricts(); getLoadingplan(); getProjects(); getTransporters(); getWarehouses(); });
 
 const reports = ref({});
 //FUNCTIONS
@@ -273,6 +285,22 @@ const getLoadingplan = async () => {
     });
 };
 
+
+const getCommodityInventories = async () => {
+  commodityinventoriestore
+    .get()
+    .then(result => {
+
+      commodityinventories.length = 0; //empty array
+      commodityinventories.push(...result);
+
+    })
+    .catch(error => {
+
+    })
+    .finally(() => {
+    });
+};
 
 const getWarehouses = async () => {
   warehouseStore
@@ -372,4 +400,22 @@ const getTransporters = async () => {
     .finally(() => {
     });
 };
+
+// Watch for changes in commodity and warehouse selections
+watch(
+  () => [reports.value.commodityId, reports.value.warehouseId],
+  ([newCommodityId, newWarehouseId]) => {
+    if (newCommodityId && newWarehouseId) {
+      // Find the corresponding inventory record based on the selection
+      const matchingInventory = commodityinventories.find(
+        (inventory) => inventory.commodityId === newCommodityId && inventory.warehouseId === newWarehouseId
+      );
+
+      // Update the available balance if a matching inventory record is found
+      availableBalance.value = matchingInventory ? `${matchingInventory.Quantity} MT` : 'Not Available';
+    } else {
+      availableBalance.value = 'Select Commodity and Warehouse';
+    }
+  }
+);
 </script>

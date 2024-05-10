@@ -28,15 +28,16 @@
           <template #table-actions> </template>
           <template #table-row="props">
             <span v-if="props.column.label == 'Options'">
-              <button @click="openEditDialog(props.row)"
+
+              <button @click="openEditDialog(props.row)" v-if="props.row.Dispatcher?.email == user.email"
                 class="text-green-500 hover:text-green-700 transition duration-300">
                 <PencilIcon class="h-5 w-5 inline-block mr-1" />
                 Edit
               </button>
 
               <!-- Delete Button with Trash Icon -->
-              <button @click="deleteItem(props.row.id)" v-if="props.row.IsArchived == false"
-                class="text-red-500 hover:text-red-700 transition duration-300">
+              <button @click="deleteItem(props.row.id)" v-if="props.row.IsArchived == false &&
+      props.row.Dispatcher?.email == user.email" class="text-red-500 hover:text-red-700 transition duration-300">
                 <TrashIcon class="h-5 w-5 inline-block mr-1" />
                 Delete
               </button>
@@ -283,7 +284,11 @@ const getDispatches = async () => {
 
 
       let sorteddata = result.reverse();
-      dispaches.push(...sorteddata);
+
+      const filterByDistrict = sorteddata.filter(plan => plan.Dispatcher?.district == user.value.district)
+
+
+      dispaches.push(...filterByDistrict);
 
 
     })
@@ -297,11 +302,20 @@ const getDispatches = async () => {
 
 
 const deleteItem = async (id) => {
-  // First, ask for confirmation
   try {
+    // First, ask for confirmation and reason
     const result = await Swal.fire({
       title: "Are you sure?",
-      text: "You won't be able to revert this!",
+      text: "Please enter the reason for deletion:",
+      input: 'textarea',
+      inputAttributes: {
+        'aria-label': 'Type your message here'
+      },
+      inputValidator: (value) => {
+        if (!value) {
+          return 'You need to provide a reason!'
+        }
+      },
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
@@ -309,16 +323,22 @@ const deleteItem = async (id) => {
       confirmButtonText: "Yes, delete it!"
     });
 
-    // If confirmed, proceed to delete
-    if (result.isConfirmed) {
+    // If confirmed and reason provided, proceed to delete
+    if (result.isConfirmed && result.value) {
       isLoading.value = true;
 
-      await dispatchStore.remove(id);
+      // Create object with id and reason
+      const deletePayload = {
+        id: id,
+        reason: result.value
+      };
+
+      await dispatchStore.removeWithComments(deletePayload);
 
       // Show success message
       await Swal.fire("Deleted!", "Your Dispatch has been deleted.", "success");
 
-      // Refresh the loading plans
+      // Refresh the dispatches
       await getDispatches();
     }
   } catch (error) {
@@ -333,6 +353,7 @@ const deleteItem = async (id) => {
     isLoading.value = false;
   }
 };
+
 
 
 
