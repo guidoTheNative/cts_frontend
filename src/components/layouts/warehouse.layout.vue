@@ -228,7 +228,7 @@ function navigation() {
 /*  { name: "Commodities", href: "/warehouse/commodity-tracking", icon: CollectionIcon, current: false },
     { name: "Requisitions", href: "/warehouse/requisition-management", icon: IdentificationIcon, current: false },
     { name: "Project Management", href: "/warehouse/project-management", icon: IdentificationIcon, current: false },
-  */   { name: "Receipts", href: "/warehouse/receipt-management", icon: DocumentDuplicateIcon, current: false },
+  */   { name: "Warehouse Management", href: "/warehouse/warehouse-management", icon: OfficeBuildingIcon, current: false },
 
     { name: "Reports", href: "/warehouse/report-management", icon: DocumentTextIcon, current: false },
 
@@ -242,7 +242,7 @@ function navigation() {
     // Check if the current route base matches the nav item's href
     // Or if it's the "Loading Plans" item and the current route base starts with /planner/loadingplans or /planner/dispatches
     const isMatched = currentRouteBase === navItem.href ||
-      (navItem.name === "Plan & Dispatch" && (currentRouteBase.startsWith("/warehouse/loadingplans") || currentRouteBase.startsWith("/warehouse/dispatches"))) ||
+      (navItem.name === "Warehouse Management" && (currentRouteBase.startsWith("/warehouse/warehouses") || currentRouteBase.startsWith("/warehouse/stock-managment") || currentRouteBase.startsWith("/warehouse/receipts"))) ||
       (navItem.name === "Receipts" && (currentRouteBase.startsWith("/warehouse/receipts")));
     navItem.current = isMatched;
   });

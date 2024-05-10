@@ -45,8 +45,8 @@
               new requisition
             </button>
           </router-link> -->
-          <create-requisition-form v-on:create="createRequisition" :commodities="commodities" />
-
+          <!--  <create-requisition-form v-on:create="createInstruction" />
+ -->
         </div>
       </div>
       <!-- table  -->
@@ -60,14 +60,14 @@
             <span v-if="props.column.label === 'Options'">
               <div class="flex space-x-2">
                 <!-- Manage Button -->
-                <button @click.prevent="navigateToManage(props.row.id)" class="
+                <button @click.prevent="openRequisitionDetails(props.row)" class="
           inline-flex
           items-center
           px-3
           py-2
           text-sm
           font-medium
-          text-blue-500
+          text-green-500
           hover:text-green-900
           bg-white
           rounded-md
@@ -76,50 +76,118 @@
           hover:bg-gray-100
         ">
                   <!-- Heroicon Pencil (Manage) -->
-                  <PencilIcon class="h-5 w-5 mr-1" />
-                  
+                  <EyeIcon class="h-5 w-5 mr-1" />
 
-                  <router-link :to="{ path: '/field/requisition-management/requisitions/manage/' + props.row.id }">
-                    <a href="#" class="text-blue-400 text-sm hover:text-green-900">Manage </a>
-                  </router-link>
+                View Requisition
+
 
                 </button>
 
-                <!-- Create Instruction Button -->
-               <!--  <button @click.prevent="createInstruction(props.row.id)" class="
-          inline-flex
-          items-center
-          px-3
-          py-2
-          text-sm
-          font-medium
-          text-green-600
-          hover:text-green-900
-          bg-white
-          rounded-md
-          border
-          border-gray-200
-          hover:bg-gray-100
-        ">
-                  <PlusCircleIcon class="h-5 w-5 mr-1" />
-                  Create Instruction
-                </button> -->
+              
+
               </div>
             </span>
           </template>
         </vue-good-table>
+        <TransitionRoot as="template" :show="isModalOpen">
+          <Dialog as="div" class="fixed inset-0 z-10 flex items-center justify-center overflow-y-auto"
+            @close="closeModal">
+            <!-- Background overlay -->
+            <TransitionChild as="template" enter="ease-out duration-300" enter-from="opacity-0" enter-to="opacity-100"
+              leave="ease-in duration-200" leave-from="opacity-100" leave-to="opacity-0">
+              <DialogOverlay class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
+            </TransitionChild>
+
+            <!-- Modal content -->
+            <TransitionChild as="template" enter="ease-out duration-300"
+              enter-from="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
+              enter-to="opacity-100 translate-y-0 sm:scale-100" leave="ease-in duration-200"
+              leave-from="opacity-100 translate-y-0 sm:scale-100" leave-to="opacity-0 translate-y-4 sm:scale-95">
+              <div
+                class="inline-block bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:max-w-lg sm:w-full">
+                <div
+                  class="modal-header flex items-center justify-between p-4 border-b border-gray-200 bg-white rounded-t-md">
+                  <h5 class="text-lg font-medium leading-normal text-gray-800">Requisition Details</h5>
+                  <button type="button" @click="closeModal"
+                    class="btn-close box-content w-4 h-4 p-1 text-black border-none opacity-50 hover:text-black hover:opacity-75 focus:outline-none">
+                    <XIcon class="h-4 w-4" />
+                  </button>
+                </div>
+                <div class="bg-white px-4 pb-4 sm:p-6 sm:pb-4">
+                  <div>
+                    <h3 class="text-lg font-semibold mb-2">Requisition Information</h3>
+                    <p><strong>Disaster:</strong> {{ selectedRequisition?.disaster.name }}</p>
+                    <p><strong>Activity:</strong> {{ selectedRequisition?.activity.Name }}</p>
+                    <p><strong>District:</strong> {{ selectedRequisition?.district.Name }}</p>
+                    <p><strong>Affected Areas:</strong> {{ selectedRequisition?.AffectedAreas }}</p>
+                    <p><strong>Affected Households:</strong> {{ selectedRequisition?.AffectedHouseholds }}</p>
+                  </div>
+
+                  <!-- Requested Commodities Table -->
+                  <div class="mt-4">
+                    <h3 class="text-lg font-semibold text-blue-500 mb-2">Requested Commodities</h3>
+                    <table class="min-w-full bg-white border border-gray-200 rounded-lg">
+                      <thead class="bg-blue-100">
+                        <tr>
+                          <th
+                            class="py-2 px-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-b">
+                            #
+                          </th>
+                          <th
+                            class="py-2 px-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-b">
+                            Commodity</th>
+                          <th
+                            class="py-2 px-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-b">
+                            Quantity</th>
+                          <th
+                            class="py-2 px-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-b">
+                            Unit</th>
+                        </tr>
+                      </thead>
+                      <tbody class="divide-y divide-gray-200">
+                        <tr v-for="(item, index) in selectedRequisition?.requestedCommodities" :key="index"
+                          class="hover:bg-gray-100">
+                          <td class="py-2 px-4 border-b">{{ index + 1 }}</td>
+                          <td class="py-2 px-4 border-b">{{ item.commodity.Name }}</td>
+                          <td class="py-2 px-4 border-b">{{ item.Quantity }}</td>
+                          <td class="py-2 px-4 border-b">{{ item.commodity.Unit }}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+                <div class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse">
+                  <button @click="closeModal"
+                    class="inline-flex justify-center py-2 px-4 text-sm font-medium text-white bg-blue-500 rounded-md hover:bg-blue-400">Close</button>
+                </div>
+              </div>
+            </TransitionChild>
+          </Dialog>
+        </TransitionRoot>
+
       </div>
+
     </div>
   </main>
 </template>
 
 <script setup>
 // import the styles
+import {
+  Dialog,
+  DialogOverlay,
+  RadioGroup,
+  RadioGroupLabel,
+  RadioGroupOption,
+  TransitionChild,
+  TransitionRoot,
+} from "@headlessui/vue";
 
 import { inject, ref, reactive, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import {
   SearchIcon,
+  EyeIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
   PencilIcon, PlusCircleIcon
@@ -127,16 +195,20 @@ import {
 //COMPONENTS
 import spinnerWidget from "../../../components/widgets/spinners/default.spinner.vue";
 import breadcrumbWidget from "../../../components/widgets/breadcrumbs/admin.breadcrumb.vue";
-import createRequisitionForm from "../../../components/pages/requisition/create.component.vue";
+import createInstructionForm from "../../../components/pages/instruction/create.component.vue";
 
-import { usecommoditiestore } from "../../../stores/commodity.store";
 
 //SCHEMA//AND//STORES
 import { userequisitionstore } from "../../../stores/requisition.store";
+
+import { useinstructionstore } from "../../../stores/instructions.store";
+
 //INJENCTIONS
 const $router = useRouter();
 const moment = inject("moment");
 const Swal = inject("Swal");
+const isModalOpen = ref(false);
+const selectedRequisition = ref(null);
 
 const isDropdownOpen = ref(null);
 // Toggle dropdown visibility based on the row ID
@@ -152,11 +224,10 @@ const breadcrumbs = [
   { name: "Requisition Management", href: "#", current: true }
 ];
 const requisitionsStore = userequisitionstore();
+const instructionStore = useinstructionstore()
 const requisitions = reactive([]);
 
-
-const commodityStore = usecommoditiestore();
-const commodities = reactive([]);
+const instructions = reactive([]);
 
 const columns = ref([
 
@@ -217,36 +288,10 @@ const columns = ref([
 //MOUNTED
 onMounted(() => {
   getRequisitions();
-  getCommodities();
 });
 
 
 
-const getCommodities = async () => {
-  isLoading.value = true;
-  commodityStore
-    .get()
-    .then(result => {
-      // for (let i = 0; i < 100; i++) {
-      //   requisitions.push(...result);
-      // }
-      commodities.length = 0; //empty array
-      commodities.push(...result);
-
- 
-    })
-    .catch(error => {
-      Swal.fire({
-        title: "Commodities Retrieval Failed",
-        text: "failed to get requisitions (Please refresh to try again)",
-        icon: "error",
-        confirmButtonText: "Ok"
-      });
-    })
-    .finally(() => {
-      isLoading.value = false;
-    });
-};
 
 //FUNCTIONS
 const getRequisitions = async () => {
@@ -259,6 +304,7 @@ const getRequisitions = async () => {
       // }
       requisitions.length = 0; //empty array
       requisitions.push(...result);
+
 
       requisitions.sort((a, b) => new Date(b.created) - new Date(a.created));
 
@@ -276,17 +322,20 @@ const getRequisitions = async () => {
     });
 };
 
-const createRequisition = async model => {
+const createInstruction = async model => {
   isLoading.value = true;
-  requisitionsStore
+  instructionStore
     .create(model)
     .then(result => {
       Swal.fire({
         title: "Success",
-        text: "Created a new requisition successfully",
+        text: "Created a new instructions successfully",
         icon: "success",
         confirmButtonText: "Ok"
       });
+
+      $router.push({ path: '/dodma/instruction-management' });
+
     })
     .catch(error => {
       /*  Swal.fire({
@@ -298,9 +347,21 @@ const createRequisition = async model => {
     })
     .finally(() => {
       isLoading.value = false;
-      getRequisitions();
+
     });
 };
+
+
+
+const openRequisitionDetails = (row) => {
+  selectedRequisition.value = row;
+  isModalOpen.value = true;
+};
+
+const closeModal = () => {
+  isModalOpen.value = false;
+};
+
 </script>
 
 <style>

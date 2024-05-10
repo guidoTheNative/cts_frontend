@@ -59,7 +59,7 @@
 
 
 
-    <div class="bg-white shadow px-4 py-5 sm:rounded-lg sm:p-6" v-if="user.roleId == 'ADMIN1'">
+    <div class="bg-white shadow px-4 py-5 sm:rounded-lg sm:p-6" v-if="user.roleId == 'ADMIN1' || user.roleId == 'ADMIN6'">
       <div class="md:grid md:grid-cols-3 md:gap-6">
         <div class="md:col-span-1">
           <h3 class="text-lg font-medium leading-6 text-gray-900">
@@ -183,8 +183,7 @@ const deleteAcc = async () => {
         if (result.isConfirmed) {
           Swal.fire("Deleted!", "Deleted warehouse succesfully.", "success");
           isLoading.value = false;
-          let role = user.value.roleId == "ADMIN1" ? "admin" : "manager";
-          $router.push({ path: "/" + role + "/warehouses" });
+          $router.push({ path: "/" + "warehouse" + "/warehouses" });
         }
       });
     })

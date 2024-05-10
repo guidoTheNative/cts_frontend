@@ -50,7 +50,6 @@
       </div>
       <!-- table  -->
 
-
       <div class="align-middle inline-block min-w-full mt-5 shadow-xl rounded-table">
         <vue-good-table :columns="columns" :rows="instructions" :search-options="{ enabled: true }"
           style="font-weight: bold; color: #096eb4;" :pagination-options="{ enabled: true }" theme="polar-bear"
@@ -58,13 +57,25 @@
           <template #table-actions> </template>
 
           <template #table-row="props">
+            <span v-if="props.column.label === 'Status'">
+              <div>
+                <span v-if="props.row.IsApproved"
+                  class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-800">
+                  Approved
+                </span>
+                <span v-else
+                  class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-red-100 text-red-800">
+                  Not Approved
+                </span>
+              </div>
+            </span>
             <span v-if="props.column.label == 'Options'">
 
               <div class="flex space-x-2">
 
                 <!-- Create Instruction Button -->
 
-                <create-instruction-dispatch-form :row-id="props.row.id" v-on:create="createDispatch"
+                <create-instruction-dispatch-form :row-id="props.row.id" v-on:create="updateInstruction"
                   :instruction="props.row" :commodities="filteredCommodities(props.row.id)" :commodity="commodity" />
 
 
@@ -91,7 +102,7 @@ import {
 //COMPONENTS
 import spinnerWidget from "../../../components/widgets/spinners/default.spinner.vue";
 import breadcrumbWidget from "../../../components/widgets/breadcrumbs/admin.breadcrumb.vue";
-import createInstructionDispatchForm from "../../../components/pages/instruction/dispatch.component.vue";
+import createInstructionDispatchForm from "../../../components/pages/instruction/instructionApproval.component.vue";
 
 
 //SCHEMA//AND//STORES
@@ -179,6 +190,14 @@ const columns = ref([
     tdClass: "capitalize"
   },
 
+  {
+    label: "Status",
+    hidden: false,
+    field: row => row.IsApproved,
+    sortable: true,
+    firstSortType: "asc",
+    tdClass: "capitalize"
+  },
 
   {
     label: "Options",
@@ -194,55 +213,31 @@ onMounted(() => {
 });
 
 // Create dispatched commodities with the dispatch ID
-const createDispatchedCommodities = async (dispatchId, reliefItems) => {
-  const dispatchedCommodityPromises = reliefItems.map((item) => {
-    const dispatchedModel = {
-      instructedDispatchId: dispatchId,
-      commodityId: item.commodityId,
-      Quantity: item.Quantity,
-    };
 
-    return DispatchedCommoditiesStore.create(dispatchedModel);
-  });
-
-  // Wait for all promises to complete
-  await Promise.all(dispatchedCommodityPromises);
-};
-
-
-const createDispatch = async (originalModel) => {
+const updateInstruction = async (newValues) => {
   isLoading.value = true;
-
-  // Separate relief items from the original model
-  const { reliefItems, ...dispatchModel } = originalModel;
-
-  try {
-    // Create the dispatch without the relief items
-    const createdDispatch = await InstructedDispatchesStore.create(dispatchModel);
-    const dispatchId = createdDispatch.id;
-
-    // Pass the dispatch ID and the original relief items to create dispatched commodities
-    await createDispatchedCommodities(dispatchId, originalModel.reliefItems);
-
-    Swal.fire({
-      title: "Success",
-      text: "Created a dispatch and associated commodities successfully",
-      icon: "success",
-      confirmButtonText: "Ok"
+  instructionsStore
+    .update(newValues)
+    .then((result) => {
+      Swal.fire({
+        title: "Success",
+        text: "Successfully updated instruction",
+        icon: "success",
+      });
+    })
+    .catch((error) => {
+      Swal.fire({
+        title: "Failed",
+        text: "failed to update instruction (" + error + ")",
+        icon: "error",
+        confirmButtonText: "Ok",
+      });
+    })
+    .finally(() => {
+      getInstructions()
+      isLoading.value = false;
     });
-  } catch (error) {
-    Swal.fire({
-      title: "Creation Failed",
-      text: `Failed to create dispatch and associated commodities: ${error}`,
-      icon: "error",
-      confirmButtonText: "Ok"
-    });
-  } finally {
-    isLoading.value = false;
-  }
 };
-
-
 
 
 //FUNCTIONS
@@ -255,7 +250,7 @@ const getInstructions = async () => {
       //   instructions.push(...result);
       // }
       instructions.length = 0; //empty array
-      instructions.push(...result.filter(item => (item.district.Name == user.value.district) && item.IsApproved));
+      instructions.push(...result.filter(item => !item.IsApproved));
 
 
     })

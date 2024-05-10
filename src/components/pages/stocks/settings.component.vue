@@ -210,7 +210,7 @@ const deleteAcc = async () => {
           Swal.fire("Deleted!", "Deleted commodity inventory succesfully.", "success");
           isLoading.value = false;
           let role = user.value.roleId == "ADMIN1" ? "admin" : "manager";
-          $router.push({ path: "/" + role + "/stock-management" });
+          $router.push({ path: "/warehouse/stock-management" });
         }
       });
     })

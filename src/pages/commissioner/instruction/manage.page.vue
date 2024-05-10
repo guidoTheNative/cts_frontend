@@ -18,34 +18,177 @@
       <div class="align-middle inline-block min-w-full">
         <ul class="nav nav-tabs flex flex-col md:flex-row flex-wrap pl-0 mb-4 border-b border-blue-300" id="tabs-menu"
           role="tablist">
+          <!-- <li class="nav-item" role="presentation">
+            <a
+              href="#user-profile"
+              class="nav-link block  font-bold text-xs leading-tight capitalize border-x-0 border-t-0 border-b-2 border-transparent px-6 py-3 my-1hover:border-transparent hover:bg-blue-100 focus:border-transparent active"
+              id="tabs-user-profile"
+              data-bs-toggle="pill"
+              data-bs-target="#user-profile"
+              role="tab"
+              aria-controls="user-profile"
+              aria-selected="true"
+              >Profile</a
+            >
+          </li> -->
           <li class="nav-item mr-1" role="presentation">
-            <a href="#user-relief"
-              class="nav-link block font-bold text-xs leading-tight capitalize border-x-0 border-t-0 border-b-2 border-transparent px-6 py-3 my-1hover:border-transparent hover:bg-blue-100 focus:border-transparent active"
-              id="tabs-user-relief" data-bs-toggle="pill" data-bs-target="#user-relief" role="tab"
-              aria-controls="user-relief" aria-selected="true">Relief Items</a>
-          </li>
-          <li class="nav-item" role="presentation">
             <a href="#user-settings"
-              class="nav-link block font-bold text-xs leading-tight capitalize border-x-0 border-t-0 border-b-2 border-transparent px-6 py-3 my-1hover:border-transparent hover:bg-blue-100 focus:border-transparent"
+              class="nav-link block font-bold text-xs leading-tight capitalize border-x-0 border-t-0 border-b-2 border-transparent px-6 py-3 my-1hover:border-transparent hover:bg-blue-100 focus:border-transparent active"
               id="tabs-user-settings" data-bs-toggle="pill" data-bs-target="#user-settings" role="tab"
               aria-controls="user-settings" aria-selected="false">Instruction Management</a>
           </li>
+
+          <li class="nav-item ml-auto mb-4" role="presentation">
+            <button @click="showPrintModal = true"
+              class="bg-blue-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded-md">
+              Print Goods Release Instruction
+            </button>
+
+            <div v-if="showPrintModal"
+              class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50">
+              <div id="content" class="bg-white w-full max-w-4xl p-6 shadow-lg rounded-md">
+                <!-- Department Header -->
+                <div class="text-center mb-4">
+                  <img src="../../../assets/images/images.png" alt="Department Logo" class="w-20 mx-auto mb-2">
+                  <h2 class="font-bold text-xl">DEPARTMENT OF DISASTER MANAGEMENT AFFAIRS</h2>
+                  <h3 class="font-semibold mt-2">Goods Release Instruction</h3>
+                </div>
+
+                <!-- Instruction and Reference Info -->
+                <table class="w-full text-left mt-4 border-collapse border border-gray-400">
+                  <tbody>
+                    <tr>
+                      <td class="border border-gray-400 p-2"><strong>REF NO:</strong></td>
+                      <td class="border border-gray-400 p-2"> {{ model.id }} <span>|</span> {{ model.district.Name }}
+                        <span>|</span> {{ model.VehicleRegNo }}
+                      </td>
+                      <td class="border border-gray-400 p-2"><strong>INSTRUCTION NO:</strong></td>
+                      <td class="border border-gray-400 p-2">DODMA-I{{ model.id }}</td>
+                    </tr>
+                    <tr>
+                      <td class="border border-gray-400 p-2"><strong>DATE:</strong></td>
+                      <td class="border border-gray-400 p-2">{{ moment(model.CreatedOn).format("MM-DD-YYYY") }}</td>
+                      <td class="border border-gray-400 p-2"><strong>FROM:</strong></td>
+                      <td class="border border-gray-400 p-2">{{ model.warehouse.Name }}</td>
+                    </tr>
+                    <tr>
+                      <td class="border border-gray-400 p-2"><strong>TO:</strong></td>
+                      <td class="border border-gray-400 p-2">{{ model.district.Name }}</td>
+                      <td class="border border-gray-400 p-2"><strong>VEHICLE REG NO:</strong></td>
+                      <td class="border border-gray-400 p-2">{{ model.VehicleRegNo }}</td>
+                    </tr>
+                    <tr>
+                      <td class="border border-gray-400 p-2"><strong>DRIVER NAME:</strong></td>
+                      <td class="border border-gray-400 p-2">{{ model.DriverName }}</td>
+                      <td class="border border-gray-400 p-2"><strong>PURPOSE:</strong></td>
+                      <td class="border border-gray-400 p-2">{{ model.Purpose }}</td>
+                    </tr>
+
+                  </tbody>
+                </table>
+
+                <!-- Instructions Text Section -->
+                <div class="mt-4">
+                  <h4 class="font-semibold">INSTRUCTION:</h4>
+                  <p>{{ model.Remarks }}</p>
+                </div>
+
+                <!-- Goods List Section -->
+                <div class="mt-6">
+                  <h3 class="font-semibold">Goods List:</h3>
+                  <table class="w-full text-left mt-2 border-collapse border border-gray-400">
+                    <thead>
+                      <tr class="bg-gray-200">
+                        <th class="border border-gray-400 p-2">Instruction No</th>
+                        <th class="border border-gray-400 p-2">Warehouse</th>
+                        <th class="border border-gray-400 p-2">Vehicle Reg No</th>
+                        <th class="border border-gray-400 p-2">Stock Code</th>
+                        <th class="border border-gray-400 p-2">Package</th>
+                        <th class="border border-gray-400 p-2">Qty to Release</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr v-for="(item, index) in instructedCommodities" :key="index">
+                        <td class="border border-gray-400 p-2">DODMA-I{{ model.id }}</td>
+                        <td class="border border-gray-400 p-2">{{ item.instruction.warehouse.Name }}</td>
+                        <td class="border border-gray-400 p-2">{{ model.VehicleRegNo }}</td>
+                        <td class="border border-gray-400 p-2">{{ item.commodity.Name }}</td>
+                        <td class="border border-gray-400 p-2">
+
+                          {{ item.commodity.PackSize }}
+
+                          {{ item.commodity.Unit }}</td>
+                        <td class="border border-gray-400 p-2">{{ item.Quantity }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <!-- Approvals Section -->
+                <div class="mt-6">
+                  <h3 class="font-semibold">Approvals:</h3>
+                  <table class="w-full text-left mt-2 border-collapse border border-gray-400">
+                    <thead>
+                      <tr class="bg-gray-200">
+                        <th class="border border-gray-400 p-2">Fullname</th>
+                        <th class="border border-gray-400 p-2">Signature</th>
+                        <th class="border border-gray-400 p-2">Date</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td class="border border-gray-400 p-2">{{ model.ApprovedBy }}</td>
+                        <td class="border border-gray-400 p-2">{{ model.ApprovedBy.split(/\s+/).map(word =>
+      word.charAt(0).toUpperCase()).join('') }}</td>
+                        <td class="border border-gray-400 p-2">{{
+      moment(model.UpdatedOn).format("MM-DD-YYYY")
+    }}
+
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <!-- Print and Close Buttons -->
+                <div class="flex justify-end space-x-4 mt-4">
+                  <button @click="printPDF"
+                    class="bg-green-500 text-white px-4 py-2 rounded-md  no-print">Print</button>
+                  <button @click="closePrintModal"
+                    class="bg-red-500 text-white px-4 py-2 rounded-md  no-print">Close</button>
+                </div>
+              </div>
+            </div>
+          </li>
+
         </ul>
         <div class="tab-content" id="tabs-user-options">
+          <!-- <div
+            class="tab-pane fade show active"
+            id="user-profile"
+            role="tabpanel"
+            aria-labelledby="tabs-user-profile"
+          >
+            <user-profile v-bind:model="model" v-on:update="updateInstruction" :key="model.id+'profile'"/>
+          </div> -->
+          <div class="tab-pane fade show active" id="user-settings" role="tabpanel"
+            aria-labelledby="tabs-user-settings">
+            <user-settings v-bind:model="model" v-on:update="updateInstruction" :key="model.id + 'settings'" />
+          </div>
+
+
           <div class="tab-pane fade show active mt-3" id="user-relief" role="tabpanel"
             aria-labelledby="tabs-user-relief">
             <user-relief v-bind:model="model" v-on:update="updateOrCreateReliefItems" :key="model.id + 'relief'" />
           </div>
-          <div class="tab-pane fade" id="user-settings" role="tabpanel"
-            aria-labelledby="tabs-user-settings">
-            <user-settings v-bind:model="model" v-on:update="updateInstruction" :key="model.id + 'settings'" />
-          </div>
+
+
+
         </div>
       </div>
     </div>
   </main>
 </template>
-
 
 <script setup>
 import { inject, ref, reactive, onMounted } from "vue";

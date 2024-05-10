@@ -7,7 +7,7 @@ export default class RequisitionService {
       return axios
         .get(
           resource +
-          `?filter={"include": ["disaster", "Requester", "activity", "district" ]}`,
+          `?filter={"include": ["disaster", "Requester", "activity", "district",  {"relation":"requestedCommodities","scope":{"include":[{"relation":"commodity"}]}}  ]}`,
           {
             headers: {
               "Access-Control-Allow-Origin": "*",
@@ -28,7 +28,7 @@ export default class RequisitionService {
         });
     } else if (id != null) {
       return axios
-        .get(resource + `/` + id + `?filter={"include": ["disaster", "Requester", "activity", "district" ]}`, {
+        .get(resource + `/` + id + `?filter={"include": ["disaster", "Requester", "activity", "district",  {"relation":"requestedCommodities","scope":{"include":[{"relation":"commodity"}]}}  ]}`, {
           headers: {
             "Access-Control-Allow-Origin": "*",
             "Content-type": "Application/json",

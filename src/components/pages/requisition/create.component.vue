@@ -359,6 +359,7 @@ const onSubmit = useSubmitForm((values, actions) => {
     AffectedAreas: AffectedAreas.value.join(),
     AffectedHouseholds: AffectedHouseholds.value,
     RequesterId: user.value.id,
+    reliefItems: reliefItems.value,
     CreatedOn: currentDate.value
   };
   emit("create", model);

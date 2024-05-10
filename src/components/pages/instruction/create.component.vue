@@ -59,7 +59,7 @@
 
                  
 
-                    <div class="col-span-6 sm:col-span-6">
+                    <div class="col-span-12 sm:col-span-12">
                       <label for="user-district" class="block text-sm font-medium text-gray-700">
                         Select Warehouse (From)</label>
                       <select id="activity" name="activity" v-model="warehouseId" autocomplete="activity-name"
@@ -74,7 +74,7 @@
                     </div>
 
                     
-                    <div class="col-span-6 sm:col-span-6">
+                    <div class="col-span-12 sm:col-span-12">
                       <label for="user-district" class="block text-sm font-medium text-gray-700">
                         Select District (To)</label>
                       <select id="district" name="district" v-model="districtId" autocomplete="district-name"
@@ -102,7 +102,7 @@
                       </p>
                     </div>
 
-                    <div class="col-span-6 sm:col-span-6">
+                    <div class="col-span-12 sm:col-span-12">
                       <label for="DriverName" class="block text-sm font-medium text-gray-700">Driver Name</label>
                       <input type="text" v-model="DriverName" name="DriverName" id="From" autocomplete="off"
                         placeholder="Driver Name"
@@ -114,7 +114,7 @@
 
                     
 
-                    <div class="col-span-6 sm:col-span-6">
+                    <div class="col-span-12 sm:col-span-12">
                       <label for="From" class="block text-sm font-medium text-gray-700">Vehicle Reg #</label>
                       <input type="text" v-model="VehicleRegNo" name="Fromr" id="From" autocomplete="off"
                         placeholder="Vehicle Reg #"

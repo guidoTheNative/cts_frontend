@@ -218,7 +218,7 @@ const getWarehouses = async () => {
     .then(result => {
 
       warehouses.length = 0; //empty array
-      warehouses.push(...result);
+      warehouses.push(...result.filter(item => item.district.Name == user.value.district));
 
     })
     .catch(error => {

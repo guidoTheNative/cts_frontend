@@ -192,6 +192,11 @@ const onSubmit = useSubmitForm((values, actions) => {
         // Specific redirection for warehouse officer
         $router.push({ path: '/field' });
       }
+
+      else if (result.role === 'Commissioner (DODMA)') {
+        // Specific redirection for warehouse officer
+        $router.push({ path: '/commissioner' });
+      }
       else {
         // General redirection for other roles
         $router.push({ path: '/' + result.role });

@@ -16,7 +16,7 @@
         hover:bg-gray-100
       ">
       <!-- Heroicon PlusCircle (Create Instruction) -->
-      <PlusCircleIcon class="h-5 w-5 mr-1" />
+      <TruckIcon class="h-5 w-5 mr-1" />
       Create Dispatch
     </button>
     <TransitionRoot as="template" :show="open">
@@ -105,22 +105,22 @@
                         <!-- Form Inputs -->
                         <label for="deliveryNote" class="block font-medium">Delivery Note:</label>
                         <input type="text" id="deliveryNote" v-model="DeliveryNote"
-                          class="w-full p-2 border rounded mb-1">
+                        class="mt-1 focus:ring-gray-500 focus:border-blue-300 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
 
                         <label for="finalDestination" class="block font-medium">Final Destination Point:</label>
                         <input type="text" id="finalDestination" v-model="FinalDestinationPoint"
-                          class="w-full p-2 border rounded mb-1">
+                        class="mt-1 focus:ring-gray-500 focus:border-blue-300 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
 
                         <label for="driverName" class="block font-medium">Driver Name:</label>
-                        <input type="text" id="driverName" v-model="DriverName" class="w-full p-2 border rounded mb-1">
+                        <input type="text" id="driverName" v-model="DriverName"  class="mt-1 focus:ring-gray-500 focus:border-blue-300 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
 
                         <label for="driverLicense" class="block font-medium">Driver License:</label>
                         <input type="text" id="driverLicense" v-model="DriverLicense"
-                          class="w-full p-2 border rounded mb-1">
+                        class="mt-1 focus:ring-gray-500 focus:border-blue-300 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
 
                         <label for="truckNumber" class="block font-medium">Truck Number:</label>
                         <input type="text" id="truckNumber" v-model="TruckNumber"
-                          class="w-full p-2 border rounded mb-1">
+                        class="mt-1 focus:ring-gray-500 focus:border-blue-300 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
 
                         <!-- Relief Items Form -->
                         <div class="overflow-hidden sm:rounded-md mt-3">
@@ -132,7 +132,7 @@
                                 <div class="flex-1">
                                   <label class="block text-sm font-bold text-gray-700">Commodity</label>
                                   <select v-model="item.commodityId" @change="validateCommodity(index)"
-                                    class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm p-2">
+                                  class="mt-1 focus:ring-gray-500 focus:border-blue-300 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
                                     <option value="" disabled>Commodity</option>
                                     <option v-for="comm in commodity" :key="comm.id" :value="comm.id">
                                       {{ comm.Name }}
@@ -145,7 +145,7 @@
                                 <div class="flex-1">
                                   <label class="block text-sm font-bold text-gray-700">Quantity</label>
                                   <input type="number" v-model.number="item.Quantity"
-                                    class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm p-2"
+                                  class="mt-1 focus:ring-gray-500 focus:border-blue-300 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
                                     placeholder="Quantity" />
                                 </div>
 
@@ -191,6 +191,7 @@
 import {
   SearchIcon,
   EyeIcon,
+  TruckIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
   PencilIcon, PlusCircleIcon
