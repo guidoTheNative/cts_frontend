@@ -199,6 +199,7 @@ import {
 import spinnerWidget from "../../../components/widgets/spinners/default.spinner.vue";
 import breadcrumbWidget from "../../../components/widgets/breadcrumbs/admin.breadcrumb.vue";
 import createInstructionForm from "../../../components/pages/instruction/create.component.vue";
+import createRequisitionForm from "../../../components/pages/requisition/create.component.vue";
 
 
 import { useinstructionstore } from "../../../stores/instructions.store";
