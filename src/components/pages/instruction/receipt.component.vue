@@ -82,9 +82,14 @@
                                 <td class="py-2 px-4 border-b">{{ item.Quantity }}</td>
                                 <td class="py-2 px-4 border-b">{{ item.commodity.PackSize }} {{ item.commodity.Unit }}</td>
                                 <td class="py-2 px-4 border-b">
-                                  <input type="number" v-model.number="item.receivedQuantity" min="0" class=" w-20 p-1 border rounded border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm p-2" placeholder="Qty" />
-                                  <button type="button" @click="receiveCommodity(item)" class="ml-2 px-2 py-1 bg-green-500 text-white rounded">Receive</button>
-                                </td>
+                                  <input type="number" v-if="!item.received" v-model.number="item.receivedQuantity" min="0" class=" w-20 p-1 border rounded border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm p-2" placeholder="Qty" />
+                                  <button type="button" @click="receiveCommodity(item)"
+                                    :disabled="item.received" 
+                                    class="ml-2 px-2 py-1 text-white rounded"
+                                    :class="item.received ? 'bg-green-500' : 'bg-blue-500 hover:bg-blue-600'">
+                                    <CheckCircleIcon v-if="item.received" class="h-5 w-5 mr-1" />
+                                    <span v-if="!item.received">Receive</span>
+                                  </button> </td>
                               </tr>
                             </tbody>
                           </table>
@@ -116,6 +121,7 @@
 
 import {
   SearchIcon,
+  CheckCircleIcon,
   EyeIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
@@ -225,6 +231,7 @@ const receivedCommodities = reactive([]);
 
 const receiveCommodity = (item) => {
   if (item.receivedQuantity && item.receivedQuantity > 0) {
+    item.received = true;
     receivedCommodities.push({
       commodityId: item.commodity.id,
       instructedReceiptId: props.rowId,

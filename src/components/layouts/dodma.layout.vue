@@ -40,6 +40,13 @@
             'mr-1 flex-shrink-0 h-6 w-6',
           ]" aria-hidden="true" />
               {{ item.name }}
+              
+              <div v-if="item.name === 'Requisitions' && newRequisitionsCount > 0" class="relative ml-2 mx-4">
+                    <span
+                      class="absolute -top-3 -right-3 flex items-center justify-center px-1 py-0.5 text-xs font-bold text-white bg-red-600 rounded-full">
+                      {{ newRequisitionsCount }}
+                    </span>
+                  </div>
             </a>
           </router-link>
 
@@ -86,6 +93,7 @@
             'block py-2 px-4 text-sm text-white',
           ]">
                   {{ item.name }}
+
                 </a>
                 </MenuItem>
 
@@ -149,6 +157,7 @@ import {
   ViewListIcon,
   UsersIcon,
   XIcon,
+  BellIcon,
   UserCircleIcon,
   ClipboardListIcon,
   DocumentTextIcon,
@@ -168,6 +177,11 @@ import {
   SelectorIcon,
 } from "@heroicons/vue/solid";
 
+import { userequisitionstore } from "../../stores/requisition.store";
+const requisitionsStore = userequisitionstore();
+const requisitions = reactive([]);
+
+
 //DECLARATIONS
 const system = reactive({
   name: process.env.VUE_APP_NAME,
@@ -184,6 +198,7 @@ const user = ref(sessionStore.getUser);
 const role = ref(sessionStore.getRole);
 
 
+const newRequisitionsCount = ref(0);
 const isDropdownOpen = ref(false);
 
 
@@ -214,8 +229,14 @@ function gotoSystemsettings() {
 
 }
 
+
+const isLoading = ref(false)
+
 //MOUNTED
-onMounted(() => { });
+onMounted(() => {
+  
+  getRequisitions();
+ });
 //WAT
 function navigation() {
   let navList = [
@@ -223,8 +244,7 @@ function navigation() {
    /*  { name: "Commodities", href: "/warehouse/commodity-tracking", icon: CollectionIcon, current: false },
     { name: "Requisitions", href: "/warehouse/requisition-management", icon: IdentificationIcon, current: false },
     { name: "Project Management", href: "/warehouse/project-management", icon: IdentificationIcon, current: false },
-  */   { name: "Receipts", href: "/dodma/receipt-management", icon: DocumentDuplicateIcon, current: false },
-    { name: "Requisitions", href: "/dodma/requisition-management", icon: ClipboardListIcon, current: false },
+  */  { name: "Requisitions", href: "/dodma/requisition-management", icon: ClipboardListIcon, current: false },
     { name: "Instructions", href: "/dodma/instruction-management", icon: CollectionIcon, current: false },
 
     { name: "Reports", href: "/dodma/report-management", icon: DocumentTextIcon, current: false },
@@ -294,5 +314,32 @@ const onSignout = async () => {
   }
 };
 
+
+
+
+//FUNCTIONS
+const getRequisitions = async () => {
+  isLoading.value = true;
+  requisitionsStore
+    .get()
+    .then((result) => {
+      // Clear the existing array
+      requisitions.length = 0;
+
+   
+
+      // Push the filtered instructions into the array
+      requisitions.push(...result.filter(item => item.IsArchived == false || item.IsArchived == null));
+
+
+      // Update the count of new instructions
+      newRequisitionsCount.value = requisitions.length;
+    })
+    
+    
+    .finally(() => {
+      isLoading.value = false;
+    });
+};
 
 </script>

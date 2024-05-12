@@ -48,7 +48,7 @@
 
 
               <div class="bg-gray-100 p-5">
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
 
 
                   <!-- Stats Cards -->
@@ -557,21 +557,7 @@ const stats = ref([
 
 
   {
-    label: 'Dispatched Goods',
-    value: totalDispatched,
-    // Use a ternary operator to decide between ExclamationCircleIcon and CheckCircleIcon
-    icon: receivedPercentage > 50 ? ExclamationCircleIcon : CheckCircleIcon,
-    iconColor: dispatchPercentage > 50 ? 'green-500' : 'red-500',
-    percentageText: receivedPercentageFormated,
-    textColor: receivedPercentage > 50 ? 'green-500' : 'red-500',
-    showProgress: true,
-    progress: receivedPercentage,
-    isProgressPositive: receivedPercentage > 50,
-    progressColor: receivedPercentage > 50 ? 'green-500' : 'red-500',
-    progressText: ''
-  },
-  {
-    label: 'Stock Position',
+    label: 'Total Dispatches',
     value: dispatchcount,
     icon: ClipboardListIcon,
     iconColor: 'green-500',

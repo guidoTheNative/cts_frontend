@@ -17,7 +17,7 @@
       ">
       <!-- Heroicon PlusCircle (Create Instruction) -->
       <CheckCircleIcon class="h-5 w-5 mr-1" />
-      View & Approve 
+      View & Approve
     </button>
     <TransitionRoot as="template" :show="open">
       <Dialog as="div" class="fixed inset-0 z-10 overflow-y-auto" @close="open = false" static>
@@ -233,10 +233,11 @@ const getRequisition = async () => {
 
 
 const onSubmit = useSubmitForm((values, actions) => {
-  
+
   let model = {
     id: props.rowId,
-    IsApproved: true
+    IsApproved: true,
+    ApprovedBy: user.value.username.replace('.', ' ').split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
   }
   emit("create", model);
 });

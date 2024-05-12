@@ -3,7 +3,7 @@
     <button type="button"
       class="font-body inline-block px-6 py-2.5 bg-gray-500 text-white font-medium text-xs leading-tight rounded shadow-md hover:bg-gray-600 hover:shadow-lg focus:bg-gray-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-400 active:shadow-lg transition duration-100 ease-in-out capitalize"
       @click="open = true">
-      new disaster
+      new activity
     </button>
     <TransitionRoot as="template" :show="open">
       <Dialog as="div" class="fixed z-10 inset-0 overflow-y-auto" @close="open = false" static>
@@ -26,7 +26,7 @@
               <div
                 class="modal-header flex flex-shrink-0 items-center justify-between p-4 border-b border-gray-200 rounded-t-md bg-white">
                 <h5 class="text-md font-medium leading-normal text-gray-800" id="formModalLabel">
-                  Create Disaster
+                  Create Activity
                 </h5>
                 <button type="button"
                   class="btn-close box-content w-4 h-4 p-1 text-black border-none rounded-none opacity-50 focus:shadow-none focus:outline-none focus:opacity-100 hover:text-black hover:opacity-75 hover:no-underline"
@@ -39,92 +39,20 @@
               </div>
 
 
-              <form @submit="onSubmit" :validation-schema="CreateDisasterSchema">
+              <form @submit="onSubmit" :validation-schema="CreateActivitySchema">
                 <div class="px-4 py-5 bg-white sm:p-6">
                   <div class="grid grid-cols-6 gap-2">
 
-                    <div class="col-span-12 sm:col-span-12">
-                      <label for="batch" class="block text-sm font-medium text-gray-700">Disaster Name</label>
+                    <div class="col-span-6 sm:col-span-3">
+                      <label for="batch" class="block text-sm font-medium text-gray-700">Activity Name</label>
                       <input type="text" v-model="name" Name="name" id="name" autocomplete="off"
-                        placeholder="Disaster Name"
+                        placeholder="Activity Name"
                         class="mt-1 focus:ring-gray-500 focus:border-blue-300 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
                       <p class="text-red-500 text-xs italic pt-1">
                         {{ nameError }}
                       </p>
                     </div>
 
-
-                    <div class="col-span-12 sm:col-span-12">
-                      <label for="user-district" class="block text-sm font-medium text-gray-700">
-                        Select Disaster Type</label>
-                      <select id="type" name="type" v-model="type" autocomplete="type-name"
-                        class="mt-1 focus:ring-gray-500 focus:border-blue-300 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
-                        <option v-for="item in ['Floods', 'Heavy Rains', 'Droughts', 'Dry Spells', 'Flash Floos']" :key="item" :value="item" class="uppercase">
-                          {{ item }}
-                        </option>
-                      </select>
-                      <p class="text-red-500 text-xs italic pt-1">
-                        {{ typeError }}
-                      </p>
-                    </div>
-
-                    <div class="col-span-12 sm:col-span-12">
-                      <label for="user-district" class="block text-sm font-medium text-gray-700">
-                        Select District</label>
-                      <select id="district" name="district" v-model="district" autocomplete="district-name"
-                        class="mt-1 focus:ring-gray-500 focus:border-blue-300 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
-                        <option v-for="district in districts" :key="district" :value="district"
-                          class="uppercase">
-                          {{ district.Name }}
-                        </option>
-                      </select>
-                      <p class="text-red-500 text-xs italic pt-1">
-                        {{ districtIdError }}
-                      </p>
-                    </div>
-
-
-
-                    <div class="col-span-12 sm:col-span-12">
-                      <label for="batch" class="block text-sm font-medium text-gray-700">TA</label>
-                      <input type="text" v-model="ta" Name="ta" id="ta" autocomplete="off" placeholder="T/A"
-                        class="mt-1 focus:ring-gray-500 focus:border-blue-300 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
-                      <p class="text-red-500 text-xs italic pt-1">
-                        {{ taError }}
-                      </p>
-                    </div>
-
-                    <div class="col-span-12 sm:col-span-12">
-                      <label for="batch" class="block text-sm font-medium text-gray-700">GVH</label>
-                      <input type="text" v-model="gvh" Name="gvh" id="gvh" autocomplete="off" placeholder="GVH"
-                        class="mt-1 focus:ring-gray-500 focus:border-blue-300 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
-                      <p class="text-red-500 text-xs italic pt-1">
-                        {{ gvhError }}
-                      </p>
-                    </div>
-
-                    <div class="col-span-12 sm:col-span-12">
-                      <label for="villages_affected" class="block text-sm font-medium text-gray-700">
-                        Villages Affected
-                      </label>
-
-                      <!-- Tags display -->
-                      <div class="flex flex-wrap items-center border-gray-300 rounded-md border p-2 mt-1">
-                        <span v-for="(village, index) in villages_affected" :key="index"
-                          class="mr-2 mb-2 px-2 py-1 bg-blue-200 text-blue-800 rounded-lg text-sm flex items-center">
-                          {{ village }}
-                          <button @click="removeTag(index)" class="ml-1 text-red-500">&times;</button>
-                        </span>
-
-                        <!-- Input for adding new tags -->
-                        <input type="text" v-model="newVillage" @keydown.enter.prevent="addTag"
-                          placeholder="Add a village then place enter..."
-                          class="flex-grow focus:ring-gray-500 focus:border-blue-300 border-none shadow-sm sm:text-sm" />
-                      </div>
-
-                      <!-- Error message -->
-                      <p class="text-red-500 text-xs italic pt-1">{{ vgError }}</p>
-                    </div>
 
 
                   </div>
@@ -162,17 +90,15 @@ import { useForm, useField, useSubmitForm, useIsFormValid } from "vee-validate";
 //COMPONENTS
 import spinnerWidget from "../../../components/widgets/spinners/default.spinner.vue";
 //SCHEMA AND STORES
-import { CreateDisasterSchema } from "../../../services/schema/disaster.schema";
+import { CreateActivitySchema } from "../../../services/schema/activity.schema";
 import { useRoleStore } from "../../../stores/role.store";
 import { useUserStore } from "../../../stores/user.store";
 
+import { usedistrictstore } from "../../../stores/districts.store";
 
 import { usecommoditiestore } from "../../../stores/commodity.store";
 
-import { useDisasterstore } from "../../../stores/disaster.store";
-
-
-import { usedistrictstore } from "../../../stores/districts.store";
+import { useactivitiestore } from "../../../stores/activity.store";
 
 import { useSessionStore } from "../../../stores/session.store";
 //INJENCTIONS
@@ -198,8 +124,8 @@ const commodities = reactive([])
 
 
 
-const warehouseStore = useDisasterstore();
-const disasters = reactive([])
+const activityStore = useactivitiestore();
+const activitys = reactive([])
 
 const sessionStore = useSessionStore();
 
@@ -207,7 +133,7 @@ const user = ref(sessionStore.getUser);
 
 //FORM
 const { meta } = useForm({
-  validationSchema: CreateDisasterSchema,
+  validationSchema: CreateActivitySchema,
   initialValues: {
     Quantity: "",
     ExpiryDate: "",
@@ -229,19 +155,18 @@ const { value: name, errorMessage: nameError } = useField("name");
 
 //MOUNTED
 onMounted(() => {
-  getDisaster();
-  getDistricts();
+  getActivity();
 });
 //FUNCTIONS
 
 
-const getDisaster = async () => {
-  warehouseStore
+const getActivity = async () => {
+  activityStore
     .get()
     .then(result => {
 
-      disasters.length = 0; //empty array
-      disasters.push(...result);
+      activitys.length = 0; //empty array
+      activitys.push(...result);
 
     })
     .catch(error => {
@@ -251,32 +176,12 @@ const getDisaster = async () => {
     });
 };
 
-
-const getDistricts = async () => {
-  districtstore
-    .get()
-    .then(result => {
-
-      districts.length = 0; //empty array
-      districts.push(...result);
-
-    })
-    .catch(error => {
-
-    })
-    .finally(() => {
-    });
-};
 
 
 const onSubmit = useSubmitForm((values, actions) => {
   let model = {
-    name: name.value,
-    type: type.value,
-    villages_affected: villages_affected.value.join(),
-    district: district.value,
-    gvh: gvh.value,
-    ta: ta.value
+    Name: name.value,
+    
   };
   emit("create", model);
   open.value = false;

@@ -57,7 +57,7 @@
                       :class="{ 'hidden': currentView === 'charts' }">
                       <ChartBarIcon class="h-5 w-5 mr-2" />
 
-                      Chart View
+                      Analysis View
                     </button>
 
 
@@ -82,7 +82,7 @@
 
               </div>
 
-              <section ref="maizeTable">
+              <section ref="commodityTable">
                 <!-- Chart and image container -->
                 <div class="bg-gray-100 p-5" v-show="currentView === 'charts'">
                   <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -98,30 +98,29 @@
                       </div>
                     </div>
 
-
                     <!-- Instance of chart components -->
                     <div class="mx-4">
-                      <chart-component />
+                      <distribution-by-commodity v-if="commodityDistributionData.length > 0" :commodityDistributionData="commodityDistributionData" />
                     </div>
                     <div class="mx-4">
-                      <chart-component />
+                      <distribution-by-district  v-if="commodityDistributionData.length > 0" :commodityDistributionData="commodityDistributionData" />
                     </div>
                     <div class="mx-4">
-                      <chart-component />
+                      <distribution-percentage  v-if="commodityDistributionData.length > 0" :commodityDistributionData="commodityDistributionData" />
                     </div>
                   </div>
                 </div>
 
-                <!-- Maize distribution table view -->
+                <!-- Commodity distribution table view -->
                 <div class="bg-gray-100 p-5" v-show="currentView === 'charts'">
                   <!-- New table component -->
-                  <maize-distribution-table :data="maizeDistributionData" />
+                  <commodity-distribution-table :data="commodityDistributionData" :screenshotMode="screenshotMode" />
                   <!-- Other components for stats, etc... -->
                 </div>
               </section>
 
               <div class="bg-gray-100 p-5" v-show="currentView === 'dashboard'">
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
 
 
                   <!-- Stats Cards -->
@@ -164,7 +163,7 @@
 
           <!-- Actions panel -->
           <section aria-labelledby="quick-links-title" class="shadow-2xl bg-white rounded-table">
-            <p class="text-center text-gray-600 mt-4 font-bold"> Recent dispatches</p>
+            <p class="text-center text-gray-600 mt-4 font-bold"> Recent Dispatches</p>
 
             <div class="align-middle inline-block min-w-full mt-1 rounded-table mx-0">
               <vue-good-table :columns="columns" :rows="dispaches" :search-options="{ enabled: true }"
@@ -182,7 +181,7 @@
 </template>
 
 <script setup>
-import { inject, ref, watch, reactive, onMounted, toRefs } from "vue";
+import { inject, ref, watch, reactive, onMounted, toRefs, computed, toRaw } from "vue";
 import { useRouter } from "vue-router";
 import { useSessionStore } from "../../../stores/session.store";
 
@@ -197,16 +196,23 @@ import { useUserStore } from "../../../stores/user.store";
 
 import { useDispatcherStore } from "../../../stores/dispatch.store";
 import ChartComponent from '../../../components/pages/charts/dashboardcharts.vue'; // Adjust path as needed
+import distributionByCommodity from '../../../components/pages/charts/distributionByCommodity.vue'; // Adjust path as needed
+import distributionByDistrict from '../../../components/pages/charts/distributionByDistrict.vue'; // Adjust path as needed
+import distributionPercentage from '../../../components/pages/charts/distributionPercentage.vue'; // Adjust path as needed
 
 
 import { useListingStore } from "../../../stores/catalogue.store";
 import { usebookingstore } from "../../../stores/booking.store";
 
-import MaizeDistributionTable from './MaizeDistributionTable.vue';
+import CommodityDistributionTable from './CommodityDistributionTable.vue';
 
 
 import { useloadingplanstore } from "../../../stores/loadingplans.store";
 import html2canvas from 'html2canvas';
+import { useInstructedDispatchesStore } from "../../../stores/instructedDispatches.store";
+import { useinstructionstore } from "../../../stores/instructions.store";
+
+import { userequisitionstore } from "../../../stores/requisition.store";
 
 
 import { usereceiptstore } from "../../../stores/receipt.store";
@@ -255,265 +261,7 @@ const screenshotMode = ref(false);
 
 
 // Example data structure for maize distribution
-const maizeDistributionData = ref([
-
-  {
-    "district": "Phalombe",
-    "required": 23,
-    "distributed": 4,
-    "balance": 19,
-    "percentage": 45
-
-  },
-  {
-    "district": "Mzuzu",
-    "required": 232,
-    "distributed": 4,
-    "balance": 19,
-    "percentage": 45
-
-  },
-  {
-    "district": "Mzuzu",
-    "required": 232,
-    "distributed": 4,
-    "balance": 19,
-    "percentage": 45
-
-  },
-  {
-    "district": "Mzuzu",
-    "required": 232,
-    "distributed": 4,
-    "balance": 19,
-    "percentage": 45
-
-  },
-  {
-    "district": "Mzuzu",
-    "required": 232,
-    "distributed": 4,
-    "balance": 19,
-    "percentage": 45
-
-  },
-  {
-    "district": "Mzuzu",
-    "required": 232,
-    "distributed": 4,
-    "balance": 19,
-    "percentage": 45
-
-  },
-  {
-    "district": "Mzuzu",
-    "required": 232,
-    "distributed": 4,
-    "balance": 19,
-    "percentage": 45
-
-  },
-  {
-    "district": "Mzuzu",
-    "required": 232,
-    "distributed": 4,
-    "balance": 19,
-    "percentage": 45
-
-  },
-  {
-    "district": "Mzuzu",
-    "required": 232,
-    "distributed": 4,
-    "balance": 19,
-    "percentage": 45
-
-  },
-  {
-    "district": "Mzuzu",
-    "required": 232,
-    "distributed": 4,
-    "balance": 19,
-    "percentage": 45
-
-  },
-  {
-    "district": "Mzuzu",
-    "required": 232,
-    "distributed": 4,
-    "balance": 19,
-    "percentage": 45
-
-  },
-  {
-    "district": "Mzuzu",
-    "required": 232,
-    "distributed": 4,
-    "balance": 19,
-    "percentage": 45
-
-  },
-  {
-    "district": "Mzuzu",
-    "required": 232,
-    "distributed": 4,
-    "balance": 19,
-    "percentage": 45
-
-  },
-  {
-    "district": "Mzuzu",
-    "required": 232,
-    "distributed": 4,
-    "balance": 19,
-    "percentage": 45
-
-  },
-  {
-    "district": "Mzuzu",
-    "required": 232,
-    "distributed": 4,
-    "balance": 19,
-    "percentage": 45
-
-  },
-  {
-    "district": "Mzuzu",
-    "required": 232,
-    "distributed": 4,
-    "balance": 19,
-    "percentage": 45
-
-  },
-  {
-    "district": "Mzuzu",
-    "required": 232,
-    "distributed": 4,
-    "balance": 19,
-    "percentage": 45
-
-  },
-  {
-    "district": "Mzuzu",
-    "required": 232,
-    "distributed": 4,
-    "balance": 19,
-    "percentage": 45
-
-  },
-  {
-    "district": "Mzuzu",
-    "required": 232,
-    "distributed": 4,
-    "balance": 19,
-    "percentage": 45
-
-  },
-  {
-    "district": "Mzuzu",
-    "required": 232,
-    "distributed": 4,
-    "balance": 19,
-    "percentage": 45
-
-  },
-  {
-    "district": "Mzuzu",
-    "required": 232,
-    "distributed": 4,
-    "balance": 19,
-    "percentage": 45
-
-  },
-  {
-    "district": "Mzuzu",
-    "required": 232,
-    "distributed": 4,
-    "balance": 19,
-    "percentage": 45
-
-  },
-  {
-    "district": "Mzuzu",
-    "required": 232,
-    "distributed": 4,
-    "balance": 19,
-    "percentage": 45
-
-  },
-  {
-    "district": "Mzuzu",
-    "required": 232,
-    "distributed": 4,
-    "balance": 19,
-    "percentage": 45
-
-  },
-  {
-    "district": "Mzuzu",
-    "required": 232,
-    "distributed": 4,
-    "balance": 19,
-    "percentage": 45
-
-  },
-  {
-    "district": "Mzuzu",
-    "required": 232,
-    "distributed": 4,
-    "balance": 19,
-    "percentage": 45
-
-  },
-  {
-    "district": "Mzuzu",
-    "required": 232,
-    "distributed": 4,
-    "balance": 19,
-    "percentage": 45
-
-  },
-  {
-    "district": "Mzuzu",
-    "required": 232,
-    "distributed": 4,
-    "balance": 19,
-    "percentage": 45
-
-  },
-  {
-    "district": "Mzuzu",
-    "required": 232,
-    "distributed": 4,
-    "balance": 19,
-    "percentage": 45
-
-  },
-  {
-    "district": "Mzuzu",
-    "required": 232,
-    "distributed": 4,
-    "balance": 19,
-    "percentage": 45
-
-  },
-  {
-    "district": "Mzuzu",
-    "required": 232,
-    "distributed": 4,
-    "balance": 19,
-    "percentage": 45
-
-  },
-  {
-    "district": "Mzuzu",
-    "required": 232,
-    "distributed": 4,
-    "balance": 19,
-    "percentage": 45
-
-  }
-]);
+const commodityDistributionData = ref([]);
 
 
 const currentView = ref('dashboard'); // The initial view can be 'dashboard' or 'charts'
@@ -524,30 +272,33 @@ const toggleView = (view) => {
 
 const showTooltip = ref(false);
 
+const res = reactive(['eee'])
 
-const maizeTable = ref(null);
+const commodityTable = ref(null);
 
 const takeScreenshot = () => {
-    screenshotMode.value = true;
+  screenshotMode.value = true;
 
-  if (maizeTable.value) {
+  // Use a timeout to delay the screenshot taking
+  setTimeout(() => {
+    if (commodityTable.value) {
+      html2canvas(commodityTable.value.$el || commodityTable.value).then(canvas => {
+        // Create an image from the canvas
+        const image = canvas.toDataURL('image/png').replace('image/png', 'image/octet-stream');
+        // Create a link element, set the download attribute, and trigger a click to download
+        const link = document.createElement('a');
+        link.download = 'commodity-distribution.png';
+        link.href = image;
+        link.click();
+        screenshotMode.value = false; // Hide screenshot specific content after taking the screenshot
 
-  
-    html2canvas(maizeTable.value.$el || maizeTable.value).then((canvas) => {
-      // Create an image from the canvas
-      const image = canvas.toDataURL('image/png').replace('image/png', 'image/octet-stream');
-      // Create a link element, set the download attribute, and trigger a click to download
-      const link = document.createElement('a');
-      link.download = 'maize-distribution.png';
-      link.href = image;
-      link.click();
-      //screenshotMode.value = false; // Hide screenshot specific content after taking the screenshot
-
-    }).catch(error => {
-      console.error('Error taking screenshot:', error);
-    });
-  }
+      }).catch(error => {
+        console.error('Error taking screenshot:', error);
+      });
+    }
+  }, 300); // Delay in milliseconds, adjust as necessary
 };
+
 const columns = ref([
 
   {
@@ -559,14 +310,14 @@ const columns = ref([
   },
   {
     label: "Origin Warehouse",
-    field: row => row.loadingPlan?.warehouse?.Name,
+    field: row => row.instruction?.warehouse?.Name,
     sortable: true,
     firstSortType: "asc",
     tdClass: "capitalize"
   },
   {
     label: "Destination District",
-    field: row => row.loadingPlan?.district?.Name,
+    field: row => row.instruction?.district?.Name,
     sortable: true,
     firstSortType: "asc",
     tdClass: "capitalize"
@@ -574,29 +325,21 @@ const columns = ref([
 
   {
     label: "Date Created",
-    field: row => moment(row.loadingPlan?.CreatedOn).format("DD/MM/yyyy"),
+    field: row => moment(row.instruction?.CreatedOn).format("DD/MM/yyyy"),
     sortable: true,
     firstSortType: "asc",
     tdClass: "capitalize"
   },
 
-  {
-    label: "Dispatched Tonnage (MT)",
-    hidden: false,
-    field: row => row.Quantity,
-    sortable: true,
-    firstSortType: "asc",
-    tdClass: "capitalize"
-  },
 
+
+  /* 
   {
-    label: "Loading Plan Balance (MT)",
-    hidden: false,
-    field: row => row.loadingPlan?.Balance,
-    sortable: true,
-    firstSortType: "asc",
-    tdClass: "capitalize"
-  },
+    label: "Options",
+    field: row => row,
+    sortable: false
+  } */
+
 
 
 ]);
@@ -607,6 +350,9 @@ const loadingPlanStore = useloadingplanstore();
 const loadingplans = reactive([]);
 
 
+const instructionsStore = useinstructionstore();
+
+const requisitionStore = userequisitionstore();
 
 
 const recieptStore = usereceiptstore();
@@ -620,7 +366,7 @@ const Swal = inject("Swal");
 const sessionStore = useSessionStore();
 const userStore = useUserStore();
 
-const dispatchStore = useDispatcherStore();
+const dispatchStore = useInstructedDispatchesStore();
 
 const catalogueStore = useListingStore();
 const bookingStore = usebookingstore();
@@ -650,7 +396,15 @@ const receiptcount = ref(0)
 
 const dispatchcount = ref(0)
 //MOUNTEDgetCatalogue
-onMounted(() => {
+onMounted(async () => {
+  try {
+    const data = await requisitionStore.getCommodityDistributionSummary();
+    commodityDistributionData.value = [...data];
+  } catch (error) {
+    console.error("Failed to load commodity data:", error);
+  } finally {
+    isLoading.value = false;
+  }
   getCatalogue();
   getUsers();
   getBookings();
@@ -661,6 +415,8 @@ onMounted(() => {
   getloadingplansSummary();
   getdispatchSummary();
   getloadingplansSummaryByCommodity();
+  getInstructions()
+ 
 });
 //WATCH
 
@@ -668,6 +424,30 @@ const getCatalogue = async () => {
   catalogueStore.count().then((result) => {
     catalogueCount.value = result.count;
   });
+};
+
+
+
+
+
+const instructions = reactive([])
+const newInstructionsCount = ref(0)
+
+const getInstructions = async () => {
+  isLoading.value = true;
+  instructionsStore
+    .get()
+    .then((result) => {
+      // Clear the existing array
+      instructions.length = 0;
+      // Push the filtered instructions into the array
+      instructions.push(...result.filter(item => !item.IsApproved));
+
+
+      // Update the count of new instructions
+      newInstructionsCount.value = instructions.length;
+    })
+
 };
 
 
@@ -683,12 +463,12 @@ const getReceipts = async () => {
 
 // Export to Excel method
 const exportToExcel = () => {
-  const worksheet = XLSX.utils.json_to_sheet(maizeDistributionData.value);
+  const worksheet = XLSX.utils.json_to_sheet(commodityDistributionData.value);
   const workbook = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(workbook, worksheet, 'Maize Distribution');
+  XLSX.utils.book_append_sheet(workbook, worksheet, 'Commodity Distribution');
   const excelBuffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
   const data = new Blob([excelBuffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;charset=UTF-8' });
-  saveAs(data, 'table.xlsx');
+  saveAs(data, 'commoditydistributionreport.xlsx');
 };
 
 
@@ -704,6 +484,7 @@ const getloadingplansSummaryByCommodity = async () => {
     })
 }
 
+const completedDispatch = ref(0)
 const getDispatches = async () => {
   isLoading.value = true;
   dispatchStore
@@ -719,6 +500,7 @@ const getDispatches = async () => {
       dispaches.length = 0;
       let reversedData = sortedDispatches.reverse();
       dispaches.push(...reversedData);
+      completedDispatch.value = dispaches.filter(item => item.IsArchived).length
     })
     .finally(() => {
       isLoading.value = false;
@@ -878,58 +660,33 @@ const formatDate = (date) => {
   return new Date(date).toLocaleDateString(undefined, options);
 };
 
+// Calculate the total required tonnage
+const totalRequiredTonnage = computed(() => {
+  const total = commodityDistributionData.value.reduce((sum, item) => sum + item.required, 0);
+  return `${total.toLocaleString()} MT`; // Format number with thousand separator and add 'MT'
+});
+
 // Dummy data for stats
 const stats = ref([
-  {
-    label: 'Total Stocks Planned',
-    value: totalStockPlanned,
-    // Use a ternary operator for the icon
-    icon: dispatchPercentage < 50 ? CheckCircleIcon : ExclamationCircleIcon,
-    iconColor: dispatchPercentage < 50 ? 'green-500' : 'red-500',
-    percentageText: dispatchPercentageFormated,
-    textColor: dispatchPercentage < 50 ? 'green-500' : 'red-500',
-    showProgress: true,
-    moreInfo: true,
-    progress: dispatchPercentage,
-    isProgressPositive: dispatchPercentage >= 50,
-    progressColor: dispatchPercentage < 50 ? 'green-500' : 'red-500',
-  },
+    {
+    label: 'Total Required Tonnage',
+    value: totalRequiredTonnage,
+    icon: CheckCircleIcon,
+    iconColor: 'green-500',
+    percentageText: '',
+    textColor: 'green-500',
+    showProgress: false,
+    moreInfo: true
+  }
+,
 
   {
-    label: 'Dispatch Status',
-    value: totalDispatched,
-    // Use a ternary operator to decide between ExclamationCircleIcon and CheckCircleIcon
-    icon: receivedPercentage > 50 ? ExclamationCircleIcon : CheckCircleIcon,
-    iconColor: dispatchPercentage > 50 ? 'green-500' : 'red-500',
-    percentageText: receivedPercentageFormated,
-    textColor: receivedPercentage > 50 ? 'green-500' : 'red-500',
-    showProgress: true,
-    progress: receivedPercentage,
-    isProgressPositive: receivedPercentage > 50,
-    progressColor: receivedPercentage > 50 ? 'green-500' : 'red-500',
-    progressText: ''
-  },
-  {
-    label: 'Dispatches Done',
-    value: dispatchcount,
-    icon: ClipboardListIcon,
-    iconColor: 'green-500',
-    percentageText: null
-  },
-  {
-    label: 'Receipts Done',
-    value: receiptcount,
+    label: 'Requisitions Pending',
+    value: newInstructionsCount,
     icon: DocumentIcon,
-    iconColor: 'blue-500',
-    percentageText: null
-  },
-  {
-    label: 'Pending Loading Plans',
-    value: pendingplans,
-    icon: DocumentIcon,
-    iconColor: 'gray-400',
+    iconColor: 'blue-400',
     percentageText: '',
-    textColor: 'gray-600',
+    textColor: 'blue-600',
     showProgress: false
   }
   /* ,
@@ -973,7 +730,7 @@ const dispatchstatus = ref(0)
   border-radius: 10px;
   /* Adjust the radius as needed */
   overflow: hidden;
-  /* This is important to apply rounded corners to child elements */
+  /* This is impor23tant to apply rounded corners to child elements */
 }
 
 

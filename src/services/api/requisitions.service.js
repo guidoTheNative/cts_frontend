@@ -109,6 +109,45 @@ export default class RequisitionService {
   }
 
 
+  getCommodityDistributionSummary(id) {
+    if (id == null) {
+      return axios
+        .get(resource + '/commodity-distribution' + `?filter={}`, {
+          headers: {
+            "Access-Control-Allow-Origin": "*",
+            "Content-type": "Application/json",
+            Authorization: `Bearer ${sessionStorage.getItem("JWT")}`,
+          },
+        })
+        .then((response) => {
+          var result = response.data;
+          return result;
+        })
+        .catch((error) => {
+          if (error.response) {
+            throw error.response.data.error;
+          }
+        });
+    } else if (id != null) {
+      return axios
+        .get(resource + `/` + id + `?filter={}`, {
+          headers: {
+            "Access-Control-Allow-Origin": "*",
+            "Content-type": "Application/json",
+            Authorization: `Bearer ${sessionStorage.getItem("JWT")}`,
+          },
+        })
+        .then((response) => {
+          var result = response.data;
+          return result;
+        })
+        .catch((error) => {
+          if (error.response) {
+            throw error.response.data.error;
+          }
+        });
+    }
+  }
 
 
 

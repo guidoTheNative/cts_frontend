@@ -40,88 +40,22 @@
                       </p>
                     </div>
                   </div>
+                  <div class="mt-1 flex justify-center sm:mt-0">
 
-
-                  <div class="mt-1 flex justify-right gap-x-2 sm:mt-0">
-
-                    <button @click="toggleView('dashboard')" type="button" style="background-color: #248cd6;"
-                      class="font-body inline-flex items-center px-6 py-2.5 text-white font-medium text-xs leading-tight rounded shadow-md hover:bg-gray-600 hover:shadow-lg focus:bg-gray-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-500 active:shadow-lg transition duration-100 ease-in-out capitalize"
-                      :class="{ 'hidden': currentView === 'dashboard' }">
-                      <TemplateIcon class="h-5 w-5 mr-2" />
-
-                      Dashboard View
-                    </button>
-
-                    <button @click="toggleView('charts')" type="button" style="background-color: #248cd6;"
-                      class="font-body inline-flex items-center px-6 py-2.5 text-white font-medium text-xs leading-tight rounded shadow-md hover:bg-gray-600 hover:shadow-lg focus:bg-gray-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-500 active:shadow-lg transition duration-100 ease-in-out capitalize"
-                      :class="{ 'hidden': currentView === 'charts' }">
-                      <ChartBarIcon class="h-5 w-5 mr-2" />
-
-                      Chart View
-                    </button>
-
-
-
-                    <button @click="exportToExcel" v-if="!showCharts" style="background-color: #399dcd;"
-                      class="font-body inline-flex items-center px-6 py-2.5 text-white font-medium text-xs leading-tight rounded shadow-md hover:bg-gray-600 hover:shadow-lg focus:bg-gray-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-500 active:shadow-lg transition duration-100 ease-in-out capitalize"
-                      :class="{ 'hidden': currentView === 'dashboard' }">
-                      <DocumentDownloadIcon class="h-5 w-5 mr-2" /> <!-- Assuming DocumentDownloadIcon is available -->
-
-                      Export to Excel
-                    </button>
-
-                    <button @click="takeScreenshot" v-if="!showCharts" style="background-color: #0f6c97;"
-                      class="font-body inline-flex items-center px-6 py-2.5 text-white font-medium text-xs leading-tight rounded shadow-md hover:bg-gray-600 hover:shadow-lg focus:bg-gray-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-500 active:shadow-lg transition duration-100 ease-in-out capitalize"
-                      :class="{ 'hidden': currentView === 'dashboard' }">
-                      <CameraIcon class="h-5 w-5 mr-2" /> <!-- Assuming CameraIcon is available -->
-                      Take Screenshot
-                    </button>
-
+                    <LocationMarkerIcon class="h-5 w-5 text-gray mr-2" />
+                    <span class="text-gray font-medium text-sm">
+                      {{ user.district }}
+                    </span>
                   </div>
+
+
                 </div>
 
               </div>
 
-              <section ref="maizeTable">
-                <!-- Chart and image container -->
-                <div class="bg-gray-100 p-5" v-show="currentView === 'charts'">
-                  <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                    <!-- Aligned images in the center -->
-                    <div v-show="screenshotMode"
-                      class="col-span-3 flex flex-col justify-center items-center bg-blue-500 text-white p-5">
-                      <div class="flex justify-center items-center">
-                        <img class="mr-4 h-20" src="../../../assets/images/images.png" alt="MW-Govt" />
-                        <img class="h-20" src="../../../assets/images/wfp-logo-emblem-white.png" alt="WFP" />
-                      </div>
-                      <div class="text-center mt-4 ml-6">
-                        <h1 class="text-lg font-bold">Commodity Tracking Dashboard</h1>
-                      </div>
-                    </div>
 
-
-                    <!-- Instance of chart components -->
-                    <div class="mx-4">
-                      <chart-component />
-                    </div>
-                    <div class="mx-4">
-                      <chart-component />
-                    </div>
-                    <div class="mx-4">
-                      <chart-component />
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Maize distribution table view -->
-                <div class="bg-gray-100 p-5" v-show="currentView === 'charts'">
-                  <!-- New table component -->
-                  <maize-distribution-table :data="maizeDistributionData" />
-                  <!-- Other components for stats, etc... -->
-                </div>
-              </section>
-
-              <div class="bg-gray-100 p-5" v-show="currentView === 'dashboard'">
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+              <div class="bg-gray-100 p-5">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
 
 
                   <!-- Stats Cards -->
@@ -162,18 +96,7 @@
             </div>
           </section>
 
-          <!-- Actions panel -->
-          <section aria-labelledby="quick-links-title" class="shadow-2xl bg-white rounded-table">
-            <p class="text-center text-gray-600 mt-4 font-bold"> Recent dispatches</p>
 
-            <div class="align-middle inline-block min-w-full mt-1 rounded-table mx-0">
-              <vue-good-table :columns="columns" :rows="dispaches" :search-options="{ enabled: true }"
-                style="font-weight: bold; color: #096eb4;" :pagination-options="{ enabled: true }" theme="polar-bear"
-                styleClass="vgt-table striped" compactMode>
-                <!-- ... -->
-              </vue-good-table>
-            </div>
-          </section>
 
         </div>
       </div>
@@ -185,6 +108,7 @@
 import { inject, ref, watch, reactive, onMounted, toRefs } from "vue";
 import { useRouter } from "vue-router";
 import { useSessionStore } from "../../../stores/session.store";
+import createInstructionReceiptForm from "../../../components/pages/instruction/receipt.component.vue";
 
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
@@ -195,7 +119,7 @@ import "jspdf-autotable";
 import breadcrumbWidget from "../../../components/widgets/breadcrumbs/admin.breadcrumb.vue";
 import { useUserStore } from "../../../stores/user.store";
 
-import { useDispatcherStore } from "../../../stores/dispatch.store";
+import { useInstructedDispatchesStore } from "../../../stores/instructedDispatches.store";
 import ChartComponent from '../../../components/pages/charts/dashboardcharts.vue'; // Adjust path as needed
 
 
@@ -254,267 +178,6 @@ import { SearchIcon } from "@heroicons/vue/solid";
 const screenshotMode = ref(false);
 
 
-// Example data structure for maize distribution
-const maizeDistributionData = ref([
-
-  {
-    "district": "Phalombe",
-    "required": 23,
-    "distributed": 4,
-    "balance": 19,
-    "percentage": 45
-
-  },
-  {
-    "district": "Mzuzu",
-    "required": 232,
-    "distributed": 4,
-    "balance": 19,
-    "percentage": 45
-
-  },
-  {
-    "district": "Mzuzu",
-    "required": 232,
-    "distributed": 4,
-    "balance": 19,
-    "percentage": 45
-
-  },
-  {
-    "district": "Mzuzu",
-    "required": 232,
-    "distributed": 4,
-    "balance": 19,
-    "percentage": 45
-
-  },
-  {
-    "district": "Mzuzu",
-    "required": 232,
-    "distributed": 4,
-    "balance": 19,
-    "percentage": 45
-
-  },
-  {
-    "district": "Mzuzu",
-    "required": 232,
-    "distributed": 4,
-    "balance": 19,
-    "percentage": 45
-
-  },
-  {
-    "district": "Mzuzu",
-    "required": 232,
-    "distributed": 4,
-    "balance": 19,
-    "percentage": 45
-
-  },
-  {
-    "district": "Mzuzu",
-    "required": 232,
-    "distributed": 4,
-    "balance": 19,
-    "percentage": 45
-
-  },
-  {
-    "district": "Mzuzu",
-    "required": 232,
-    "distributed": 4,
-    "balance": 19,
-    "percentage": 45
-
-  },
-  {
-    "district": "Mzuzu",
-    "required": 232,
-    "distributed": 4,
-    "balance": 19,
-    "percentage": 45
-
-  },
-  {
-    "district": "Mzuzu",
-    "required": 232,
-    "distributed": 4,
-    "balance": 19,
-    "percentage": 45
-
-  },
-  {
-    "district": "Mzuzu",
-    "required": 232,
-    "distributed": 4,
-    "balance": 19,
-    "percentage": 45
-
-  },
-  {
-    "district": "Mzuzu",
-    "required": 232,
-    "distributed": 4,
-    "balance": 19,
-    "percentage": 45
-
-  },
-  {
-    "district": "Mzuzu",
-    "required": 232,
-    "distributed": 4,
-    "balance": 19,
-    "percentage": 45
-
-  },
-  {
-    "district": "Mzuzu",
-    "required": 232,
-    "distributed": 4,
-    "balance": 19,
-    "percentage": 45
-
-  },
-  {
-    "district": "Mzuzu",
-    "required": 232,
-    "distributed": 4,
-    "balance": 19,
-    "percentage": 45
-
-  },
-  {
-    "district": "Mzuzu",
-    "required": 232,
-    "distributed": 4,
-    "balance": 19,
-    "percentage": 45
-
-  },
-  {
-    "district": "Mzuzu",
-    "required": 232,
-    "distributed": 4,
-    "balance": 19,
-    "percentage": 45
-
-  },
-  {
-    "district": "Mzuzu",
-    "required": 232,
-    "distributed": 4,
-    "balance": 19,
-    "percentage": 45
-
-  },
-  {
-    "district": "Mzuzu",
-    "required": 232,
-    "distributed": 4,
-    "balance": 19,
-    "percentage": 45
-
-  },
-  {
-    "district": "Mzuzu",
-    "required": 232,
-    "distributed": 4,
-    "balance": 19,
-    "percentage": 45
-
-  },
-  {
-    "district": "Mzuzu",
-    "required": 232,
-    "distributed": 4,
-    "balance": 19,
-    "percentage": 45
-
-  },
-  {
-    "district": "Mzuzu",
-    "required": 232,
-    "distributed": 4,
-    "balance": 19,
-    "percentage": 45
-
-  },
-  {
-    "district": "Mzuzu",
-    "required": 232,
-    "distributed": 4,
-    "balance": 19,
-    "percentage": 45
-
-  },
-  {
-    "district": "Mzuzu",
-    "required": 232,
-    "distributed": 4,
-    "balance": 19,
-    "percentage": 45
-
-  },
-  {
-    "district": "Mzuzu",
-    "required": 232,
-    "distributed": 4,
-    "balance": 19,
-    "percentage": 45
-
-  },
-  {
-    "district": "Mzuzu",
-    "required": 232,
-    "distributed": 4,
-    "balance": 19,
-    "percentage": 45
-
-  },
-  {
-    "district": "Mzuzu",
-    "required": 232,
-    "distributed": 4,
-    "balance": 19,
-    "percentage": 45
-
-  },
-  {
-    "district": "Mzuzu",
-    "required": 232,
-    "distributed": 4,
-    "balance": 19,
-    "percentage": 45
-
-  },
-  {
-    "district": "Mzuzu",
-    "required": 232,
-    "distributed": 4,
-    "balance": 19,
-    "percentage": 45
-
-  },
-  {
-    "district": "Mzuzu",
-    "required": 232,
-    "distributed": 4,
-    "balance": 19,
-    "percentage": 45
-
-  },
-  {
-    "district": "Mzuzu",
-    "required": 232,
-    "distributed": 4,
-    "balance": 19,
-    "percentage": 45
-
-  }
-]);
-
 
 const currentView = ref('dashboard'); // The initial view can be 'dashboard' or 'charts'
 
@@ -528,11 +191,11 @@ const showTooltip = ref(false);
 const maizeTable = ref(null);
 
 const takeScreenshot = () => {
-    screenshotMode.value = true;
+  screenshotMode.value = true;
 
   if (maizeTable.value) {
 
-  
+
     html2canvas(maizeTable.value.$el || maizeTable.value).then((canvas) => {
       // Create an image from the canvas
       const image = canvas.toDataURL('image/png').replace('image/png', 'image/octet-stream');
@@ -559,14 +222,14 @@ const columns = ref([
   },
   {
     label: "Origin Warehouse",
-    field: row => row.loadingPlan?.warehouse?.Name,
+    field: row => row.instruction?.warehouse?.Name,
     sortable: true,
     firstSortType: "asc",
     tdClass: "capitalize"
   },
   {
     label: "Destination District",
-    field: row => row.loadingPlan?.district?.Name,
+    field: row => row.instruction?.district?.Name,
     sortable: true,
     firstSortType: "asc",
     tdClass: "capitalize"
@@ -574,29 +237,21 @@ const columns = ref([
 
   {
     label: "Date Created",
-    field: row => moment(row.loadingPlan?.CreatedOn).format("DD/MM/yyyy"),
+    field: row => moment(row.instruction?.CreatedOn).format("DD/MM/yyyy"),
     sortable: true,
     firstSortType: "asc",
     tdClass: "capitalize"
   },
 
-  {
-    label: "Dispatched Tonnage (MT)",
-    hidden: false,
-    field: row => row.Quantity,
-    sortable: true,
-    firstSortType: "asc",
-    tdClass: "capitalize"
-  },
+
+
 
   {
-    label: "Loading Plan Balance (MT)",
-    hidden: false,
-    field: row => row.loadingPlan?.Balance,
-    sortable: true,
-    firstSortType: "asc",
-    tdClass: "capitalize"
-  },
+    label: "Options",
+    field: row => row,
+    sortable: false
+  }
+
 
 
 ]);
@@ -620,7 +275,7 @@ const Swal = inject("Swal");
 const sessionStore = useSessionStore();
 const userStore = useUserStore();
 
-const dispatchStore = useDispatcherStore();
+const dispatchStore = useInstructedDispatchesStore();
 
 const catalogueStore = useListingStore();
 const bookingStore = usebookingstore();
@@ -878,37 +533,17 @@ const formatDate = (date) => {
   return new Date(date).toLocaleDateString(undefined, options);
 };
 
+
 // Dummy data for stats
 const stats = ref([
-  {
-    label: 'Total Stocks Planned',
-    value: totalStockPlanned,
-    // Use a ternary operator for the icon
-    icon: dispatchPercentage < 50 ? CheckCircleIcon : ExclamationCircleIcon,
-    iconColor: dispatchPercentage < 50 ? 'green-500' : 'red-500',
-    percentageText: dispatchPercentageFormated,
-    textColor: dispatchPercentage < 50 ? 'green-500' : 'red-500',
-    showProgress: true,
-    moreInfo: true,
-    progress: dispatchPercentage,
-    isProgressPositive: dispatchPercentage >= 50,
-    progressColor: dispatchPercentage < 50 ? 'green-500' : 'red-500',
+{
+    label: 'Number of Warehouses',
+    value: dispatchcount,
+    icon: ClipboardListIcon,
+    iconColor: 'green-500',
+    percentageText: null
   },
-
-  {
-    label: 'Dispatch Status',
-    value: totalDispatched,
-    // Use a ternary operator to decide between ExclamationCircleIcon and CheckCircleIcon
-    icon: receivedPercentage > 50 ? ExclamationCircleIcon : CheckCircleIcon,
-    iconColor: dispatchPercentage > 50 ? 'green-500' : 'red-500',
-    percentageText: receivedPercentageFormated,
-    textColor: receivedPercentage > 50 ? 'green-500' : 'red-500',
-    showProgress: true,
-    progress: receivedPercentage,
-    isProgressPositive: receivedPercentage > 50,
-    progressColor: receivedPercentage > 50 ? 'green-500' : 'red-500',
-    progressText: ''
-  },
+  
   {
     label: 'Dispatches Done',
     value: dispatchcount,
@@ -924,7 +559,7 @@ const stats = ref([
     percentageText: null
   },
   {
-    label: 'Pending Loading Plans',
+    label: 'Pending Instructions',
     value: pendingplans,
     icon: DocumentIcon,
     iconColor: 'gray-400',
@@ -932,16 +567,7 @@ const stats = ref([
     textColor: 'gray-600',
     showProgress: false
   }
-  /* ,
-   {
-     label: 'Requisitions',
-     value: 11,
-     icon: ClipboardListIcon,
-     iconColor: 'gray-400',
-     percentageText: '',
-     textColor: 'gray-600',
-     showProgress: false
-   }, */
+  
 ]);
 const actions = [
   {

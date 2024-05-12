@@ -164,7 +164,7 @@
 
           <!-- Actions panel -->
           <section aria-labelledby="quick-links-title" class="shadow-2xl bg-white rounded-table">
-            <p class="text-center text-gray-600 mt-4 font-bold"> Recent dispatches</p>
+            <p class="text-center text-gray-600 mt-4 font-bold"> Recent Dispatches</p>
 
             <div class="align-middle inline-block min-w-full mt-1 rounded-table mx-0">
               <vue-good-table :columns="columns" :rows="dispaches" :search-options="{ enabled: true }"

@@ -110,7 +110,25 @@ export default class WarehouseService {
 
 
 
-
+  inventorydetails() {
+    return axios
+      .get(resource + `/detailed-inventories` + `?filter={}`, {
+        headers: {
+          "Access-Control-Allow-Origin": "*",
+          "Content-type": "Application/json",
+          Authorization: `Bearer ${sessionStorage.getItem("JWT")}`,
+        },
+      })
+      .then((response) => {
+        var result = response.data;
+        return result;
+      })
+      .catch((error) => {
+        if (error.response) {
+          throw error.response.data.error;
+        }
+      });
+  }
 
 
   getByReference(data) {

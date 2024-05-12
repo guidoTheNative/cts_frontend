@@ -23,7 +23,6 @@
               {{ item.name }}
               <!-- Notification Bell for "Instructions" -->
               <div v-if="item.name === 'Instructions' && newInstructionsCount > 0" class="relative ml-2 mx-4">
-                <BellIcon class="h-5 w-5 text-white" />
                 <span
                   class="absolute -top-3 -right-3 flex items-center justify-center px-1 py-0.5 text-xs font-bold text-white bg-red-600 rounded-full"
                 >

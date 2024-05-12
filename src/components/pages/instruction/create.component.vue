@@ -414,6 +414,7 @@ const onSubmit = useSubmitForm((values, actions) => {
     VehicleRegNo: VehicleRegNo.value,
     Purpose: Purpose.value,
     requisitionId: props.rowId,
+    UpdatedOn: currentDate.value,
     CreatedOn: currentDate.value
   };
   emit("create", model);

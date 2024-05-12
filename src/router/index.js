@@ -245,6 +245,18 @@ const routes = [
 
 
       {
+        path: "/admin/activity-management",
+        name: "admin-activity-management",
+        component: () => import("../pages/admin/activities/index.page.vue"),
+      },
+
+      {
+        path: "/admin/activity-management/manage/:id",
+        name: "admin-manage-activity-management",
+        component: () => import("../pages/admin/activities/manage.page.vue"),
+      },
+
+      {
         path: "/admin/organisations/manage/:id",
         name: "admin-manage-organisations",
         component: () => import("../pages/admin/organisations/manage.page.vue"),
@@ -828,7 +840,7 @@ const routes = [
         component: () => import("../pages/warehouse/warehouses/index.page.vue"),
       },
 
-      
+
       {
         path: "/warehouse/warehouses/manage/:id",
         name: "warehouse-manage-warehouses",
@@ -1275,150 +1287,150 @@ const routes = [
   },
 
 
-    //Manager
-    {
-      path: "/commissioner",
-      name: "commissioner",
-      component: () => import("../components/layouts/commissioner.layout.vue"),
-      children: [
-        //Dashboard
-        {
-          path: "",
-          name: "commissioner-home",
-          redirect: { name: "commissioner-dashboard" },
-        },
-        {
-          path: "/commissioner/dashboard",
-          name: "commissioner-dashboard",
-          component: () => import("../pages/commissioner/dashboard/index.page.vue"),
-        },
-        //Users
-        {
-          path: "/commissioner/users",
-          name: "commissioner-users",
-          component: () => import("../pages/commissioner/users/index.page.vue"),
-        },
-        {
-          path: "/commissioner/users/manage/:id",
-          name: "commissioner-manage-user",
-          component: () => import("../pages/commissioner/users/manage.page.vue"),
-        },
-  
-        {
-          path: "/commissioner/dispatch-management",
-          name: "commissioner-dispatch-management",
-          component: () => import("../pages/commissioner/dispatch/index.page.vue"),
-        },
+  //Manager
+  {
+    path: "/commissioner",
+    name: "commissioner",
+    component: () => import("../components/layouts/commissioner.layout.vue"),
+    children: [
+      //Dashboard
+      {
+        path: "",
+        name: "commissioner-home",
+        redirect: { name: "commissioner-dashboard" },
+      },
+      {
+        path: "/commissioner/dashboard",
+        name: "commissioner-dashboard",
+        component: () => import("../pages/commissioner/dashboard/index.page.vue"),
+      },
+      //Users
+      {
+        path: "/commissioner/users",
+        name: "commissioner-users",
+        component: () => import("../pages/commissioner/users/index.page.vue"),
+      },
+      {
+        path: "/commissioner/users/manage/:id",
+        name: "commissioner-manage-user",
+        component: () => import("../pages/commissioner/users/manage.page.vue"),
+      },
 
-        {
-          path: "/commissioner/instruction-management",
-          name: "commissioner-instruction-management",
-          component: () => import("../pages/commissioner/instruction/index.page.vue"),
-        },
-        {
-          path: "/commissioner/instruction-management/manage/:id",
-          name: "commissioner-manage-instruction-management",
-          component: () => import("../pages/commissioner/instruction/manage.page.vue"),
-        },
-  
-  
-        {
-          path: "/commissioner/dispatches",
-          name: "commissioner-dispatches",
-          component: () => import("../pages/commissioner/dispatch/dispatches.page.vue"),
-        },
-  
-        {
-          path: "/commissioner/loadingplans",
-          name: "commissioner-loadingplans",
-          component: () => import("../pages/commissioner/loadingplans/index.page.vue"),
-        },
-        {
-          path: "/commissioner/dispatch-management/manage/:id",
-          name: "commissioner-manage-catalogue",
-          component: () => import("../pages/commissioner/dispatch/manage.page.vue"),
-        },
-  
-        {
-          path: "/commissioner/commodity-tracking",
-          name: "commissioner-commodity-tracking",
-          component: () => import("../pages/commissioner/commodities/index.page.vue"),
-        },
-        {
-          path: "/commissioner/commodity-tracking/manage/:id",
-          name: "commissioner-manage-commodity-tracking",
-          component: () => import("../pages/commissioner/commodities/manage.page.vue"),
-        },
-  
-  
-        {
-          path: "/commissioner/receipt-management",
-          name: "commissioner-receipt-management",
-          component: () => import("../pages/commissioner/receipts/index.page.vue"),
-        },
-  
-  
-        {
-          path: "/commissioner/receipts",
-          name: "commissioner-receipts",
-          component: () => import("../pages/commissioner/receipts/receipts.page.vue"),
-        },
-  
-        {
-          path: "/commissioner/receipt-management/manage/:id",
-          name: "commissioner-manage-receipt-management",
-          component: () => import("../pages/commissioner/receipts/manage.page.vue"),
-        },
-  
-        {
-          path: "/commissioner/requisition-management",
-          name: "commissioner-requisition-management",
-          component: () => import("../pages/commissioner/requisitions/index.page.vue"),
-        },
-        {
-          path: "/commissioner/receipt-management/manage/:id",
-          name: "commissioner-manage-requisition-management",
-          component: () => import("../pages/commissioner/requisitions/manage.page.vue"),
-        },
-  
-  
-  
-        {
-          path: "/commissioner/system",
-          name: "commissioner-system",
-          component: () => import("../pages/commissioner/system/index.page.vue"),
-        },
-  
-  
-        {
-          path: "/commissioner/project-management",
-          name: "commissioner-project-management",
-          component: () => import("../pages/commissioner/projects/index.page.vue"),
-        },
-  
-  
-  
-        {
-          path: "/commissioner/report-management",
-          name: "commissioner-report-management",
-          component: () => import("../pages/commissioner/reports/index.page.vue"),
-        },
-  
-  
-      ],
-      beforeEnter: (to, from, next) => {
-        let role = JSON.parse(sessionStorage.getItem("RLE"));
-        if (role != null && typeof role.name != "undefined") {
-          if (role.name == "Commissioner (DODMA)") {
-            next();
-          } else {
-            next({ name: "portal-signin" });
-          }
+      {
+        path: "/commissioner/dispatch-management",
+        name: "commissioner-dispatch-management",
+        component: () => import("../pages/commissioner/dispatch/index.page.vue"),
+      },
+
+      {
+        path: "/commissioner/instruction-management",
+        name: "commissioner-instruction-management",
+        component: () => import("../pages/commissioner/instruction/index.page.vue"),
+      },
+      {
+        path: "/commissioner/instruction-management/manage/:id",
+        name: "commissioner-manage-instruction-management",
+        component: () => import("../pages/commissioner/instruction/manage.page.vue"),
+      },
+
+
+      {
+        path: "/commissioner/dispatches",
+        name: "commissioner-dispatches",
+        component: () => import("../pages/commissioner/dispatch/dispatches.page.vue"),
+      },
+
+      {
+        path: "/commissioner/loadingplans",
+        name: "commissioner-loadingplans",
+        component: () => import("../pages/commissioner/loadingplans/index.page.vue"),
+      },
+      {
+        path: "/commissioner/dispatch-management/manage/:id",
+        name: "commissioner-manage-catalogue",
+        component: () => import("../pages/commissioner/dispatch/manage.page.vue"),
+      },
+
+      {
+        path: "/commissioner/commodity-tracking",
+        name: "commissioner-commodity-tracking",
+        component: () => import("../pages/commissioner/commodities/index.page.vue"),
+      },
+      {
+        path: "/commissioner/commodity-tracking/manage/:id",
+        name: "commissioner-manage-commodity-tracking",
+        component: () => import("../pages/commissioner/commodities/manage.page.vue"),
+      },
+
+
+      {
+        path: "/commissioner/receipt-management",
+        name: "commissioner-receipt-management",
+        component: () => import("../pages/commissioner/receipts/index.page.vue"),
+      },
+
+
+      {
+        path: "/commissioner/receipts",
+        name: "commissioner-receipts",
+        component: () => import("../pages/commissioner/receipts/receipts.page.vue"),
+      },
+
+      {
+        path: "/commissioner/receipt-management/manage/:id",
+        name: "commissioner-manage-receipt-management",
+        component: () => import("../pages/commissioner/receipts/manage.page.vue"),
+      },
+
+      {
+        path: "/commissioner/requisition-management",
+        name: "commissioner-requisition-management",
+        component: () => import("../pages/commissioner/requisitions/index.page.vue"),
+      },
+      {
+        path: "/commissioner/receipt-management/manage/:id",
+        name: "commissioner-manage-requisition-management",
+        component: () => import("../pages/commissioner/requisitions/manage.page.vue"),
+      },
+
+
+
+      {
+        path: "/commissioner/system",
+        name: "commissioner-system",
+        component: () => import("../pages/commissioner/system/index.page.vue"),
+      },
+
+
+      {
+        path: "/commissioner/project-management",
+        name: "commissioner-project-management",
+        component: () => import("../pages/commissioner/projects/index.page.vue"),
+      },
+
+
+
+      {
+        path: "/commissioner/report-management",
+        name: "commissioner-report-management",
+        component: () => import("../pages/commissioner/reports/index.page.vue"),
+      },
+
+
+    ],
+    beforeEnter: (to, from, next) => {
+      let role = JSON.parse(sessionStorage.getItem("RLE"));
+      if (role != null && typeof role.name != "undefined") {
+        if (role.name == "Commissioner (DODMA)") {
+          next();
         } else {
           next({ name: "portal-signin" });
         }
-      },
+      } else {
+        next({ name: "portal-signin" });
+      }
     },
+  },
 
   // Always leave this as last one,
   // but you can also remove it

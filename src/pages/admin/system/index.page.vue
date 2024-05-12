@@ -70,6 +70,8 @@ const optionGroups = ref([
   {
     title: 'Commodity Management',
     options: [
+    { label: 'Activities', icon: KeyIcon, path: '/admin/activity-management' },
+   
       
     { label: 'Stock Register', icon: ClipboardListIcon, path: '/admin/stock-management' },
     { label: 'Warehouses', icon: OfficeBuildingIcon, path: '/admin/warehouse-management' },

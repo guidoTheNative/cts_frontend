@@ -111,11 +111,11 @@ const breadcrumbs = [
 ];
 
 
-import { usereceiptstore } from "../../../stores/receipt.store";
+import { useInstructedReceiptsStore } from "../../../stores/instructedReceipts.store";
 
 
 
-const receiptStore = usereceiptstore();
+const receiptStore = useInstructedReceiptsStore();
 const receipts = reactive([]);
 
 

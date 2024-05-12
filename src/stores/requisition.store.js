@@ -21,8 +21,15 @@ export const userequisitionstore = defineStore({
     },
 
 
- 
-
+    async getCommodityDistributionSummary(data) {
+      return await requisitionsService.getCommodityDistributionSummary().then((result) => {
+        if (result) {
+          var response = result;
+          return response
+        }
+      });
+    }
+,
     
     async getByReference(data) {
       return await requisitionsService.getByReference(data).then((result => {
