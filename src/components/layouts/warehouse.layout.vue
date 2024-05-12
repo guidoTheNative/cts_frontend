@@ -32,22 +32,18 @@
         <div class="flex space-x-4">
           <!-- Display the first five items -->
           <router-link v-for="item in firstFiveItems" :key="item.name" :to="item.href">
-            <a :class="[
-              item.current
-                ? 'bg-white text-black'
-                : 'text-gray-50 hover:text-gray-50 hover:bg-blue-400',
-              'group flex items-center px-2 py-2 text-sm font-medium rounded-md',
-            ]" :aria-current="item.current ? 'page' : undefined">
-              <component :is="item.icon" :class="[
-                item.current
-                  ? 'text-gray-500'
-                  : 'text-white group-hover:text-white',
-                'mr-1 flex-shrink-0 h-6 w-6',
-              ]" aria-hidden="true" />
+            <a :class="itemClasses(item)" :aria-current="item.current ? 'page' : undefined">
+              <component :is="item.icon" :class="iconClasses(item)" aria-hidden="true" />
               {{ item.name }}
+              <!-- Notification Bell for "Instructions" -->
+              <div v-if="item.name === 'Instructions' && newInstructionsCount > 0" class="relative ml-2 mx-4">
+                <span
+                  class="absolute -top-3 -right-3 flex items-center justify-center px-1 py-0.5 text-xs font-bold text-white bg-red-600 rounded-full">
+                  {{ newInstructionsCount }}
+                </span>
+              </div>
             </a>
           </router-link>
-
           <!-- Dropdown for the rest of the items -->
           <div v-if="remainingItems.length > 0" class="relative">
             <button @click="toggleDropdown" @mouseenter="toggleDropdown"
@@ -87,9 +83,9 @@
                 class="origin-top-right absolute z-10 right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 py-1 focus:outline-none">
                 <MenuItem v-for="item in userNavigation" :key="item.name" v-slot="{ active }">
                 <a :href="item.href" :class="[
-                  active ? 'bg-white' : '',
-                  'block py-2 px-4 text-sm text-white',
-                ]">
+                active ? 'bg-white' : '',
+                'block py-2 px-4 text-sm text-white',
+              ]">
                   {{ item.name }}
                 </a>
                 </MenuItem>
@@ -171,6 +167,7 @@ import {
   SearchIcon,
   SelectorIcon,
 } from "@heroicons/vue/solid";
+import { useinstructionstore } from "../../stores/instructions.store";
 
 //DECLARATIONS
 const system = reactive({
@@ -190,6 +187,9 @@ const role = ref(sessionStore.getRole);
 
 const isDropdownOpen = ref(false);
 
+
+const instructionsStore = useinstructionstore();
+const instructions = reactive([]);
 
 const menuItemClasses = (active, isButton = false) => [
   active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',
@@ -218,9 +218,16 @@ function gotoSystemsettings() {
 
 }
 
-//MOUNTED
-onMounted(() => { });
-//WAT
+const iconClasses = (item) => [
+  item.current ? "text-gray-500" : "text-white group-hover:text-white",
+  "mr-1 flex-shrink-0 h-6 w-6",
+];
+
+
+onMounted(() => {
+  getInstructions();
+});
+
 function navigation() {
   let navList = [
     { name: "Home", href: "/warehouse/dashboard", icon: HomeIcon, current: false },
@@ -297,5 +304,28 @@ const onSignout = async () => {
   }
 };
 
+const newInstructionsCount = ref(0)
+
+
+//FUNCTIONS
+const getInstructions = async () => {
+   instructionsStore
+    .get()
+    .then((result) => {
+      // Clear the existing array
+      instructions.length = 0;
+
+
+
+      // Push the filtered instructions into the array
+      instructions.push(result.filter(item => (item.district.Name == user.value.district) && item.IsApproved).length);
+
+    
+      // Update the count of new instructions
+      newInstructionsCount.value = instructions.length;
+    })
+   
+    
+};
 
 </script>

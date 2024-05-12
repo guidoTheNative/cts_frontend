@@ -8,7 +8,7 @@
       <div class="md:flex md:items-center md:justify-between">
         <div class="flex-1 min-w-0">
           <h2 class="font-bold leading-7 text-white sm:text-2xl py-3 sm:truncate">
-            Dashboard
+            Dashboard 
           </h2>
         </div>
       </div>
@@ -55,7 +55,7 @@
 
 
               <div class="bg-gray-100 p-5">
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
 
 
                   <!-- Stats Cards -->
@@ -309,6 +309,7 @@ onMounted(() => {
   getCatalogue();
   getUsers();
   getBookings();
+  getInstructions();
   getDispatches();
   getReceipts();
   getDispatchesCount();
@@ -332,7 +333,36 @@ const getReceipts = async () => {
   });
 };
 
+import { useinstructionstore } from "../../../stores/instructions.store";
 
+
+
+const instructionsStore = useinstructionstore();
+const instructions = reactive([]);
+
+const newInstructionsCount = ref(0)
+
+
+//FUNCTIONS
+const getInstructions = async () => {
+   instructionsStore
+    .get()
+    .then((result) => {
+      // Clear the existing array
+      instructions.length = 0;
+
+
+
+      // Push the filtered instructions into the array
+      instructions.push(result.filter(item => (item.district.Name == user.value.district) && item.IsApproved).length);
+
+    
+      // Update the count of new instructions
+      newInstructionsCount.value = instructions.length;
+    })
+   
+    
+};
 
 
 
@@ -543,24 +573,9 @@ const stats = ref([
     iconColor: 'green-500',
     percentageText: null
   },
-  
-  {
-    label: 'Dispatches Done',
-    value: dispatchcount,
-    icon: ClipboardListIcon,
-    iconColor: 'green-500',
-    percentageText: null
-  },
-  {
-    label: 'Receipts Done',
-    value: receiptcount,
-    icon: DocumentIcon,
-    iconColor: 'blue-500',
-    percentageText: null
-  },
   {
     label: 'Pending Instructions',
-    value: pendingplans,
+    value: newInstructionsCount,
     icon: DocumentIcon,
     iconColor: 'gray-400',
     percentageText: '',

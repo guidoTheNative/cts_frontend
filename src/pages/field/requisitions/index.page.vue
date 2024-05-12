@@ -47,6 +47,9 @@
           </router-link> -->
           <!--  <create-requisition-form v-on:create="createInstruction" />
  -->
+          <create-requisition-form v-on:create="createRequisition" :commodities="commodities" />
+
+
         </div>
       </div>
       <!-- table  -->
@@ -78,12 +81,12 @@
                   <!-- Heroicon Pencil (Manage) -->
                   <EyeIcon class="h-5 w-5 mr-1" />
 
-                View Requisition
+                  View Requisition
 
 
                 </button>
 
-              
+
 
               </div>
             </span>
@@ -198,10 +201,18 @@ import breadcrumbWidget from "../../../components/widgets/breadcrumbs/admin.brea
 import createInstructionForm from "../../../components/pages/instruction/create.component.vue";
 
 
+import { useinstructionstore } from "../../../stores/instructions.store";
+
+
+import { usecommoditiestore } from "../../../stores/commodity.store";
+
 //SCHEMA//AND//STORES
 import { userequisitionstore } from "../../../stores/requisition.store";
 
-import { useinstructionstore } from "../../../stores/instructions.store";
+import { useRequestedCommoditiesStore } from "../../../stores/requestedCommodities.store";
+//INJENCTIONS
+
+
 
 //INJENCTIONS
 const $router = useRouter();
@@ -226,6 +237,16 @@ const breadcrumbs = [
 const requisitionsStore = userequisitionstore();
 const instructionStore = useinstructionstore()
 const requisitions = reactive([]);
+
+
+
+const requestedCommodityStore = useRequestedCommoditiesStore();
+const requestedCommodities = reactive([]);
+
+
+const commodityStore = usecommoditiestore();
+const commodities = reactive([]);
+
 
 const instructions = reactive([]);
 
@@ -288,9 +309,87 @@ const columns = ref([
 //MOUNTED
 onMounted(() => {
   getRequisitions();
+  getCommodities();
 });
 
 
+const getCommodities = async () => {
+  isLoading.value = true;
+  commodityStore
+    .get()
+    .then(result => {
+      // for (let i = 0; i < 100; i++) {
+      //   requisitions.push(...result);
+      // }
+      commodities.length = 0; //empty array
+      commodities.push(...result);
+
+
+    })
+    .catch(error => {
+      Swal.fire({
+        title: "Commodities Retrieval Failed",
+        text: "failed to get requisitions (Please refresh to try again)",
+        icon: "error",
+        confirmButtonText: "Ok"
+      });
+    })
+    .finally(() => {
+      isLoading.value = false;
+    });
+};
+
+
+const createRequestedCommodities = async (reqId, reliefItems) => {
+  const reqCommodityPromises = reliefItems.map((item) => {
+    const requestedModel = {
+      requisitionId: reqId,
+      commodityId: item.commodityId,
+      Quantity: item.Quantity,
+    };
+
+    return requestedCommodityStore.create(requestedModel);
+  });
+
+  // Wait for all promises to complete
+  await Promise.all(reqCommodityPromises);
+};
+
+
+
+const createRequisition = async (originalModel) => {
+  isLoading.value = true;
+
+  // Separate relief items from the original model
+  const { reliefItems, ...reqModel } = originalModel;
+
+  try {
+    // Create the dispatch without the relief items
+    const createdReq = await requisitionsStore.create(reqModel);
+    const reqId = createdReq.id;
+
+    // Pass the dispatch ID and the original relief items to create dispatched commodities
+    await createRequestedCommodities(reqId, originalModel.reliefItems);
+
+    Swal.fire({
+      title: "Success",
+      text: "Created a requisition and associated commodities successfully",
+      icon: "success",
+      confirmButtonText: "Ok"
+    });
+
+    getRequisitions()
+  } catch (error) {
+    Swal.fire({
+      title: "Creation Failed",
+      text: `Failed to create requisition and associated commodities: ${error}`,
+      icon: "error",
+      confirmButtonText: "Ok"
+    });
+  } finally {
+    isLoading.value = false;
+  }
+};
 
 
 //FUNCTIONS
