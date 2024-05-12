@@ -306,11 +306,11 @@ const getRequisitions = async () => {
       //   requisitions.push(...result);
       // }
       requisitions.length = 0; //empty array
-      requisitions.push(...result);
+      requisitions.push(...result.filter(item => !item.IsArchived));
 
 
-      requisitions.sort((a, b) => new Date(b.created) - new Date(a.created));
-
+      requisitions.sort((a, b) => new Date(b.CreatedOn) - new Date(a.CreatedOn));
+      requisitions.reverse()
     })
     .catch(error => {
       Swal.fire({

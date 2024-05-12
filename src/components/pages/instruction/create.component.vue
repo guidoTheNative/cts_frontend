@@ -21,7 +21,7 @@
       Create Instruction
     </button>
 
-    
+
     <TransitionRoot as="template" :show="open">
       <Dialog as="div" class="fixed z-10 inset-0 overflow-y-auto" @close="open = false" static>
         <div class="flex min-h-screen text-center md:block md:px-2 lg:px-4" style="font-size: 0">
@@ -48,7 +48,7 @@
                 <button type="button"
                   class="btn-close box-content w-4 h-4 p-1 text-black border-none rounded-none opacity-50 focus:shadow-none focus:outline-none focus:opacity-100 hover:text-black hover:opacity-75 hover:no-underline"
                   @click="open = false">
-                  <XIcon class="h-4 w-4" /> <!-- Icon added here -->  
+                  <XIcon class="h-4 w-4" /> <!-- Icon added here -->
                 </button>
 
               </div>
@@ -57,7 +57,7 @@
                 <div class="px-4 py-5 bg-white sm:p-6">
                   <div class="grid grid-cols-6 gap-2">
 
-                 
+
 
                     <div class="col-span-12 sm:col-span-12">
                       <label for="user-district" class="block text-sm font-medium text-gray-700">
@@ -68,12 +68,13 @@
                           {{ item.Name }}
                         </option>
                       </select>
-                      <p class="text-red-500 text-xs italic pt-1">
-                        {{ warehouseError }}
-                      </p>
+
+                      <span class="text-md text-red-500 mb-5 text-italic font-medium text-sm" v-if="warehouseId">
+                        {{ availableBalance }}</span>
+
                     </div>
 
-                    
+
                     <div class="col-span-12 sm:col-span-12">
                       <label for="user-district" class="block text-sm font-medium text-gray-700">
                         Select District (To)</label>
@@ -112,7 +113,7 @@
                       </p>
                     </div>
 
-                    
+
 
                     <div class="col-span-12 sm:col-span-12">
                       <label for="From" class="block text-sm font-medium text-gray-700">Vehicle Reg #</label>
@@ -124,7 +125,7 @@
                       </p>
                     </div>
 
-                    
+
                     <div class="col-span-12 sm:col-span-12">
                       <label for="From" class="block text-sm font-medium text-gray-700">Purpose</label>
                       <input type="text" v-model="Purpose" name="Purpose" id="Purpose" autocomplete="off"
@@ -135,7 +136,7 @@
                       </p>
                     </div>
 
-                   
+
 
 
 
@@ -193,7 +194,7 @@ import {
   TransitionRoot,
 } from "@headlessui/vue";
 import { XIcon } from "@heroicons/vue/outline";
-import { inject, ref, reactive, onMounted } from "vue";
+import { inject, ref, reactive, onMounted, watch } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import { useForm, useField, useSubmitForm, useIsFormValid } from "vee-validate";
 //COMPONENTS
@@ -212,6 +213,7 @@ import { useactivitiestore } from "../../../stores/activity.store";
 
 import { usewarehousestore } from "../../../stores/warehouse.store";
 import { usetransporterstore } from "../../../stores/transporter.store";
+import { usecommodityinventoriestore } from "../../../stores/commodityinventories.store";
 
 
 import { userequisitionstore } from "../../../stores/requisition.store";
@@ -219,8 +221,12 @@ import { userequisitionstore } from "../../../stores/requisition.store";
 import { useSessionStore } from "../../../stores/session.store";
 //INJENCTIONS
 const $router = useRouter();
+const availableBalance = ref(''); // Hold the available balance
 
 const $route = useRoute();
+
+const commodityinventoriestore = usecommodityinventoriestore();
+const commodityinventories = reactive([])
 
 const props = defineProps({
   rowId: {
@@ -265,6 +271,23 @@ const sessionStore = useSessionStore();
 
 const user = ref(sessionStore.getUser);
 
+const getCommodityInventories = async () => {
+  commodityinventoriestore
+    .get()
+    .then(result => {
+
+      commodityinventories.length = 0; //empty array
+      commodityinventories.push(...result);
+
+    })
+    .catch(error => {
+
+    })
+    .finally(() => {
+    });
+};
+
+
 //FORM
 const { meta } = useForm({
   validationSchema: CreateRequisitionSchema,
@@ -273,6 +296,7 @@ const { meta } = useForm({
     ExpiryDate: "",
     commodityId: "",
     warehouseId: "",
+    districtId: "",
     userId: ""
 
   },
@@ -300,6 +324,7 @@ onMounted(() => {
   getDistricts()
   getWarehouses()
   getTransporters()
+  getCommodityInventories()
 });
 //FUNCTIONS
 
@@ -409,7 +434,7 @@ const onSubmit = useSubmitForm((values, actions) => {
     districtId: districtId.value,
     transporterId: transporterId.value,
     Remarks: Remarks.value,
-    userId: user.value.id, 
+    userId: user.value.id,
     DriverName: DriverName.value,
     VehicleRegNo: VehicleRegNo.value,
     Purpose: Purpose.value,
@@ -442,5 +467,26 @@ function addTag() {
 function removeTag(index) {
   AffectedAreas.value.splice(index, 1);
 }
+
+watch(
+  () => [warehouseId.value],
+  ([newWarehouseId]) => {
+    if (newWarehouseId) {
+      // Attempt to find a matching inventory record for the selected warehouse.
+      const matchingInventory = commodityinventories.find(
+        inventory => inventory.warehouseId == newWarehouseId
+      );
+
+      // Provide a detailed message based on the existence of a matching inventory record.
+      availableBalance.value = matchingInventory
+        ? `Stock availability confirmed. Detailed commodity checks will occur upon order placement.`
+        : 'Stock not available for the selected warehouse.';
+    } else {
+      // Prompt user to make a selection if the warehouse ID is not yet set.
+      availableBalance.value = 'Please select a warehouse to check stock availability.';
+    }
+  }
+);
+
 
 </script>

@@ -84,7 +84,7 @@ import {
 //COMPONENTS
 import spinnerWidget from "../../../components/widgets/spinners/default.spinner.vue";
 import breadcrumbWidget from "../../../components/widgets/breadcrumbs/admin.breadcrumb.vue";
-import createStockForm from "../../../components/pages/stocks/create.component.vue";
+import createStockForm from "../../../components/pages/stocks/create.component-admin.vue";
 
 
 //SCHEMA//AND//STORES

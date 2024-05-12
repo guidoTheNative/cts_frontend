@@ -134,11 +134,12 @@
                                   <select v-model="item.commodityId" @change="validateCommodity(index)"
                                   class="mt-1 focus:ring-gray-500 focus:border-blue-300 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
                                     <option value="" disabled>Commodity</option>
-                                    <option v-for="comm in commodity" :key="comm.id" :value="comm.id">
-                                      {{ comm.Name }}
+                                    <option v-for="comm in commodityInventories" :key="comm" :value="comm">
+                                      {{ comm.commodity.Name }} ( Batch : {{ comm.BatchNumber}})
                                     </option>
                                   </select>
                                   <!-- Display Error Message if the Commodity is Duplicated -->
+                                  
                                   <p v-if="item.error" class="text-red-500 text-xs italic pt-1">{{ item.error }}</p>
                                 </div>
 
@@ -244,7 +245,8 @@ const props = defineProps({
   },
   instruction: Object,
   commodities: Array,
-  commodity: Array
+  commodity: Array,
+  commodityInventories: Array
 });
 
 const moment = inject("moment");

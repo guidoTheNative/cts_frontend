@@ -27,7 +27,8 @@
                         </option>
                       </select>
                       <!-- Display Error Message if the Commodity is Duplicated -->
-                      <p v-if="item.error" class="text-red-500 text-xs italic pt-1">{{ item.error }}</p>
+                      <span class="text-md text-red-500 mb-5 text-italic font-medium text-sm" v-if="item.commodityId">
+                        {{ availableBalance }}</span>
                     </div>
 
                     <div class="flex-1">
@@ -80,6 +81,7 @@ import { useInstructedCommoditiesStore } from "../../../stores/instructedCommodi
 import { usewarehousestore } from "../../../stores/warehouse.store";
 import { usetransporterstore } from "../../../stores/transporter.store";
 import { usecommoditiestore } from "../../../stores/commodity.store";
+import { usecommodityinventoriestore } from "../../../stores/commodityinventories.store";
 
 import { useSessionStore } from "../../../stores/session.store";
 //INJENCTIONS
@@ -90,6 +92,8 @@ const Swal = inject("Swal");
 const props = defineProps({
   model: Object,
 });
+
+const availableBalance = ref(0)
 //VARIABLES
 const emit = defineEmits(["update"]);
 const isLoading = ref(false);
@@ -105,6 +109,8 @@ const instructedCommodityStore = useInstructedCommoditiesStore();
 const commodityStore = usecommoditiestore()
 const sessionStore = useSessionStore();
 const user = ref(sessionStore.getUser);
+const commodityinventoriestore = usecommodityinventoriestore();
+const commodityinventories = reactive([])
 
 const warehouses = reactive([]);
 
@@ -151,6 +157,7 @@ const removeItem = async (index) => {
     cancelButtonText: "Cancel",
   });
 
+
   // Proceed only if user confirmed the action
   if (result.isConfirmed) {
     try {
@@ -180,6 +187,22 @@ const removeItem = async (index) => {
 // Check if a Commodity is Duplicated
 const validateCommodity = (index) => {
   const selectedCommodity = reliefItems[index].commodityId;
+  const warehouseId = model.value.warehouse.id
+  const warehouseName = model.value.warehouse.Name
+
+  if (selectedCommodity && warehouseId) {
+    // Find the corresponding inventory record based on the selection
+    const matchingInventory = commodityinventories.find(
+      (inventory) => inventory.commodityId === selectedCommodity && inventory.warehouseId === warehouseId
+    );
+
+    // Update the available balance if a matching inventory record is found
+    availableBalance.value = matchingInventory ? `${matchingInventory.Quantity} MT Available at ` + warehouseName : 'Not Available';
+  } else {
+    availableBalance.value = 'Select Commodity';
+  }
+
+
   const isDuplicate = reliefItems.some((item, idx) => item.commodityId === selectedCommodity && idx !== index);
   reliefItems[index].error = isDuplicate ? "Commodity already added. Please select another." : "";
 };
@@ -190,10 +213,30 @@ onMounted(() => {
 
   getCommodities()
   //Assign
-
+  getCommodityInventories();
   getReliefItems()
 
 });
+
+
+
+const getCommodityInventories = async () => {
+  commodityinventoriestore
+    .get()
+    .then(result => {
+
+      commodityinventories.length = 0; //empty array
+      commodityinventories.push(...result);
+
+    })
+    .catch(error => {
+
+    })
+    .finally(() => {
+    });
+};
+
+
 
 //FUNCTIONS
 const onSubmit = useSubmitForm((values, actions) => {

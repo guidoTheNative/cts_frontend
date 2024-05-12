@@ -65,7 +65,8 @@
                 <!-- Create Instruction Button -->
 
                 <create-instruction-dispatch-form :row-id="props.row.id" v-on:create="createDispatch"
-                  :instruction="props.row" :commodities="filteredCommodities(props.row.id)" :commodity="commodity" />
+                  :instruction="props.row" :commodities="filteredCommodities(props.row.id)" :commodity="commodity"
+                  :commodityInventories="commodityInventories" />
 
 
               </div>
@@ -101,6 +102,8 @@ import { useSessionStore } from "../../../stores/session.store";
 import { useInstructedCommoditiesStore } from "../../../stores/instructedCommodities.store";
 import { usecommoditiestore } from "../../../stores/commodity.store";
 
+import { usecommodityinventoriestore } from "../../../stores/commodityinventories.store";
+
 import { useInstructedDispatchesStore } from "../../../stores/instructedDispatches.store";
 import { useDispatchedCommoditiesStore } from "../../../stores/dispatchedCommodities.store";
 
@@ -128,6 +131,11 @@ const instructions = reactive([]);
 
 const InstructedDispatchesStore = useInstructedDispatchesStore();
 const InstructedDispatches = reactive([]);
+
+
+const commodityInventorieStore = usecommodityinventoriestore();
+const commodityInventories = reactive([]);
+
 
 const DispatchedCommoditiesStore = useDispatchedCommoditiesStore();
 const DispatchedCommodities = reactive([]);
@@ -190,6 +198,7 @@ const columns = ref([
 onMounted(() => {
   getInstructions();
   getInstructedCommodities();
+  getCommodityInventories();
   getCommodity();
 });
 
@@ -198,7 +207,8 @@ const createDispatchedCommodities = async (dispatchId, reliefItems) => {
   const dispatchedCommodityPromises = reliefItems.map((item) => {
     const dispatchedModel = {
       instructedDispatchId: dispatchId,
-      commodityId: item.commodityId,
+      commodityId: item.commodityId.commodity.id,
+      BatchNumber: item.commodityId.BatchNumber,
       Quantity: item.Quantity,
     };
 
@@ -243,6 +253,23 @@ const createDispatch = async (originalModel) => {
 };
 
 
+//FUNCTIONS
+const getCommodityInventories = async () => {
+  isLoading.value = true;
+  commodityInventorieStore
+    .get()
+    .then(result => {
+      // for (let i = 0; i < 100; i++) {
+      //   instructions.push(...result);
+      // }
+      commodityInventories.length = 0; //empty array
+      commodityInventories.push(...result);
+
+
+    })
+
+};
+
 
 
 //FUNCTIONS
@@ -255,7 +282,7 @@ const getInstructions = async () => {
       //   instructions.push(...result);
       // }
       instructions.length = 0; //empty array
-      instructions.push(...result.filter(item => (item.district.Name == user.value.district) && item.IsApproved));
+      instructions.push(...result.filter(item => (item.district.Name == user.value.district) && item.IsApproved && !item.IsArchived));
 
 
     })

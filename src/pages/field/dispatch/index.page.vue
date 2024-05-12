@@ -82,15 +82,19 @@ const breadcrumbs = [
   { name: "Dispatches", href: "#", current: true },
 ];
 
-
+const open = ref(true)
 import { useInstructedDispatchesStore } from "../../../stores/instructedDispatches.store";
 import { useDispatchedCommoditiesStore } from "../../../stores/dispatchedCommodities.store";
 import { useReceivedCommoditiesStore } from "../../../stores/receivedCommodities.store";
+import { useInstructedReceiptsStore } from "../../../stores/instructedReceipts.store";
 
 
 
 const dispatchStore = useInstructedDispatchesStore();
 const dispaches = reactive([]);
+
+const receiptStore = useInstructedReceiptsStore();
+const receipt = reactive([]);
 
 
 const dispatchedCommodityStore = useDispatchedCommoditiesStore();
@@ -166,45 +170,49 @@ const columns = ref([
 
 
 
+// Create dispatched commodities with the dispatch ID
+const createReceivedCommodities = async (receiptId, receivedCommodities) => {
+  const receivedCommodityPromises = receivedCommodities.map((item) => {
+    const receiptModel = {
+      instructedReceiptId: receiptId,
+      commodityId: item.commodityId,
+      BatchNumber: item.BatchNumber,
+      Quantity: item.Quantity,
+    };
 
-const createReceipt = async (models) => {
+    return receivedCommodityStore.create(receiptModel); // Assuming receivedCommodityStore is the correct reference
+  });
 
-  console.log(models, "dddddddddddddddddddd")
-  if (!models || models.length === 0) {
-    Swal.fire({
-      title: "No Items",
-      text: "No commodities available to receive.",
-      icon: "info",
-      confirmButtonText: "Ok"
-    });
-    return;
-  }
+  // Wait for all promises to complete
+  await Promise.all(receivedCommodityPromises);
+};
 
-  isLoading.value = true;
+
+
+const createReceipt = async (originalModel) => {
+
+  // Separate relief items from the original model
+  const { receivedCommodities, ...receiptModel } = originalModel;
 
   try {
-    // Process all receipt creations concurrently
-    const promises = models.map(async (model) => {
-      try {
-        await receivedCommodityStore.create(model);
-      } catch (error) {
-        console.error(`Error receiving commodity with ID ${model.commodityId}:`, error);
-      }
-    });
+    // Create the dispatch without the relief items
+    const createdReceipt = await receiptStore.create(receiptModel);
+    const receiptId = createdReceipt.id;
 
-    // Wait for all promises to complete
-    await Promise.all(promises);
+    // Pass the dispatch ID and the original relief items to create dispatched commodities
+    await createReceivedCommodities(receiptId, originalModel.receivedCommodities);
 
     Swal.fire({
       title: "Success",
-      text: "Received commodities successfully.",
+      text: "Created a receipt and associated commodities successfully",
       icon: "success",
       confirmButtonText: "Ok"
     });
+    getDispatches()
   } catch (error) {
     Swal.fire({
-      title: "Receipt Failed",
-      text: `Failed to receive commodities due to an unexpected error: ${error}`,
+      title: "Creation Failed",
+      text: `Failed to create dispatch and associated commodities: ${error}`,
       icon: "error",
       confirmButtonText: "Ok"
     });
@@ -236,10 +244,33 @@ const generateExcel = () => {
 onMounted(() => {
   getDispatches();
   getDispatchedCommodities();
+  getReceipts();
   // getLatest()
 });
 //FUNCTIONS
 
+
+const getReceipts = async () => {
+  isLoading.value = true;
+  receiptStore
+    .get()
+    .then(result => {
+      // for (let i = 0; i < 100; i++) {
+      //   users.push(...result);
+      // }
+      receipt.length = 0; //empty array
+      let sorteddata = result.reverse()
+      receipt.push(...sorteddata);
+
+
+    })
+
+
+    .finally(() => {
+      isLoading.value = false;
+    });
+
+}
 
 
 const getDispatches = async () => {
@@ -252,7 +283,7 @@ const getDispatches = async () => {
       // }
       dispaches.length = 0; //empty array
       let sorteddata = result.reverse()
-      dispaches.push(...sorteddata);
+      dispaches.push(...sorteddata.filter(item => !item.IsArchived));
 
 
     })

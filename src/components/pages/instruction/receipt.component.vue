@@ -68,35 +68,76 @@
                           <table class="min-w-full bg-white border border-0 rounded-lg">
                             <thead class="bg-blue-100">
                               <tr>
-                                <th class="py-2 px-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-b">#</th>
-                                <th class="py-2 px-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-b">Commodity</th>
-                                <th class="py-2 px-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-b">Quantity</th>
-                                <th class="py-2 px-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-b">Unit</th>
-                                <th class="py-2 px-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-b">Receive</th>
+                                <th
+                                  class="py-2 px-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-b">
+                                  #</th>
+                                <th
+                                  class="py-2 px-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-b">
+                                  Commodity</th>
+                                <th
+                                  class="py-2 px-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-b">
+                                  Quantity</th>
+                                <th
+                                  class="py-2 px-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-b">
+                                  Unit</th>
+                                <th
+                                  class="py-2 px-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-b">
+                                  Remarks</th>
+                                <th
+                                  class="py-2 px-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-b">
+                                  Received</th>
                               </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-200">
-                              <tr v-for="(item, index) in  dispatch.dispatchedCommodities" :key="index" class="hover:bg-gray-100">
+                              <tr v-for="(item, index) in  dispatch.dispatchedCommodities" :key="index"
+                                class="hover:bg-gray-100">
                                 <td class="py-2 px-4 border-b">{{ index + 1 }}</td>
                                 <td class="py-2 px-4 border-b">{{ item.commodity.Name }}</td>
                                 <td class="py-2 px-4 border-b">{{ item.Quantity }}</td>
-                                <td class="py-2 px-4 border-b">{{ item.commodity.PackSize }} {{ item.commodity.Unit }}</td>
+                                <td class="py-2 px-4 border-b">{{ item.commodity.PackSize }} {{ item.commodity.Unit }}
+                                </td>
                                 <td class="py-2 px-4 border-b">
-                                  <input type="number" v-if="!item.received" v-model.number="item.receivedQuantity" min="0" class=" w-20 p-1 border rounded border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm p-2" placeholder="Qty" />
-                                  <button type="button" @click="receiveCommodity(item)"
-                                    :disabled="item.received" 
-                                    class="ml-2 px-2 py-1 text-white rounded"
+                                  <div class="col-span-6 sm:col-span-3">
+
+                                    <select name="Remarks" v-model="item.Remarks" id="Remarks"
+                                      class="mt-2 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                                      <option value="">Select Remark</option>
+                                      <option value="received in good condition">Received in good condition</option>
+                                      <option value="received but damaged">Received but damaged</option>
+                                      <option value="received but not expected quantity">Received but not at the
+                                        expected quantity
+                                      </option>
+                                      <option value="other">Other (please specify)</option>
+                                    </select>
+
+                                    <textarea v-if="item.Remarks === 'other'" v-model="item.Remarks" id="CustomRemark"
+                                      rows="3"
+                                      class="mt-2 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+                                      placeholder="Enter your custom remark here"></textarea>
+                                  </div>
+                                </td>
+                                <td class="py-2 px-4 border-b">
+                                  <input type="number" v-if="!item.received" v-model.number="item.receivedQuantity"
+                                    min="0"
+                                    class="mt-2 w-20 p-1 border rounded border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm p-2"
+                                    placeholder="Qty" />
+
+                                  <!-- 
+                                  <button type="button" @click="receiveCommodity(item)" :disabled="item.received"
+                                    class="ml-2 px-2 py-1 text-white rounded mt-2"
                                     :class="item.received ? 'bg-green-500' : 'bg-blue-500 hover:bg-blue-600'">
                                     <CheckCircleIcon v-if="item.received" class="h-5 w-5 mr-1" />
                                     <span v-if="!item.received">Receive</span>
-                                  </button> </td>
+                                  </button> -->
+                                </td>
+
                               </tr>
                             </tbody>
                           </table>
                         </div>
                       </div>
 
-                 
+
                     </div>
                   </div>
                 </div>
@@ -218,28 +259,33 @@ onMounted(() => {
 
 
 const currentDate = ref(moment().format('YYYY-MM-DD HH:mm:ss'));
-
-const onSubmit = useSubmitForm((values, actions) => {
-
-  emit("create", receivedCommodities);
-  open.value = false;
-  actions.resetForm();
-});
-
-
 const receivedCommodities = reactive([]);
 
-const receiveCommodity = (item) => {
-  if (item.receivedQuantity && item.receivedQuantity > 0) {
-    item.received = true;
-    receivedCommodities.push({
-      commodityId: item.commodity.id,
-      instructedReceiptId: props.rowId,
-      Quantity: item.receivedQuantity,
-    });
-  }
+const onSubmit = useSubmitForm((values) => {
+  props.dispatch.dispatchedCommodities.forEach((item) => {
+    if (item.receivedQuantity && item.receivedQuantity > 0) {
+      receivedCommodities.push({
+        BatchNumber: item.BatchNumber,
+        commodityId: item.commodity.id,
+        Quantity: item.receivedQuantity,
+        Remarks: item.Remarks,
+      });
+    }
+  });
 
-}
+  let model = {
+    FinalDestinationPoint: FinalDestinationPoint.value,
+    RecipientId: user.value.id,
+    CreatedOn: currentDate.value,
+    instructedDispatchId: props.rowId,
+    receivedCommodities: receivedCommodities
+  };
+
+  emit("create", model);
+  open.value = false
+ });
+
+
 
 
 </script>

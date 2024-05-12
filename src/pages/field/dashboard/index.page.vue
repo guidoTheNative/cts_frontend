@@ -140,6 +140,8 @@ import { useUserStore } from "../../../stores/user.store";
 
 import { useInstructedDispatchesStore } from "../../../stores/instructedDispatches.store";
 import ChartComponent from '../../../components/pages/charts/dashboardcharts.vue'; // Adjust path as needed
+import { userequisitionstore } from "../../../stores/requisition.store";
+import { useDisasterstore } from "../../../stores/disaster.store";
 
 
 import { useListingStore } from "../../../stores/catalogue.store";
@@ -283,6 +285,13 @@ const loadingplans = reactive([]);
 
 
 
+const requisitionStore = userequisitionstore();
+const requisitions = reactive([]);
+
+const disasterStore = useDisasterstore();
+const disasters = reactive([]);
+
+
 const recieptStore = usereceiptstore();
 const receipts = reactive([]);
 
@@ -335,6 +344,8 @@ onMounted(() => {
   getloadingplansSummary();
   getdispatchSummary();
   getloadingplansSummaryByCommodity();
+  getRequisitions();
+  getDisasters();
 });
 //WATCH
 
@@ -344,6 +355,21 @@ const getCatalogue = async () => {
   });
 };
 
+
+const requisitionCount = ref(0)
+const getRequisitions = async () => {
+  requisitionStore.get().then((result) => {
+    requisitionCount.value = result.filter(item => item.requesterId == user.value.id).length;
+  });
+};
+
+
+const disasterCount = ref(0)
+const getDisasters = async () => {
+  disasterStore.get().then((result) => {
+    disasterCount.value = result.length;
+  });
+};
 
 const getReceipts = async () => {
   recieptStore.count().then((result) => {
@@ -392,7 +418,7 @@ const getDispatches = async () => {
       // Clear the existing dispatches and push the sorted results
       dispaches.length = 0;
       let reversedData = sortedDispatches.reverse();
-      dispaches.push(...reversedData);
+      dispaches.push(...reversedData.filter(item => !item.IsArchived));
     })
     .finally(() => {
       isLoading.value = false;
@@ -557,8 +583,8 @@ const stats = ref([
 
 
   {
-    label: 'Total Dispatches',
-    value: dispatchcount,
+    label: 'Total Disasters',
+    value: disasterCount,
     icon: ClipboardListIcon,
     iconColor: 'green-500',
     percentageText: null
@@ -567,7 +593,7 @@ const stats = ref([
  
    {
      label: 'Requisitions',
-     value: 11,
+     value: requisitionCount,
      icon: ClipboardListIcon,
      iconColor: 'gray-400',
      percentageText: '',

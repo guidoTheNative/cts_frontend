@@ -318,7 +318,8 @@ const getInstructions = async () => {
 
 
       // Push the filtered instructions into the array
-      instructions.push(result.filter(item => (item.district.Name == user.value.district) && item.IsApproved).length);
+      instructions.push(...result.filter(item => (item.district.Name == user.value.district) && item.IsApproved && !item.IsArchived)).length;
+
 
     
       // Update the count of new instructions

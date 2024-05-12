@@ -212,8 +212,6 @@ import html2canvas from 'html2canvas';
 import { useInstructedDispatchesStore } from "../../../stores/instructedDispatches.store";
 import { useinstructionstore } from "../../../stores/instructions.store";
 
-import { userequisitionstore } from "../../../stores/requisition.store";
-
 
 import { usereceiptstore } from "../../../stores/receipt.store";
 
@@ -344,6 +342,9 @@ const columns = ref([
 
 ]);
 
+import { userequisitionstore } from "../../../stores/requisition.store";
+const requisitionsStore = userequisitionstore();
+const requisitions = reactive([]);
 
 
 const loadingPlanStore = useloadingplanstore();
@@ -392,6 +393,7 @@ let userCount = ref(0);
 
 let bookingCount = ref(0);
 
+const newRequisitionsCount = ref(0);
 const receiptcount = ref(0)
 
 const dispatchcount = ref(0)
@@ -415,8 +417,8 @@ onMounted(async () => {
   getloadingplansSummary();
   getdispatchSummary();
   getloadingplansSummaryByCommodity();
-  getInstructions()
- 
+  getInstructions();
+  getRequisitions();
 });
 //WATCH
 
@@ -434,7 +436,6 @@ const instructions = reactive([])
 const newInstructionsCount = ref(0)
 
 const getInstructions = async () => {
-  isLoading.value = true;
   instructionsStore
     .get()
     .then((result) => {
@@ -448,6 +449,31 @@ const getInstructions = async () => {
       newInstructionsCount.value = instructions.length;
     })
 
+};
+
+
+const getRequisitions = async () => {
+  isLoading.value = true;
+  requisitionsStore
+    .get()
+    .then((result) => {
+      // Clear the existing array
+      requisitions.length = 0;
+
+   
+
+      // Push the filtered instructions into the array
+      requisitions.push(...result.filter(item => item.IsArchived == false || item.IsArchived == null));
+
+
+      // Update the count of new instructions
+      newRequisitionsCount.value = requisitions.length;
+    })
+    
+    
+    .finally(() => {
+      isLoading.value = false;
+    });
 };
 
 
@@ -682,7 +708,7 @@ const stats = ref([
 
   {
     label: 'Requisitions Pending',
-    value: newInstructionsCount,
+    value: newRequisitionsCount,
     icon: DocumentIcon,
     iconColor: 'blue-400',
     percentageText: '',

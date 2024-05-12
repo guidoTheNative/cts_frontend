@@ -229,7 +229,8 @@ onMounted(() => {
   Remarks.value = model.value.Remarks
   DriverName.value = model.value.DriverName
   Purpose.value = model.value.Purpose
-
+  warehouseId.value= model.value.warehouseId,
+  districtId.value = model.value.districtId,
   VehicleRegNo.value = model.value.VehicleRegNo
   warehouseName.value = model.value.warehouse?.Name
 });
@@ -239,6 +240,8 @@ const onSubmit = useSubmitForm((values, actions) => {
   let newValues = {
     id: model.value.id,
     warehouseId: warehouseId.value,
+    
+    districtId: districtId.value,
     transporterId: transporterId.value,
     DriverName: DriverName.value
   };

@@ -129,13 +129,13 @@
                     </thead>
                     <tbody>
                       <tr>
-                        <td class="border border-gray-400 p-2">{{ model.ApprovedBy }}</td>
-                        <td class="border border-gray-400 p-2">{{ model.ApprovedBy.split(/\s+/).map(word =>
-      word.charAt(0).toUpperCase()).join('') }}</td>
-                        <td class="border border-gray-400 p-2">{{
-      moment(model.UpdatedOn).format("MM-DD-YYYY")
+                        <td class="border border-gray-400 p-2">{{ model.ApprovedBy || 'Not Available' }}</td>
+                        <td class="border border-gray-400 p-2">
+                          {{
+      model.ApprovedBy
+        ? model.ApprovedBy.split(/\s+/).map(word => word.charAt(0).toUpperCase()).join('')
+        : 'N/A'
     }}
-
                         </td>
                       </tr>
                     </tbody>
@@ -158,8 +158,7 @@
             aria-labelledby="tabs-user-relief">
             <user-relief v-bind:model="model" v-on:update="updateOrCreateReliefItems" :key="model.id + 'relief'" />
           </div>
-          <div class="tab-pane fade" id="user-settings" role="tabpanel"
-            aria-labelledby="tabs-user-settings">
+          <div class="tab-pane fade" id="user-settings" role="tabpanel" aria-labelledby="tabs-user-settings">
             <user-settings v-bind:model="model" v-on:update="updateInstruction" :key="model.id + 'settings'" />
           </div>
         </div>
