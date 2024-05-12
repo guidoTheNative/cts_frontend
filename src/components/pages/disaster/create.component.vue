@@ -73,7 +73,7 @@
                         Select District</label>
                       <select id="district" name="district" v-model="district" autocomplete="district-name"
                         class="mt-1 focus:ring-gray-500 focus:border-blue-300 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
-                        <option v-for="district in districts" :key="district" :value="district"
+                        <option v-for="district in districts" :key="district.id" :value="district.Name"
                           class="uppercase">
                           {{ district.Name }}
                         </option>
@@ -94,7 +94,7 @@
                       </p>
                     </div>
 
-                    <div class="col-span-12 sm:col-span-12">
+                    <div class="col-span-12 sm:col-span-3">
                       <label for="batch" class="block text-sm font-medium text-gray-700">GVH</label>
                       <input type="text" v-model="gvh" Name="gvh" id="gvh" autocomplete="off" placeholder="GVH"
                         class="mt-1 focus:ring-gray-500 focus:border-blue-300 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
@@ -209,12 +209,7 @@ const user = ref(sessionStore.getUser);
 const { meta } = useForm({
   validationSchema: CreateDisasterSchema,
   initialValues: {
-    Quantity: "",
-    ExpiryDate: "",
-    commodityId: "",
-    warehouseId: "",
-    userId: ""
-
+   
   },
 });
 ///FIELDS

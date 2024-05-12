@@ -13,9 +13,6 @@ export const CreateDisasterSchema = yup.object({
   gvh: yup
     .string(),
 
-
-  villages_affected: yup
-    .string()
 });
 
 export const UpdateDisasterSchema = yup.object({
@@ -32,8 +29,6 @@ export const UpdateDisasterSchema = yup.object({
     .string(),
 
 
-  villages_affected: yup
-    .string()
 });
 
 

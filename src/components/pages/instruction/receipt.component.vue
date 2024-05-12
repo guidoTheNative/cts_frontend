@@ -141,13 +141,15 @@
                     </div>
                   </div>
                 </div>
+
                 <div class="bg-gray-50 px-4 py-3 sm:flex sm:flex-row-reverse">
                   <button @click="closeDialog"
-                    class="mr-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400">
-                    Close
+                    class="mr-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400">Close</button>
+                  <button type="submit"
+                    class="px-4 py-2 mr-3 bg-green-500 text-white rounded hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 inline-flex items-center">
+                    <CheckCircleIcon class="h-5 w-5 mr-1" />
+                    Submit Receipt
                   </button>
-                  <button type="submit" style="background-color: #096eb4;"
-                    class="px-4 py-2 mr-3 bg-blue-500 text-white rounded">Submit</button>
                 </div>
               </form>
             </div>
@@ -283,7 +285,7 @@ const onSubmit = useSubmitForm((values) => {
 
   emit("create", model);
   open.value = false
- });
+});
 
 
 
