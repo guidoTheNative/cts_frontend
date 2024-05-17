@@ -367,7 +367,7 @@ const getRequisitions = async () => {
 const disasterCount = ref(0)
 const getDisasters = async () => {
   disasterStore.get().then((result) => {
-    disasterCount.value = result.length;
+    disasterCount.value = result.filter(item => item.district == user.value.district).length;
   });
 };
 
@@ -418,7 +418,7 @@ const getDispatches = async () => {
       // Clear the existing dispatches and push the sorted results
       dispaches.length = 0;
       let reversedData = sortedDispatches.reverse();
-      dispaches.push(...reversedData.filter(item => !item.IsArchived));
+      dispaches.push(...reversedData.filter(item => !item.IsArchived && item.instruction.district?.Name == user.value.district));
     })
     .finally(() => {
       isLoading.value = false;
@@ -583,7 +583,7 @@ const stats = ref([
 
 
   {
-    label: 'Total Disasters',
+    label: 'Total Disasters Recorded',
     value: disasterCount,
     icon: ClipboardListIcon,
     iconColor: 'green-500',

@@ -140,8 +140,7 @@ const columns = ref([
     hidden: false,
     field: row => `<span >D.N: ${row.DeliveryNote}</span><br>` +
       `<span>FDP: ${row.FinalDestinationPoint !== null ? row.FinalDestinationPoint : "N/A"}</span><br>`
-      +
-      `<span>On: ${moment(row.Date).format("DD/MM/YYYY") !== null ? moment(row.Date).format("DD/MM/YYYY") : "N/A"}</span><br>`,
+,
     sortable: true,
     firstSortType: "asc",
     html: true, // Important for rendering HTML
@@ -208,7 +207,7 @@ const createReceipt = async (originalModel) => {
       icon: "success",
       confirmButtonText: "Ok"
     });
-    getDispatches()
+    await dispatchStore.get()
   } catch (error) {
     Swal.fire({
       title: "Creation Failed",
@@ -229,7 +228,7 @@ const generateExcel = () => {
 
   // Assuming dispaches is an array of objects
   // Map over dispaches and exclude certain fields
-  const dataForExport = dispaches.map(({ CreatedOn, UpdatedOn, DispatcherId, loadingPlanId, Dispatcher, loadingPlan, ...keepAttrs }) => keepAttrs);
+  const dataForExport = dispaches.map(({ CreatedOn, UpdatedOn, DispatcherId, loadingPlanId, Dispatcher, loadingPlan, instructionId, Date,instruction, dispatchedCommodities, IsArchived, ...keepAttrs }) => keepAttrs);
 
   // Create a worksheet from the filtered data array
   const ws = XLSX.utils.json_to_sheet(dataForExport);
@@ -283,7 +282,7 @@ const getDispatches = async () => {
       // }
       dispaches.length = 0; //empty array
       let sorteddata = result.reverse()
-      dispaches.push(...sorteddata.filter(item => !item.IsArchived));
+      dispaches.push(...sorteddata.filter(item => !item.IsArchived && item.instruction.district?.Name == user.value.district));
 
 
     })

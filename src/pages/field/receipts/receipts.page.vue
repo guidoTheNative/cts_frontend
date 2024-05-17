@@ -84,7 +84,7 @@ import spinnerWidget from "../../../components/widgets/spinners/default.spinner.
 import breadcrumbWidget from "../../../components/widgets/breadcrumbs/admin.breadcrumb.vue";
 
 
-import ReceiptViewDialog from "../../../components/pages/dispatches/view.receipt.component.vue";
+import ReceiptViewDialog from "../../../components/pages/dispatches/view.instructed-receipt.component.vue";
 
 
 import EditReceiptDialog from "../../../components/pages/dispatches/edit-dispatch.component.vue";
@@ -150,9 +150,9 @@ const columns = ref([
   {
     label: "Details",
     hidden: false,
-    field: row => `<span >D.N: ${row.dispatch?.DeliveryNote !== undefined ? row.dispatch?.DeliveryNote : "N/A"}</span><br>`
+    field: row => `<span >D.N: ${row.instructedDispatch?.DeliveryNote !== undefined ? row.instructedDispatch?.DeliveryNote : "N/A"}</span><br>`
       +
-      `<span>To: ${row.FinalDestinationPoint !== null ? row.FinalDestinationPoint : "N/A"}</span><br>`,
+      `<span>To: ${row.instructedDispatch?.FinalDestinationPoint !== null ? row.instructedDispatch?.FinalDestinationPoint : "N/A"}</span><br>`,
     sortable: true,
     firstSortType: "asc",
     html: true, // Important for rendering HTML
@@ -161,9 +161,9 @@ const columns = ref([
   },
 
   {
-    label: "Quantity",
+    label: "Truck Number",
     field: row => `
-    <span class="by-color"> ${row.Quantity + " MT" || "Unknown"}</span>`,
+    <span class="by-color"> ${row.instructedDispatch?.TruckNumber || "Unknown"}</span>`,
     sortable: true,
     firstSortType: "asc",
     html: true, // This is important to render HTML
@@ -204,10 +204,8 @@ const generateExcel = () => {
     id: receipt.id,
     CreatedOn: moment(receipt.CreatedOn).format("DD/MM/YYYY"),
     UpdatedOn: moment(receipt.UpdatedOn).format("DD/MM/YYYY"),
-    NoBags: receipt.NoBags,
     Quantity: receipt.Quantity,
     FinalDestinationPoint: receipt.FinalDestinationPoint,
-    Remarks: receipt.Remarks
   }))
 
 
@@ -219,8 +217,8 @@ const generateExcel = () => {
 
 
 // Function to open the edit dialog
-const openDispatchDialog = (dispatch) => {
-  selectedReceipt.value = dispatch;
+const openDispatchDialog = (instructedDispatch) => {
+  selectedReceipt.value = instructedDispatch;
   isReceiptDialogOpen.value = true;
 };
 
@@ -231,8 +229,8 @@ const isEditDialogOpen = ref(false);
 
 
 // Function to open the edit dialog
-const openEditDialog = (dispatch) => {
-  selectedReceipt.value = dispatch;
+const openEditDialog = (instructedDispatch) => {
+  selectedReceipt.value = instructedDispatch;
   isEditDialogOpen.value = true;
 };
 
@@ -246,8 +244,8 @@ const closeEditDialog = () => {
 const isReceiptDialogOpen = ref(false);
 
 // Function to open the edit dialog
-const openReceiptDialog = (dispatch) => {
-  selectedReceipt.value = dispatch;
+const openReceiptDialog = (instructedDispatch) => {
+  selectedReceipt.value = instructedDispatch;
   isReceiptDialogOpen.value = true;
 };
 

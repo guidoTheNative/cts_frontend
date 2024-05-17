@@ -59,7 +59,8 @@
                         Select Disaster Type</label>
                       <select id="type" name="type" v-model="type" autocomplete="type-name"
                         class="mt-1 focus:ring-gray-500 focus:border-blue-300 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
-                        <option v-for="item in ['Floods', 'Heavy Rains', 'Droughts', 'Dry Spells', 'Flash Floos']" :key="item" :value="item" class="uppercase">
+                        <option v-for="item in ['Floods', 'Heavy Rains', 'Droughts', 'Dry Spells', 'Flash Floos']"
+                          :key="item" :value="item" class="uppercase">
                           {{ item }}
                         </option>
                       </select>
@@ -69,21 +70,20 @@
                     </div>
 
                     <div class="col-span-12 sm:col-span-12">
-                      <label for="user-district" class="block text-sm font-medium text-gray-700">
-                        Select District</label>
-                      <select id="district" name="district" v-model="district" autocomplete="district-name"
-                        class="mt-1 focus:ring-gray-500 focus:border-blue-300 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
-                        <option v-for="district in districts" :key="district.id" :value="district.Name"
-                          class="uppercase">
-                          {{ district.Name }}
-                        </option>
-                      </select>
-                      <p class="text-red-500 text-xs italic pt-1">
-                        {{ districtIdError }}
-                      </p>
+                      <label for="user-district" class="block text-sm font-bold mb-3 text-gray-700">
+                        District: {{ user.district }}</label>
+
                     </div>
 
 
+                    <div class="col-span-12 sm:col-span-12">
+                      <label for="date_of_occurrence" class="block text-sm font-medium text-gray-700">Date of Occurrence</label>
+                      <input type="date" v-model="date_of_occurrence"  id="date_of_occurrence" :max="today"
+                        class="mt-1 focus:ring-gray-500 focus:border-blue-300 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
+                      <p class="text-red-500 text-xs italic pt-1">
+                        {{ dateError }}
+                      </p>
+                    </div>
 
                     <div class="col-span-12 sm:col-span-12">
                       <label for="batch" class="block text-sm font-medium text-gray-700">TA</label>
@@ -175,6 +175,8 @@ import { useDisasterstore } from "../../../stores/disaster.store";
 import { usedistrictstore } from "../../../stores/districts.store";
 
 import { useSessionStore } from "../../../stores/session.store";
+
+
 //INJENCTIONS
 const $router = useRouter();
 const moment = inject("moment");
@@ -209,7 +211,7 @@ const user = ref(sessionStore.getUser);
 const { meta } = useForm({
   validationSchema: CreateDisasterSchema,
   initialValues: {
-   
+
   },
 });
 ///FIELDS
@@ -219,7 +221,9 @@ const { value: gvh, errorMessage: gvhError } = useField("gvh")
 const { value: type, errorMessage: typeError } = useField("type");
 const { value: district, errorMessage: districError } = useField("district");
 const { value: name, errorMessage: nameError } = useField("name");
+const { value: date_of_occurrence, errorMessage: dateError } = useField("date_of_occurrence");
 
+const today = new Date().toISOString().split('T')[0];
 
 
 //MOUNTED
@@ -269,7 +273,8 @@ const onSubmit = useSubmitForm((values, actions) => {
     name: name.value,
     type: type.value,
     villages_affected: villages_affected.value.join(),
-    district: district.value,
+    date_of_occurrence: date_of_occurrence.value,
+    district: user.value.district,
     gvh: gvh.value,
     ta: ta.value
   };

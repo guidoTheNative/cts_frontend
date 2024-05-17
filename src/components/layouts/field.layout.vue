@@ -19,7 +19,12 @@
           <!-- Admin Text in the Middle (if needed) -->
           <span class="font-bold text-white mx-4">DODMA CTS | Field Officer</span>
 
-
+          <div class="flex items-center ml-2">
+            <LocationMarkerIcon class="h-5 w-5 text-white mr-2" />
+            <span class="text-white font-medium text-sm">
+              {{ user.district }}
+            </span>
+          </div>
         </div>
 
 
@@ -27,19 +32,17 @@
         <div class="flex space-x-4">
           <!-- Display the first five items -->
           <router-link v-for="item in firstFiveItems" :key="item.name" :to="item.href">
-            <a :class="[
-              item.current
-                ? 'bg-white text-black'
-                : 'text-gray-50 hover:text-gray-50 hover:bg-blue-400',
-              'group flex items-center px-2 py-2 text-sm font-medium rounded-md',
-            ]" :aria-current="item.current ? 'page' : undefined">
-              <component :is="item.icon" :class="[
-                item.current
-                  ? 'text-gray-500'
-                  : 'text-white group-hover:text-white',
-                'mr-1 flex-shrink-0 h-6 w-6',
-              ]" aria-hidden="true" />
+            <a :class="itemClasses(item)" :aria-current="item.current ? 'page' : undefined">
+              <component :is="item.icon" :class="iconClasses(item)" aria-hidden="true" />
               {{ item.name }}
+              <!-- Notification Bell for "Instructions" -->
+              <div v-if="item.name === 'Dispatches' && newDispatchCount > 0" class="relative ml-2 mx-4">
+                <span
+                  class="absolute -top-3 -right-3 flex items-center justify-center px-1 py-0.5 text-xs font-bold text-white bg-red-600 rounded-full"
+                >
+                  {{ newDispatchCount }}
+                </span>
+              </div>
             </a>
           </router-link>
 
@@ -117,7 +120,7 @@
     <footer class="text-white text-center p-4" style="background-color: #096eb4;">
       <span class="inline-block align-middle text-sm">
 
-        © 2024 Designed by WFP Supply Chain Unit
+        © 2024 Designed by WFP Malawi Supply Chain Unit
       </span>
     </footer>
   </div>
@@ -128,6 +131,8 @@
 import { inject, ref, watch, reactive, onMounted, computed, toRefs } from "vue";
 import { useSessionStore } from "../../stores/session.store";
 import { useRouter } from "vue-router";
+import { useInstructedDispatchesStore } from "../../stores/instructedDispatches.store";
+
 import {
   Dialog,
   DialogOverlay,
@@ -169,6 +174,10 @@ import {
   SelectorIcon,
 } from "@heroicons/vue/solid";
 
+const getDispatchStore = useInstructedDispatchesStore();
+
+const newDispatchCount = ref(0);
+const dispaches = reactive([])
 //DECLARATIONS
 const system = reactive({
   name: process.env.VUE_APP_NAME,
@@ -194,6 +203,10 @@ const menuItemClasses = (active, isButton = false) => [
   isButton ? 'w-full text-left' : ''
 ];
 
+const iconClasses = (item) => [
+  item.current ? "text-gray-500" : "text-white group-hover:text-white",
+  "mr-1 flex-shrink-0 h-6 w-6",
+];
 
 const toggleDropdown = () => {
   isDropdownOpen.value = !isDropdownOpen.value;
@@ -215,8 +228,33 @@ function gotoSystemsettings() {
 
 }
 
+
+
+//FUNCTIONS
+const getDispatches = async () => {
+  getDispatchStore
+    .get()
+    .then((result) => {
+      // Clear the existing array
+      dispaches.length = 0;
+
+   
+
+      // Push the filtered instructions into the array
+      dispaches.push(...result.filter(item => !item.IsArchived && item.instruction.district?.Name == user.value.district && item.IsArchived == false));
+
+
+      // Update the count of new instructions
+      newDispatchCount.value = dispaches.length;
+    })
+   
+};
+
+
 //MOUNTED
-onMounted(() => { });
+onMounted(() => { 
+  getDispatches();
+});
 //WAT
 function navigation() {
   let navList = [
@@ -225,12 +263,12 @@ function navigation() {
    /*  { name: "Commodities", href: "/warehouse/commodity-tracking", icon: CollectionIcon, current: false },
     { name: "Requisitions", href: "/warehouse/requisition-management", icon: IdentificationIcon, current: false },
     { name: "Project Management", href: "/warehouse/project-management", icon: IdentificationIcon, current: false },
-  */   { name: "Receipts", href: "/field/receipts", icon: DocumentDuplicateIcon, current: false },
-
+  */   { name: "Dispatches", href: "/field/dispatch-management", icon: AdjustmentsIcon, current: false },
+ 
   { name: "Disaster Management", href: "/field/emergency-management", icon: ExclamationIcon, current: false },
 
-  { name: "Dispatches", href: "/field/dispatch-management", icon: AdjustmentsIcon, current: false },
-   
+  { name: "Receipts", href: "/field/receipts", icon: DocumentDuplicateIcon, current: false },
+
     { name: "Reports", href: "/field/report-management", icon: DocumentTextIcon, current: false },
 
   ];
@@ -267,8 +305,8 @@ const open = ref(false);
 //FUNCTIONS
 
 const navItems = computed(() => navigation());
-const firstFiveItems = computed(() => navItems.value.slice(0, 5));
-const remainingItems = computed(() => navItems.value.slice(5));
+const firstFiveItems = computed(() => navItems.value.slice(0, 4));
+const remainingItems = computed(() => navItems.value.slice(4));
 
 const itemClasses = (item) => [
   item.current ? 'bg-white text-black' : 'text-gray-50 hover:text-gray-50 hover:bg-blue-400',

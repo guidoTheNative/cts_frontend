@@ -152,8 +152,8 @@
                           class="hover:bg-gray-100">
                           <td class="py-2 px-4 border-b">{{ index + 1 }}</td>
                           <td class="py-2 px-4 border-b">{{ item.commodity.Name }}</td>
-                          <td class="py-2 px-4 border-b">{{ item.Quantity }}</td>
-                          <td class="py-2 px-4 border-b">{{ item.commodity.Unit }}</td>
+                          <td class="py-2 px-4 border-b">{{ item.Quantity }}</td> 
+                          <td class="py-2 px-4 border-b">{{item.commodity.PackSize }} {{ item.commodity.Unit }}</td>
                         </tr>
                       </tbody>
                     </table>

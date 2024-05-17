@@ -94,7 +94,7 @@
                       </p>
                     </div>
 
-                    <div class="col-span-6 sm:col-span-4" v-if="roleId == 'ADMIN3' || roleId == 'ADMIN4'">
+                    <div class="col-span-6 sm:col-span-4" v-if="roleId == 'ADMIN3' || roleId == 'ADMIN4' || roleId == 'ADMIN8'">
 
                       <label for="user-district" class="block text-sm font-medium text-gray-700">
                         Select District</label>

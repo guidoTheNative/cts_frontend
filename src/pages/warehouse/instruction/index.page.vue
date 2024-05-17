@@ -282,8 +282,7 @@ const getInstructions = async () => {
       //   instructions.push(...result);
       // }
       instructions.length = 0; //empty array
-      instructions.push(...result.filter(item => (item.district.Name == user.value.district) && item.IsApproved && !item.IsArchived));
-
+      instructions.push(...result.filter(item => (item.district.Name == user.value.district) && item.IsApproved));
 
     })
     .catch(error => {

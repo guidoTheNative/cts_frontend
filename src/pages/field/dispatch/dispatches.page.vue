@@ -112,7 +112,6 @@ const columns = ref([
     label: "Quantity",
     hidden: false,
     field: row => `
-    <span >${row.NoBags !== null && row.NoBags !== undefined ? row.NoBags + " Bags" : "Not specified"} </span><br>
     <span >${row.Quantity !== null ? row.Quantity + " MT" : "Pending"}</span>`,
     sortable: true,
     firstSortType: "asc",
@@ -124,11 +123,9 @@ const columns = ref([
   {
     label: "Details",
     hidden: false,
-    field: row => `<span >D.N: ${row.DeliveryNote}</span><br>` +
-      `<span>L.P: ${row.loadingPlanId !== null ? row.loadingPlanId : "N/A"}</span><br>`
+    field: row => `<span >D.N: ${row.DeliveryNote}</span><br>`
       +
-      `<span>To: ${row.FinalDestinationPoint !== null ? row.FinalDestinationPoint : "N/A"}</span><br>` +
-      `<span>On: ${moment(row.Date).format("DD/MM/YYYY") !== null ? moment(row.Date).format("DD/MM/YYYY") : "N/A"}</span><br>`,
+      `<span>To: ${row.FinalDestinationPoint !== null ? row.FinalDestinationPoint : "N/A"}</span><br>`,
     sortable: true,
     firstSortType: "asc",
     html: true, // Important for rendering HTML
@@ -216,10 +213,10 @@ const generateExcel = () => {
 
   // Assuming dispaches is an array of objects
   // Map over dispaches and exclude certain fields
-  const dataForExport = dispaches.map(({ CreatedOn, UpdatedOn, DispatcherId, loadingPlanId, Dispatcher, loadingPlan, ...keepAttrs }) => keepAttrs);
+  const dataForExport = dispaches.map(({ CreatedOn, UpdatedOn, DispatcherId, loadingPlanId, Dispatcher, loadingPlan, InstructionId, ...keepAttrs }) => keepAttrs);
 
   // Create a worksheet from the filtered data array
-  const ws = XLSX.utils.json_to_sheet(dataForExport);
+  const ws = XLSX.utils.json_to_sheet(dispaches);
   XLSX.utils.book_append_sheet(wb, ws, wsName);
 
   // Export the workbook
@@ -246,7 +243,7 @@ const getDispatches = async () => {
       // }
       dispaches.length = 0; //empty array
       let sorteddata = result.reverse()
-      dispaches.push(...sorteddata);
+      dispaches.push(...sorteddata.filter(item => !item.IsArchived));
 
 
     })

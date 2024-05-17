@@ -42,42 +42,7 @@
                   </div>
 
 
-                  <div class="mt-1 flex justify-right gap-x-2 sm:mt-0">
-
-                    <button @click="toggleView('dashboard')" type="button" style="background-color: #248cd6;"
-                      class="font-body inline-flex items-center px-6 py-2.5 text-white font-medium text-xs leading-tight rounded shadow-md hover:bg-gray-600 hover:shadow-lg focus:bg-gray-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-500 active:shadow-lg transition duration-100 ease-in-out capitalize"
-                      :class="{ 'hidden': currentView === 'dashboard' }">
-                      <TemplateIcon class="h-5 w-5 mr-2" />
-
-                      Dashboard View
-                    </button>
-
-                    <button @click="toggleView('charts')" type="button" style="background-color: #248cd6;"
-                      class="font-body inline-flex items-center px-6 py-2.5 text-white font-medium text-xs leading-tight rounded shadow-md hover:bg-gray-600 hover:shadow-lg focus:bg-gray-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-500 active:shadow-lg transition duration-100 ease-in-out capitalize"
-                      :class="{ 'hidden': currentView === 'charts' }">
-                      <ChartBarIcon class="h-5 w-5 mr-2" />
-
-                      Chart View
-                    </button>
-
-
-
-                    <button @click="exportToExcel" v-if="!showCharts" style="background-color: #399dcd;"
-                      class="font-body inline-flex items-center px-6 py-2.5 text-white font-medium text-xs leading-tight rounded shadow-md hover:bg-gray-600 hover:shadow-lg focus:bg-gray-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-500 active:shadow-lg transition duration-100 ease-in-out capitalize"
-                      :class="{ 'hidden': currentView === 'dashboard' }">
-                      <DocumentDownloadIcon class="h-5 w-5 mr-2" /> <!-- Assuming DocumentDownloadIcon is available -->
-
-                      Export to Excel
-                    </button>
-
-                    <button @click="takeScreenshot" v-if="!showCharts" style="background-color: #0f6c97;"
-                      class="font-body inline-flex items-center px-6 py-2.5 text-white font-medium text-xs leading-tight rounded shadow-md hover:bg-gray-600 hover:shadow-lg focus:bg-gray-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-500 active:shadow-lg transition duration-100 ease-in-out capitalize"
-                      :class="{ 'hidden': currentView === 'dashboard' }">
-                      <CameraIcon class="h-5 w-5 mr-2" /> <!-- Assuming CameraIcon is available -->
-                      Take Screenshot
-                    </button>
-
-                  </div>
+                
                 </div>
 
               </div>

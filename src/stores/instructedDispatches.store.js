@@ -5,7 +5,7 @@ const instructedDispatchesService = new InstructedDispatchesService();
 export const useInstructedDispatchesStore = defineStore({
   id: 'InstructedDispatches',
   state: () => ({
-     InstructedDispatches: [],
+    InstructedDispatches: [],
   }),
   getters: {
 
@@ -14,28 +14,28 @@ export const useInstructedDispatchesStore = defineStore({
     async get() {
       return await instructedDispatchesService.get().then((result) => {
         if (result) {
-          var response = result;
-          return response
+          this.InstructedDispatches = result;
+          return this.InstructedDispatches
         }
       });
     },
 
 
- 
 
-    
+
+
     async getByReference(data) {
       return await instructedDispatchesService.getByReference(data).then((result => {
-          if (result) {
-              return result
-          }
+        if (result) {
+          return result
+        }
       })).catch(error => {
-          switch (error.statusCode) {
-              default:
-                  throw error.message
-          }
+        switch (error.statusCode) {
+          default:
+            throw error.message
+        }
       });
-  },
+    },
 
     async getOne(id) {
       return await instructedDispatchesService

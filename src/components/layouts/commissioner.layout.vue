@@ -93,7 +93,7 @@
 
     <!-- Footer -->
     <footer class="text-white text-center p-4" style="background-color: #096eb4;">
-      <span class="inline-block align-middle text-sm">© 2024 Designed by WFP Supply Chain Unit</span>
+      <span class="inline-block align-middle text-sm">© 2024 Designed by WFP Malawi Supply Chain Unit</span>
     </footer>
   </div>
 </template>

@@ -68,13 +68,7 @@
         />
       </svg>
 
-      <div class="sm:mx-auto sm:w-full sm:max-w-md">
-        <img
-          class="mx-auto h-28 w-auto"
-          src="../../assets/logo2.jpg"
-          alt="app logo"
-        />
-      </div>
+    
       <div class="text-center">
         <h2
           class="font-body text-3xl font-extrabold tracking-tight text-gray-900 sm:text-4xl"
