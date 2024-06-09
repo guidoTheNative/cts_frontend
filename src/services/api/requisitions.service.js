@@ -112,7 +112,7 @@ export default class RequisitionService {
   getCommodityDistributionSummary(id) {
     if (id == null) {
       return axios
-        .get(resource + '/commodity-distribution' + `?filter={}`, {
+        .get(resource + '/commodity-distribution' + `?filter={{"include": ["disaster"]}}`, {
           headers: {
             "Access-Control-Allow-Origin": "*",
             "Content-type": "Application/json",

@@ -15,7 +15,7 @@
         </div>
         <button type="button"
           class="font-body inline-block px-6 py-2.5 bg-gray-500 text-white font-medium text-xs leading-tight rounded shadow-md hover:bg-gray-600 hover:shadow-lg focus:bg-gray-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-400 active:shadow-lg transition duration-100 ease-in-out capitalize"
-          @click="generateExcel">
+          @click="generateExcel()">
           Export Data
         </button>
       </div>
@@ -25,7 +25,25 @@
           style="font-weight: bold; color: blue;" :pagination-options="{
       enabled: true,
     }" theme="polar-bear" styleClass=" vgt-table striped " compactMode>
+          <template #table-actions> </template>
+          <template #table-row="props">
+            <span v-if="props.column.label == 'Options'">
 
+              <button @click="openEditDialog(props.row)" v-if="props.row.Dispatcher?.email == user.email"
+                class="text-green-500 hover:text-green-700 transition duration-300">
+                <PencilIcon class="h-5 w-5 inline-block mr-1" />
+                Edit
+              </button>
+
+              <!-- Delete Button with Trash Icon -->
+              <button @click="deleteItem(props.row.id)" v-if="props.row.IsArchived == false &&
+      props.row.Dispatcher?.email == user.email" class="text-red-500 hover:text-red-700 transition duration-300">
+                <TrashIcon class="h-5 w-5 inline-block mr-1" />
+                Delete
+              </button>
+
+            </span>
+          </template>
         </vue-good-table>
 
         <!-- Edit Loading Plan Dialog -->
@@ -68,6 +86,7 @@ import createListingForm from "../../../components/pages/catalogue/create.compon
 //SCHEMA//AND//STORES
 import { useListingStore } from "../../../stores/catalogue.store";
 
+import * as XLSX from 'xlsx';
 
 import { useSessionStore } from "../../../stores/session.store";
 //INJENCTIONS
@@ -90,7 +109,6 @@ const dispatchStore = useDispatcherStore();
 const dispaches = reactive([]);
 
 
-import * as XLSX from 'xlsx';
 
 const sessionStore = useSessionStore();
 
@@ -171,6 +189,13 @@ const columns = ref([
     html: true,
     tdClass: "capitalize"
   }
+  ,
+
+  {
+    label: "Options",
+    field: row => row,
+    sortable: false
+  }
 
 
 ]);
@@ -210,6 +235,15 @@ const closeReceiptDialog = () => {
 
 
 
+
+//MOUNTED
+onMounted(() => {
+  getDispatches();
+  // getLatest()
+});
+//FUNCTIONS
+
+
 const generateExcel = () => {
   const wb = XLSX.utils.book_new();
   const wsName = 'Dispatches';
@@ -227,12 +261,14 @@ const generateExcel = () => {
 };
 
 
-//MOUNTED
-onMounted(() => {
-  getDispatches();
-  // getLatest()
-});
-//FUNCTIONS
+
+const reloadPage = async () => {
+  // Wait for getLoadingplans to complete its data fetching
+  await getDispatches();
+
+  // Navigate to the route after the data has been updated
+  $router.push('/dispatcher/dispatches');
+}
 
 
 
@@ -245,8 +281,14 @@ const getDispatches = async () => {
       //   users.push(...result);
       // }
       dispaches.length = 0; //empty array
-      let sorteddata = result.reverse()
-      dispaches.push(...sorteddata);
+
+
+      let sorteddata = result.reverse();
+
+      const filterByDistrict = sorteddata.filter(plan => plan.Dispatcher?.district == user.value.district)
+
+
+      dispaches.push(...filterByDistrict);
 
 
     })
@@ -260,11 +302,20 @@ const getDispatches = async () => {
 
 
 const deleteItem = async (id) => {
-  // First, ask for confirmation
   try {
+    // First, ask for confirmation and reason
     const result = await Swal.fire({
       title: "Are you sure?",
-      text: "You won't be able to revert this!",
+      text: "Please enter the reason for deletion:",
+      input: 'textarea',
+      inputAttributes: {
+        'aria-label': 'Type your message here'
+      },
+      inputValidator: (value) => {
+        if (!value) {
+          return 'You need to provide a reason!'
+        }
+      },
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
@@ -272,16 +323,22 @@ const deleteItem = async (id) => {
       confirmButtonText: "Yes, delete it!"
     });
 
-    // If confirmed, proceed to delete
-    if (result.isConfirmed) {
+    // If confirmed and reason provided, proceed to delete
+    if (result.isConfirmed && result.value) {
       isLoading.value = true;
 
-      await dispatchStore.remove(id);
+      // Create object with id and reason
+      const deletePayload = {
+        id: id,
+        reason: result.value
+      };
+
+      await dispatchStore.removeWithComments(deletePayload);
 
       // Show success message
       await Swal.fire("Deleted!", "Your Dispatch has been deleted.", "success");
 
-      // Refresh the loading plans
+      // Refresh the dispatches
       await getDispatches();
     }
   } catch (error) {
@@ -296,6 +353,7 @@ const deleteItem = async (id) => {
     isLoading.value = false;
   }
 };
+
 
 
 

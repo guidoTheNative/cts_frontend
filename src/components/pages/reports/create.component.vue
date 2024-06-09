@@ -27,7 +27,7 @@
               <div
                 class="modal-header flex flex-shrink-0 items-center justify-between p-4 border-b border-gray-200 rounded-t-md bg-white">
                 <h5 class="font-body text-md font-bold leading-normal text-blue-400" id="formModalLabel">
-                  Create Loading Plan
+                  Create Loading Plan (Lean Season Response)
                 </h5>
                 <button type="button"
                   class="btn-close box-content w-4 h-4 p-1 text-black border-none rounded-none opacity-50 focus:shadow-none focus:outline-none focus:opacity-100 hover:text-black hover:opacity-75 hover:no-underline"
@@ -88,12 +88,14 @@
                         {{ warehouse.Name }}
                       </option>
                     </select>
-                    <span class="text-md text-blue-500 mb-5 text-italic text-lg" v-if="reports.commodityId && reports.warehouseId"> Commodity Balance: {{ availableBalance }}</span>
-                  
+                    <span class="text-md text-blue-500 mb-5 text-italic text-lg"
+                      v-if="reports.commodityId && reports.warehouseId"> Commodity Balance: {{ availableBalance
+                      }}</span>
+
                   </div>
                 </div>
 
-              
+
 
 
 
@@ -111,18 +113,28 @@
                     </select>
                   </div>
 
-                  <div class="col-span-6 sm:col-span-3">
-                    <label for="project" class="block text-sm font-bold text-gray-700">Project</label>
+                  <!--   <div class="col-span-6 sm:col-span-3">
+                    <label for="project" class="block text-sm font-bold text-gray-700 mt-5">Project</label>
 
-                    <select id="project" name="project" v-model="reports.projectId" autocomplete="project-name"
+                    <label for="project" class="block text-xs text-italic font-medium text-gray-700 mt-5">Lean Season Response</label>
+
+                  <select id="project" name="project" v-model="reports.projectId" autocomplete="project-name"
                       class="mt-1 focus:ring-gray-500 focus:border-blue-300 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
                       <option v-for="project in projects" :key="project" :value="project.id" class="uppercase">
                         {{ project.Name }}
                       </option>
-                    </select>
+                    </select> 
                   </div>
+ -->
 
-
+                  <div class="col-span-6 sm:col-span-3">
+                    <label for="ATCNumber" class="block text-sm font-bold text-gray-700 mb-2">
+                      ATC NUMBER <span class="text-red-500">(optional)</span>
+                    </label>
+                    <input type="text" name="ATCNumber" v-model="reports.ATCNumber" id="ATCNumber"
+                      autocomplete="ATCNumber"
+                      class="mt-2 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
+                  </div>
 
                 </div>
 
@@ -139,14 +151,7 @@
                   </div> -->
 
 
-                  <div class="col-span-3 sm:col-span-3">
-                    <label for="ATCNumber" class="block text-sm font-bold text-gray-700 mb-2">
-                      ATC NUMBER <span class="text-red-500">(optional)</span>
-                    </label>
-                    <input type="text" name="ATCNumber" v-model="reports.ATCNumber" id="ATCNumber"
-                      autocomplete="ATCNumber"
-                      class="mt-2 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
-                  </div>
+
 
                   <div class="col-span-3 sm:col-span-3">
                     <label for="Start Date" class="block text-sm text-gray-700 font-bold">Start Date</label>
@@ -189,7 +194,7 @@ import {
   TransitionRoot,
 } from "@headlessui/vue";
 import { XIcon, PlusIcon } from "@heroicons/vue/outline";
-import { inject, ref, reactive, onMounted, computed, watch  } from "vue";
+import { inject, ref, reactive, onMounted, computed, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useForm, useField, useSubmitForm, useIsFormValid } from "vee-validate";
 //COMPONENTS
@@ -263,6 +268,7 @@ const reports = ref({});
 //FUNCTIONS
 const onSubmit = () => {
 
+  reports.value.projectId = 1
   emit("create", reports.value);
   open.value = false; // This will set open.value to false after emitting the event
 

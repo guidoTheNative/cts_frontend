@@ -38,13 +38,13 @@ import { TruckIcon, MapIcon, UserIcon, HomeIcon, LocationMarkerIcon } from "@her
 
 const isLoading = ref(false); // Example reactive state
 const breadcrumbs = [
-  { name: "Home", href: "/manager/dashboard", current: false },
+  { name: "Home", href: "/admin/dashboard", current: false },
   { name: "Loading Plan Management", href: "#", current: true },
 ];
 const options = ref([
-  { label: 'Loading Plans', icon: MapIcon, path: '/manager/loadingplans' },
+  { label: 'Loading Plans', icon: MapIcon, path: '/dispatcher/loadingplans' },
 
-  { label: 'Dispatches', icon: LocationMarkerIcon, path: '/manager/dispatches' },
+  { label: 'Dispatches', icon: LocationMarkerIcon, path: '/dispatcher/dispatches' },
  /*  { label: 'Truck Drivers', icon: UserIcon, path: '/truck-drivers' },
   { label: 'Transporters', icon: TruckIcon, path: '/transporters' },
   { label: 'Warehouses', icon: HomeIcon, path: '/warehouses' },

@@ -60,6 +60,20 @@
           style="font-weight: bold; color: #096eb4;" :pagination-options="{ enabled: true }" theme="polar-bear"
           styleClass="vgt-table striped" compactMode>
           <template #table-row="props">
+
+            <span v-if="props.column.label === 'Status'">
+              <div>
+                <span v-if="props.row.IsArchived"
+                  class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-800">
+                  Completed
+                </span>
+                <span v-else
+                  class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-red-100 text-red-800">
+                  In progress
+                </span>
+              </div>
+            </span>
+
             <span v-if="props.column.label === 'Options'">
               <div class="flex space-x-2">
                 <!-- Manage Button -->
@@ -141,7 +155,7 @@
                             Commodity</th>
                           <th
                             class="py-2 px-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-b">
-                            Quantity</th>
+                            Quantity (MT)</th>
                           <th
                             class="py-2 px-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-b">
                             Unit</th>
@@ -283,7 +297,7 @@ const columns = ref([
     firstSortType: "asc",
     tdClass: "capitalize"
   },
-
+ 
 
   {
     label: "Affected HH",
@@ -300,6 +314,13 @@ const columns = ref([
     tdClass: "capitalize"
   },
 
+  {
+    label: "Status",
+    field: row => row.IsArchived,
+    sortable: true,
+    firstSortType: "asc",
+    tdClass: "capitalize"
+  },
 
   {
     label: "Options",

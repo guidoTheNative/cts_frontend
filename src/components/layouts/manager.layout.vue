@@ -17,7 +17,10 @@
 
 
           <!-- Admin Text in the Middle (if needed) -->
-          <span class="font-bold text-white mx-4">DODMA CTS | Manager</span>
+          <span class="font-bold text-white mx-4">DODMA CTS | Manager
+            <span class="text-xs font-normal">(v2.0)</span>
+        
+          </span>
 
 
         </div>
@@ -219,12 +222,9 @@ onMounted(() => { });
 function navigation() {
   let navList = [
     { name: "Home", href: "/manager/dashboard", icon: HomeIcon, current: false },
-    { name: "Plan & Dispatch", href: "/manager/dispatch-management", icon: AdjustmentsIcon, current: false },
-   /*  { name: "Commodities", href: "/manager/commodity-tracking", icon: CollectionIcon, current: false },
-    { name: "Requisitions", href: "/manager/requisition-management", icon: IdentificationIcon, current: false },
-    { name: "Project Management", href: "/manager/project-management", icon: IdentificationIcon, current: false },
-  */   { name: "Receipts", href: "/manager/receipt-management", icon: DocumentDuplicateIcon, current: false },
-
+   
+  { name: "Project Management", href: "/manager/project-management", icon: IdentificationIcon, current: false },
+  
     { name: "Reports", href: "/manager/report-management", icon: DocumentTextIcon, current: false },
 
   ];
@@ -238,6 +238,7 @@ function navigation() {
     // Or if it's the "Loading Plans" item and the current route base starts with /planner/loadingplans or /planner/dispatches
     const isMatched = currentRouteBase === navItem.href ||
       (navItem.name === "Plan & Dispatch" && (currentRouteBase.startsWith("/manager/loadingplans") || currentRouteBase.startsWith("/manager/dispatches"))) ||
+      (navItem.name === "Project Management" && (currentRouteBase.startsWith("/manager/dispatch-management") || currentRouteBase.startsWith("/manager/loadingplans") || currentRouteBase.startsWith("/manager/dispatches") ))||
       (navItem.name === "Receipts" && (currentRouteBase.startsWith("/manager/receipts")));
     navItem.current = isMatched;
   });

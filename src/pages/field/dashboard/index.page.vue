@@ -625,6 +625,56 @@ const actions = [
 const dispatchstatus = ref(0)
 
 
+const createReceipt = async (originalModel) => {
+
+// Separate relief items from the original model
+const { receivedCommodities, ...receiptModel } = originalModel;
+
+try {
+  // Create the dispatch without the relief items
+  const createdReceipt = await receiptStore.create(receiptModel);
+  const receiptId = createdReceipt.id;
+
+  // Pass the dispatch ID and the original relief items to create dispatched commodities
+  await createReceivedCommodities(receiptId, originalModel.receivedCommodities);
+
+  Swal.fire({
+    title: "Success",
+    text: "Created a receipt and associated commodities successfully",
+    icon: "success",
+    confirmButtonText: "Ok"
+  });
+  await dispatchStore.get()
+} catch (error) {
+  Swal.fire({
+    title: "Creation Failed",
+    text: `Failed to create dispatch and associated commodities: ${error}`,
+    icon: "error",
+    confirmButtonText: "Ok"
+  });
+} finally {
+  isLoading.value = false;
+}
+};
+
+const createReceivedCommodities = async (receiptId, receivedCommodities) => {
+  const receivedCommodityPromises = receivedCommodities.map((item) => {
+    const receiptModel = {
+      instructedReceiptId: receiptId,
+      commodityId: item.commodityId,
+      BatchNumber: item.BatchNumber,
+      Quantity: item.Quantity,
+    };
+
+    return receivedCommodityStore.create(receiptModel); // Assuming receivedCommodityStore is the correct reference
+  });
+
+  // Wait for all promises to complete
+  await Promise.all(receivedCommodityPromises);
+};
+
+
+
 </script>
 <style scoped>
 .rounded-table {

@@ -132,7 +132,7 @@ const columns = ref([
   {
     label: "Quantity",
     hidden: false,
-    field: row => row.Quantity,
+    field: row => row.commodity.commodityTypeId === 1 ? `${row.Quantity} MT` : row.Quantity,
     sortable: true,
     firstSortType: "asc"
   },

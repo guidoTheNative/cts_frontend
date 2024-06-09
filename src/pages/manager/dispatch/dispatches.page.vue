@@ -13,6 +13,9 @@
             Dispatches
           </h2>
         </div>
+
+
+
         <button type="button"
           class="font-body inline-block px-6 py-2.5 bg-gray-500 text-white font-medium text-xs leading-tight rounded shadow-md hover:bg-gray-600 hover:shadow-lg focus:bg-gray-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-400 active:shadow-lg transition duration-100 ease-in-out capitalize"
           @click="generateExcel">
@@ -79,6 +82,8 @@ const isLoading = ref(false);
 const breadcrumbs = [
   { name: "Home", href: "/admin/dashboard", current: false },
   { name: "Dispatches", href: "#", current: true },
+
+  { name: "Lean Season Response", href: "#", current: true },
 ];
 
 
@@ -154,16 +159,16 @@ const columns = ref([
       const endDate = moment(row.loadingPlan?.EndDate);
 
       if (row.IsArchived) {
-        return "<span class='text-green-600'>Expensed</span>";
+        return "<span class='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-800'>Expensed</span>";
       } else if (!row.IsArchived && endDate.isBefore(today)) {
         const diffDays = today.diff(endDate, 'days');
         if (diffDays <= 3) {
-          return "<span class='text-yellow-600'>Delayed</span>";
+          return "<span class='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-800'>Delayed</span>";
         } else {
-          return "<span class='text-red-600'>Not Delivered</span>";
+          return "<span class='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-red-100 text-red-800'>Not Delivered</span>";
         }
       } else {
-        return "<span class='text-blue-400'>Pending</span>";
+        return "<span class='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-800'>Pending</span>";
       }
     },
     sortable: true,

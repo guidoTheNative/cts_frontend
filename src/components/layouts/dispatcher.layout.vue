@@ -17,7 +17,10 @@
 
 
           <!-- Admin Text in the Middle (if needed) -->
-          <span class="font-bold text-white mx-4">DODMA CTS | Dispatcher</span>
+          <span class="font-bold text-white mx-4">DODMA CTS | Dispatcher
+            <span class="text-xs font-normal">(v2.0)</span>
+        
+          </span>
 
           <div class="flex items-center ml-2">
             <LocationMarkerIcon class="h-5 w-5 text-white mr-2" />

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <button @click="open = true" class="
+    <button @click="openDialog" class="
         inline-flex
         items-center
         px-3
@@ -105,9 +105,9 @@
                         <!-- Form Inputs -->
                         <label for="deliveryNote" class="block font-medium">Delivery Note:</label>
                         <input type="text" id="deliveryNote" v-model="DeliveryNote"
-                        class="mt-1 focus:ring-gray-500 focus:border-blue-300 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                        class="mt-1 focus:ring-gray-500 focus:border-blue-300 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" readonly>
 
-                        <label for="finalDestination" class="block font-medium">Final Destination Point:</label>
+                        <label for="finalDestination" class="block font-medium mt-3">Final Destination Point:</label>
                         <input type="text" id="finalDestination" v-model="FinalDestinationPoint"
                         class="mt-1 focus:ring-gray-500 focus:border-blue-300 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
 
@@ -191,7 +191,6 @@
 </template>
 
 <script setup>
-
 import {
   SearchIcon,
   EyeIcon,
@@ -210,6 +209,9 @@ import {
   RadioGroupOption,
   TransitionChild,
   TransitionRoot,
+  Popover,
+  PopoverButton,
+  PopoverPanel,
 } from "@headlessui/vue";
 import { XIcon } from "@heroicons/vue/outline";
 import { inject, ref, reactive, onMounted } from "vue";
@@ -262,9 +264,6 @@ const open = ref(false);
 const districtstore = usedistrictstore();
 const districts = reactive([])
 
-
-
-
 const warehouseStore = usewarehousestore()
 const warehouses = reactive([])
 
@@ -276,8 +275,6 @@ const activities = reactive([])
 
 const disasterStore = useDisasterstore();
 const disasters = reactive([])
-
-
 
 const requisitionStore = userequisitionstore();
 const requisitions = reactive([])
@@ -299,26 +296,37 @@ const { meta } = useForm({
   },
 });
 ///FIELDS
-const { value: DeliveryNote, errorMessage: DeliveryNoteError } =
-  useField("DeliveryNote");
-const { value: TruckNumber, errorMessage: TruckNumberError } = useField("TruckNumber")
+const { value: DeliveryNote, errorMessage: DeliveryNoteError } = useField("DeliveryNote");
+const { value: TruckNumber, errorMessage: TruckNumberError } = useField("TruckNumber");
 const { value: FinalDestinationPoint, errorMessage: FinalDestinationPointError } = useField("FinalDestinationPoint");
 const { value: DriverLicense, errorMessage: DriverLicenseError } = useField("DriverLicense");
 const { value: DriverName, errorMessage: DriverNameError } = useField("DriverName");
 
-
-
-//MOUNTED
 onMounted(() => {
   getRequisition();
-  getActivities()
-  getDisasters()
-  getDistricts()
-  getWarehouses()
-  getTransporters()
+  getActivities();
+  getDisasters();
+  getDistricts();
+  getWarehouses();
+  getTransporters();
+  generateUniqueDeliveryNote();
 });
-//FUNCTIONS
 
+const openDialog = () => {
+  open.value = true;
+  generateUniqueDeliveryNote();
+};
+
+const closeDialog = () => {
+  open.value = false;
+};
+
+// Function to generate a unique delivery note
+const generateUniqueDeliveryNote = () => {
+  const timestamp = new Date().getTime().toString(12); // Base36 timestamp
+  const uniqueString = Math.random().toString(12).substr(2, 5).toUpperCase(); // Random 5-character string
+  DeliveryNote.value = `DODMA-${timestamp}-${uniqueString}`;
+};
 
 // Check if a Commodity is Duplicated
 const validateCommodity = (index) => {
@@ -342,103 +350,70 @@ const removeItem = (id) => {
   reliefItems.value = reliefItems.value.filter(item => item.id !== id);
 };
 
-
 const getTransporters = async () => {
   transporterStore
     .get()
     .then(result => {
-
       transporters.length = 0; //empty array
       transporters.push(...result);
-
     })
-    .catch(error => {
-
-    })
-    .finally(() => {
-    });
+    .catch(error => {})
+    .finally(() => {});
 };
-
 
 const getWarehouses = async () => {
   warehouseStore
     .get()
     .then(result => {
-
       warehouses.length = 0; //empty array
       warehouses.push(...result);
-
     })
-    .catch(error => {
-
-    })
-    .finally(() => {
-    });
+    .catch(error => {})
+    .finally(() => {});
 };
 
 const getRequisition = async () => {
   requisitionStore
     .get()
     .then(result => {
-
       requisitions.length = 0; //empty array
       requisitions.push(...result);
-
     })
-    .catch(error => {
-
-    })
-    .finally(() => {
-    });
+    .catch(error => {})
+    .finally(() => {});
 };
-
 
 const getDistricts = async () => {
   districtstore
     .get()
     .then(result => {
-
       districts.length = 0; //empty array
       districts.push(...result);
-
     })
-    .catch(error => {
-
-    })
-    .finally(() => {
-    });
+    .catch(error => {})
+    .finally(() => {});
 };
 
 const getDisasters = async () => {
   disasterStore
     .get()
     .then(result => {
-
       disasters.length = 0; //empty array
       disasters.push(...result);
-
     })
-    .catch(error => {
-
-    })
-    .finally(() => {
-    });
+    .catch(error => {})
+    .finally(() => {});
 };
 
 const getActivities = async () => {
   activityStore
     .get()
     .then(result => {
-
       activities.length = 0; //empty array
       activities.push(...result);
-
     })
-    .catch(error => {
-
-    })
-    .finally(() => {
-    });
+    .catch(error => {})
+    .finally(() => {});
 };
 
 const currentDate = ref(moment().format('YYYY-MM-DD HH:mm:ss'));
@@ -459,7 +434,6 @@ const onSubmit = useSubmitForm((values, actions) => {
   open.value = false;
   actions.resetForm();
 });
-
 
 const AffectedAreas = ref([]); // Array of tags (places)
 const newVillage = ref(''); // Input value for new tags

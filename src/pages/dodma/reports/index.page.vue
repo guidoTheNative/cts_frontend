@@ -9,7 +9,7 @@
       <div class="mt-2 md:flex md:items-center md:justify-between">
         <div class="flex-1 min-w-0">
           <h2 class="font-bold leading-7 text-white sm:text-2xl sm:truncate mb-3">
-           Report Management
+            Report Management
           </h2>
         </div>
         <div class="mt-4 flex-shrink-0 flex md:mt-0 md:ml-4"></div>
@@ -31,24 +31,31 @@
               aria-controls="user-settings" aria-selected="false">Commodity Distribution Report</a>
           </li>
 
-        
-         
+          <li class="nav-item mr-1" role="presentation">
+            <a href="#user-lean"
+              class="nav-link block font-bold text-xs leading-tight capitalize border-x-0 border-t-0 border-b-2 border-transparent px-6 py-3 my-1hover:border-transparent hover:bg-blue-100 focus:border-transparent"
+              id="tabs-user-lean" data-bs-toggle="pill" data-bs-target="#user-lean" role="tab"
+              aria-controls="user-settings" aria-selected="false">Lean Season Dispatch Reports</a>
+          </li>
+
+
         </ul>
         <div class="tab-content" id="tabs-user-options">
           <div class="tab-pane fade show active mt-3" id="user-relief" role="tabpanel"
             aria-labelledby="tabs-user-relief">
-            <user-relief :data="warehousesinventory" v-on:update="updateOrCreateReliefItems"  />
+            <user-relief :data="warehousesinventory" v-on:update="updateOrCreateReliefItems" />
           </div>
-          <div class="tab-pane fade" id="user-settings" role="tabpanel"
-            aria-labelledby="tabs-user-settings">
-               
+          <div class="tab-pane fade" id="user-settings" role="tabpanel" aria-labelledby="tabs-user-settings">
+
             <commodity-distribution-table :data="commodityDistributionData" :screenshotMode="screenshotMode" />
-          
+
           </div>
-          <div class="tab-pane fade" id="user-receipt" role="tabpanel"
-            aria-labelledby="tabs-user-settings">
-            
-           </div>
+          <div class="tab-pane fade" id="user-lean" role="tabpanel" aria-labelledby="tabs-user-lean">
+
+            <user-lean :screenshotMode="screenshotMode" />
+
+          </div>
+
         </div>
       </div>
     </div>
@@ -68,6 +75,10 @@ import UserSettings from "../../../components/pages/instruction/settings.compone
 import CommodityDistributionTable from './CommodityDistributionTable.vue';
 
 import UserRelief from "./StockPositioning.vue";
+
+
+import UserLean from "./leanseason.page.vue";
+
 //SCHEMA//AND//STORES
 
 
@@ -94,7 +105,7 @@ const isLoading = ref(false);
 const breadcrumbs = [
   { name: "Home", href: "/field/dashboard", current: false },
   { name: "Report Management", href: "#", current: false },
- ];
+];
 
 const InstructionStore = useinstructionstore();
 const warehouseStore = usewarehousestore();
@@ -139,7 +150,7 @@ const getWarehouseInventory = async () => {
   warehouseStore
     .inventorydetails()
     .then((result) => {
-      warehousesinventory.push(...result)
+      warehousesinventory.push(...result.filter(item => item.warehouse.includes('DODMA')))
     })
     .catch((error) => {
       Swal.fire({

@@ -31,11 +31,8 @@
                 <button type="button"
                   class="btn-close box-content w-4 h-4 p-1 text-black border-none rounded-none opacity-50 focus:shadow-none focus:outline-none focus:opacity-100 hover:text-black hover:opacity-75 hover:no-underline"
                   @click="open = false">
-                  <XIcon class="h-4 w-4" /> <!-- Icon added here -->
-
+                  <XIcon class="h-4 w-4" />
                 </button>
-
-
               </div>
 
               <div class="grid grid-cols-6 bg-white">
@@ -94,10 +91,8 @@
                       </p>
                     </div>
 
-                    <div class="col-span-6 sm:col-span-4" v-if="roleId == 'ADMIN3' || roleId == 'ADMIN4' || roleId == 'ADMIN8'">
-
-                      <label for="user-district" class="block text-sm font-medium text-gray-700">
-                        Select District</label>
+                    <div class="col-span-6 sm:col-span-4" v-if="roleId == 'ADMIN3' || roleId == 'ADMIN4' || roleId == 'ADMIN8' || roleId == 'ADMIN6'">
+                      <label for="user-district" class="block text-sm font-medium text-gray-700">Select District</label>
                       <select id="district" name="district" v-model="district" autocomplete="district-name"
                         class="mt-1 focus:ring-gray-500 focus:border-blue-300 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
                         <option v-for="district in districts" :key="district.Name" :value="district.Name"
@@ -110,6 +105,26 @@
                       </p>
                     </div>
 
+                    <div class="col-span-12 sm:col-span-12" v-if="roleId == 'ADMIN6'">
+                      <label for="privileges" class="block text-sm font-medium text-gray-700">
+                        User Privileges
+                      </label>
+                      <div class="flex flex-wrap items-center border-gray-300 rounded-md border p-2 mt-1">
+                        <span v-for="(privilege, index) in privileges" :key="index"
+                          class="mr-2 mb-2 px-2 py-1 bg-blue-200 text-blue-800 rounded-lg text-sm flex items-center">
+                          {{ privilege }}
+                          <button @click="removePrivilege(index)" class="ml-1 text-red-500">&times;</button>
+                        </span>
+                      </div>
+                      <div class="mt-2">
+                        <select v-model="selectedPrivilege" @change="addPrivilege"
+                          class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-gray-500 focus:border-blue-300 sm:text-sm">
+                          <option value="" disabled selected>Select user privileges</option>
+                          <option v-for="priv in availablePrivileges" :key="priv" :value="priv">{{ priv }}</option>
+                        </select>
+                      </div>
+                      <p class="text-red-500 text-xs italic pt-1">{{ privilegeError }}</p>
+                    </div>
                   </div>
 
                   <div class="grid grid-cols-6 gap-6 mt-3">
@@ -122,9 +137,7 @@
                       <div class="flex items-center w-full">
                         <input id="hide-password" name="show-password" v-model="isPwd" type="checkbox"
                           class="ml-2 h-4 w-4 border-gray-300 text-blue-400 focus:ring-blue-400 rounded" />
-                        <label for="show-password" class="block text-sm text-gray-900 p-2">
-                          Show password
-                        </label>
+                        <label for="show-password" class="block text-sm text-gray-900 p-2">Show password</label>
                       </div>
                       <p class="text-red-500 text-xs italic pt-1">
                         {{ passwordError }}
@@ -134,7 +147,7 @@
                 </div>
                 <div class="px-4 py-3 bg-gray-50 text-right sm:px-6">
                   <button type="submit" style="background-color: #096eb4;"
-                    class="`inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white hover:bg-blue-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400">
+                    class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white hover:bg-blue-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400">
                     Save
                   </button>
                 </div>
@@ -151,9 +164,6 @@
 import {
   Dialog,
   DialogOverlay,
-  RadioGroup,
-  RadioGroupLabel,
-  RadioGroupOption,
   TransitionChild,
   TransitionRoot,
 } from "@headlessui/vue";
@@ -167,7 +177,6 @@ import spinnerWidget from "../../../components/widgets/spinners/default.spinner.
 import { CreateUserSchema } from "../../../services/schema/user.schema";
 import { useRoleStore } from "../../../stores/role.store";
 import { useUserStore } from "../../../stores/user.store";
-
 import { usedistrictstore } from "../../../stores/districts.store";
 import { useSessionStore } from "../../../stores/session.store";
 //INJENCTIONS
@@ -180,16 +189,16 @@ const open = ref(false);
 const isPwd = ref(false);
 const showModal = ref(false);
 const roleStore = useRoleStore();
-
 const userStore = useUserStore();
 const roles = reactive([]);
-
 const districtstore = usedistrictstore();
-const districts = reactive([])
-
+const districts = reactive([]);
 const sessionStore = useSessionStore();
-
 const user = ref(sessionStore.getUser);
+const privileges = ref([]);
+const selectedPrivilege = ref("");
+const privilegeError = ref("");
+const availablePrivileges = ["All", "Warehouse management", "Lean season responses"];
 
 //FORM
 const { meta } = useForm({
@@ -216,10 +225,7 @@ const { value: confirmPassword, errorMessage: confirmPasswordError } =
   useField("confirmPassword");
 const { value: status, errorMessage: statusError } = useField("status");
 const { value: roleId, errorMessage: roleIdError } = useField("roleId");
-
 const { value: district, errorMessage: districtError } = useField("district");
-
-
 
 //MOUNTED
 onMounted(() => {
@@ -228,23 +234,20 @@ onMounted(() => {
 });
 //FUNCTIONS
 
-
 const getDistricts = async () => {
   districtstore
     .get()
     .then(result => {
-
       districts.length = 0; //empty array
       districts.push(...result);
-
     })
     .catch(error => {
-
+      // Handle error
     })
     .finally(() => {
+      // Finalize
     });
 };
-
 
 const onSubmit = useSubmitForm((values, actions) => {
   let model = {
@@ -257,7 +260,8 @@ const onSubmit = useSubmitForm((values, actions) => {
     password: password.value,
     status: status.value,
     roleId: roleId.value,
-    district: district.value
+    district: district.value,
+    privileges: privileges.value.join()
   };
   emit("create", model);
   open.value = false;
@@ -276,15 +280,45 @@ const getRoles = async () => {
       }
     })
     .catch((error) => {
-      /* Swal.fire({
-        title: "Failed",
-        text: "failed to get roles error (" + error + ")",
-        icon: "error",
-        confirmButtonText: "Ok",
-      }); */
+      // Handle error
     })
     .finally(() => {
       isLoading.value = false;
     });
 };
+
+const addPrivilege = () => {
+  if (selectedPrivilege.value && !privileges.value.includes(selectedPrivilege.value)) {
+    if (selectedPrivilege.value === "All") {
+      privileges.value = ["All"];
+    } else {
+      privileges.value.push(selectedPrivilege.value);
+      privileges.value = privileges.value.filter(priv => priv !== "All");
+    }
+    selectedPrivilege.value = "";
+  }
+};
+
+const removePrivilege = (index) => {
+  privileges.value.splice(index, 1);
+};
 </script>
+
+<style>
+.rounded-table {
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.from-color {
+  color: #096eb4;
+}
+
+.to-color {
+  color: green;
+}
+
+.by-color {
+  color: gray;
+}
+</style>

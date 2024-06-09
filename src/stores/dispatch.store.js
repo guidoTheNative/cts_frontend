@@ -28,6 +28,24 @@ export const useDispatcherStore = defineStore({
 
 
 
+    
+
+    async getdispatchDamageSummary() {
+      return await dispatcherService
+        .getdispatchDamageSummary()
+        .then((result) => {
+
+          return result;
+
+        })
+        .catch((error) => {
+          switch (error.statusCode) {
+            default:
+              throw error.message;
+          }
+        });
+    },
+
     async getdispatchSummary() {
       return await dispatcherService
         .getdispatchSummary()

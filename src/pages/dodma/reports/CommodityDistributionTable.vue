@@ -1,53 +1,59 @@
 <template>
     <div class="w-full">
-
-
-        <div class="flex justify-between items-centerrounded-md">
+        <div class="flex justify-between items-center rounded-md">
             <!-- Title on the left -->
-
-            <span class="text-white font-bold">Commodity Distribution Report</span>
+            <span class="text-white font-bold">Commodity Distribution Report (Emergency Response)</span>
 
             <!-- Export Dropdown Button on the right -->
-            <div class="relative inline-block text-left">
-                <button @click.prevent="exportToExcel"
-                    class="inline-flex justify-center rounded-md border p-3 border-none shadow-sm px-2 py-1 bg-blue-500 text-white text-md font-bold rounded-md hover:bg-blue-700 focus:outline-none"
-                    id="menu-button" aria-expanded="true" aria-haspopup="true">
-                    Export to Excel
-
-                </button>
-
-            </div>
+           
         </div>
-        <div class="overflow-x-auto relative bg-white p-6 rounded-lg shadow-lg mt-4">
-            <div class="absolute top-0 right-0 p-4 flex items-center" :class="{ 'hidden': screenshotMode }">
-                <!-- District Selector -->
-                <span class="mr-3 font-medium mb-3">District:</span>
-                <select v-model="selectedDistrict"
-                    class="mb-2 mr-2 focus:ring-gray-500 focus:border-blue-300 block shadow-sm sm:text-sm border-gray-300 rounded-md">
-                    <option value="">All Districts</option>
-                    <option v-for="district in districts" :key="district.Name" :value="district.Name">
-                        {{ district.Name }}
-                    </option>
-                </select>
-                <!-- Commodity Selector -->
-                <span class="mr-3 font-medium mb-3">Commodity:</span>
-                <select v-model="selectedCommodity"
-                    class="mb-2 focus:ring-gray-500 focus:border-blue-300 block shadow-sm sm:text-sm border-gray-300 rounded-md">
-                    <option value="">All Commodities</option>
-                    <option v-for="commodity in commodities" :key="commodity.Name" :value="commodity.Name">
-                        {{ commodity.Name }}
-                    </option>
-                </select>
-                <!-- Reset Button -->
-                <button @click="resetFilters"
-                    class="ml-2 mb-2 bg-red-500 hover:bg-red-700 text-white font-bold py-1 px-2 text-sm rounded">
-                    Reset Filters
-                </button>
 
+        <div class="overflow-x-auto relative bg-white p-6 rounded-lg shadow-lg mt-4">
+            <div class="flex items-center space-x-4 mb-4" :class="{ 'hidden': screenshotMode }">
+                <div class="flex flex-col">
+                    <label for="district" class="text-sm font-medium text-gray-700 mb-2">District</label>
+                    <select id="district" v-model="selectedDistrict"
+                        class="focus:ring-gray-500 focus:border-blue-300 block shadow-sm sm:text-sm border-gray-300 rounded-md">
+                        <option value="">All Districts</option>
+                        <option v-for="district in districts" :key="district.Name" :value="district.Name">
+                            {{ district.Name }}
+                        </option>
+                    </select>
+                </div>
+
+                <div class="flex flex-col">
+                    <label for="commodity" class="text-sm font-medium text-gray-700 mb-2">Commodity</label>
+                    <select id="commodity" v-model="selectedCommodity"
+                        class="focus:ring-gray-500 focus:border-blue-300 block shadow-sm sm:text-sm border-gray-300 rounded-md">
+                        <option value="">All Commodities</option>
+                        <option v-for="commodity in commodities" :key="commodity.Name" :value="commodity.Name">
+                            {{ commodity.Name }}
+                        </option>
+                    </select>
+                </div>
+
+                <div class="flex items-end mt-4">
+                    <button @click="resetFilters"
+                        class="bg-gray-200 hover:bg-gray-300 text-black font-medium py-1 px-2 text-sm rounded">
+                        Reset
+                    </button>
+                    <div class="relative inline-block text-left mx-4">
+                <button @click.prevent="exportToExcel"
+                    class="inline-flex justify-center rounded-md border p-3 border-none shadow-sm px-2 py-1 bg-gray-500 text-white text-md font-medium hover:bg-gray-600 focus:outline-none"
+                    id="menu-button" aria-expanded="true" aria-haspopup="true">
+                    Export To Excel
+                </button>
             </div>
+                </div>
+            </div>
+
             <table class="min-w-full divide-y divide-gray-200 mt-8">
                 <thead class="bg-blue-50">
                     <tr>
+                        <th scope="col"
+                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                            Emergency/Disaster
+                        </th>
                         <th scope="col"
                             class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             District
@@ -76,6 +82,7 @@
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
                     <tr v-for="(row, index) in filteredData" :key="index">
+                        <td class="px-6 py-4 whitespace-nowrap">{{ row.disaster }}</td>
                         <td class="px-6 py-4 whitespace-nowrap">{{ row.district }}</td>
                         <td class="px-6 py-4 whitespace-nowrap">{{ row.commodity }}</td>
                         <td class="px-6 py-4 whitespace-nowrap">{{ row.required }}</td>
@@ -85,6 +92,7 @@
                     </tr>
                 </tbody>
             </table>
+
             <!-- Pagination Controls -->
             <div class="flex justify-center mt-4" :class="{ 'hidden': screenshotMode }">
                 <button @click="prevPage" :disabled="currentPage <= 1"
@@ -117,15 +125,13 @@ import { ref, computed, reactive, onMounted } from 'vue';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/vue/outline';
 import { usedistrictstore } from "../../../stores/districts.store";
 import { usecommoditiestore } from "../../../stores/commodity.store";
-import { boolean } from 'yup';
 import { saveAs } from 'file-saver';
 import * as XLSX from 'xlsx';
 
 const districtstore = usedistrictstore();
-const districts = reactive([])
-
+const districts = reactive([]);
 const commoditystore = usecommoditiestore();
-const commodities = reactive([])
+const commodities = reactive([]);
 
 const props = defineProps({
     data: Array,
@@ -137,6 +143,7 @@ const pageSize = ref(5);
 const selectedDistrict = ref('');
 const selectedCommodity = ref('');
 const totalPages = computed(() => Math.ceil(props.data.length / pageSize.value));
+
 const filteredData = computed(() => {
     return props.data.filter(item => {
         return (!selectedDistrict.value || item.district === selectedDistrict.value) &&
@@ -147,10 +154,6 @@ const filteredData = computed(() => {
 function nextPage() {
     if (currentPage.value < totalPages.value) currentPage.value++;
 }
-onMounted(() => {
-    getCommodities();
-    getDistricts();
-})
 
 function prevPage() {
     if (currentPage.value > 1) currentPage.value--;
@@ -161,20 +164,24 @@ function resetFilters() {
     selectedCommodity.value = '';
 }
 
+onMounted(() => {
+    getCommodities();
+    getDistricts();
+});
 
 const getCommodities = async () => {
-    let commoditydata = await commoditystore.get()
-    commodities.length = 0
-    commodities.push(...commoditydata)
-    return commodities
-}
+    let commoditydata = await commoditystore.get();
+    commodities.length = 0;
+    commodities.push(...commoditydata);
+    return commodities;
+};
 
 const getDistricts = async () => {
-    let districtsdata = await districtstore.get()
-    districts.length = 0
-    districts.push(...districtsdata)
-    return districts
-}
+    let districtsdata = await districtstore.get();
+    districts.length = 0;
+    districts.push(...districtsdata);
+    return districts;
+};
 
 const exportToExcel = () => {
     const worksheet = XLSX.utils.json_to_sheet(props.data);
@@ -185,3 +192,21 @@ const exportToExcel = () => {
     saveAs(data, 'CommodityDistributionReport.xlsx');
 };
 </script>
+
+<style scoped>
+.bg-gray-200 {
+    background-color: #e5e7eb;
+}
+
+.bg-gray-300 {
+    background-color: #d1d5db;
+}
+
+.bg-gray-500 {
+    background-color: #6b7280;
+}
+
+.bg-gray-600 {
+    background-color: #4b5563;
+}
+</style>

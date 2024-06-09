@@ -8,8 +8,10 @@ export default class LoadingPlanService {
         .get(
           resource +
           `?filter={"include": [
-              "activity", "user", "district", "transporter", "warehouse", "commodity"
-            ]}`,
+              "activity", "user", "district", "transporter", "warehouse", "commodity",
+              {"relation":"dispatches","scope":{"include":[{"relation":"receipts"}]}}
+            ]
+          }`,
           {
             headers: {
               "Access-Control-Allow-Origin": "*",

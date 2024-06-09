@@ -12,7 +12,10 @@
             <img class="block" src="../../assets/images/wfp-logo-emblem-white.png" alt="wfp" style="height: 50px;" />
           </a>
           <!-- Admin Text in the Middle -->
-          <span class="font-bold text-white mx-4">DODMA CTS | Commissioner</span>
+          <span class="font-bold text-white mx-4">DODMA CTS | Commissioner
+            <span class="text-xs font-normal">(v2.0)</span>
+        
+          </span>
         </div>
 
         <div class="flex space-x-4">

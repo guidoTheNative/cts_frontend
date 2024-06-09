@@ -17,7 +17,10 @@
 
 
           <!-- Admin Text in the Middle (if needed) -->
-          <span class="font-bold text-white mx-4">DODMA CTS | Central Officer</span>
+          <span class="font-bold text-white mx-4">DODMA CTS | Central Officer
+            <span class="text-xs font-normal">(v2.0)</span>
+        
+          </span>
 
 
         </div>
@@ -40,13 +43,13 @@
             'mr-1 flex-shrink-0 h-6 w-6',
           ]" aria-hidden="true" />
               {{ item.name }}
-              
+
               <div v-if="item.name === 'Requisitions' && newRequisitionsCount > 0" class="relative ml-2 mx-4">
-                    <span
-                      class="absolute -top-3 -right-3 flex items-center justify-center px-1 py-0.5 text-xs font-bold text-white bg-red-600 rounded-full">
-                      {{ newRequisitionsCount }}
-                    </span>
-                  </div>
+                <span
+                  class="absolute -top-3 -right-3 flex items-center justify-center px-1 py-0.5 text-xs font-bold text-white bg-red-600 rounded-full">
+                  {{ newRequisitionsCount }}
+                </span>
+              </div>
             </a>
           </router-link>
 
@@ -234,17 +237,19 @@ const isLoading = ref(false)
 
 //MOUNTED
 onMounted(() => {
-  
+
   getRequisitions();
- });
+});
 //WAT
 function navigation() {
   let navList = [
     { name: "Home", href: "/dodma/dashboard", icon: HomeIcon, current: false },
-   /*  { name: "Commodities", href: "/warehouse/commodity-tracking", icon: CollectionIcon, current: false },
-    { name: "Requisitions", href: "/warehouse/requisition-management", icon: IdentificationIcon, current: false },
-    { name: "Project Management", href: "/warehouse/project-management", icon: IdentificationIcon, current: false },
-  */  { name: "Requisitions", href: "/dodma/requisition-management", icon: ClipboardListIcon, current: false },
+    /*  { name: "Commodities", href: "/warehouse/commodity-tracking", icon: CollectionIcon, current: false },
+     { name: "Requisitions", href: "/warehouse/requisition-management", icon: IdentificationIcon, current: false },
+     { name: "Project Management", href: "/warehouse/project-management", icon: IdentificationIcon, current: false },
+   */
+    { name: "Project Management", href: "/dodma/project-management", icon: IdentificationIcon, current: false },
+    { name: "Requisitions", href: "/dodma/requisition-management", icon: ClipboardListIcon, current: false },
     { name: "Instructions", href: "/dodma/instruction-management", icon: CollectionIcon, current: false },
 
     { name: "Reports", href: "/dodma/report-management", icon: DocumentTextIcon, current: false },
@@ -259,7 +264,7 @@ function navigation() {
     // Check if the current route base matches the nav item's href
     // Or if it's the "Loading Plans" item and the current route base starts with /planner/loadingplans or /planner/dispatches
     const isMatched = currentRouteBase === navItem.href ||
-      (navItem.name === "Plan & Dispatch" && (currentRouteBase.startsWith("/warehouse/loadingplans") || currentRouteBase.startsWith("/warehouse/dispatches"))) ||
+      (navItem.name === "Project Management" && (currentRouteBase.startsWith("/dodma/dispatch-management") || currentRouteBase.startsWith("/dodma/loadingplans") || currentRouteBase.startsWith("/dodma/dispatches") )) ||
       (navItem.name === "Receipts" && (currentRouteBase.startsWith("/warehouse/receipts")));
     navItem.current = isMatched;
   });
@@ -326,7 +331,7 @@ const getRequisitions = async () => {
       // Clear the existing array
       requisitions.length = 0;
 
-   
+
 
       // Push the filtered instructions into the array
       requisitions.push(...result.filter(item => item.IsArchived == false || item.IsArchived == null));
@@ -335,8 +340,8 @@ const getRequisitions = async () => {
       // Update the count of new instructions
       newRequisitionsCount.value = requisitions.length;
     })
-    
-    
+
+
     .finally(() => {
       isLoading.value = false;
     });

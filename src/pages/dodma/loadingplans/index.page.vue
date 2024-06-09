@@ -24,7 +24,9 @@
 
 
 
-     
+        <div class="mt-5 flex ml-4 justify-center sm:mt-0">
+          <create-report-form v-on:create="createReport" />
+        </div>
 
       </div>
       <!-- table  -->
@@ -32,11 +34,40 @@
         <vue-good-table :columns="columns" :rows="loadingplans" :search-options="{ enabled: true }"
           style="font-weight: bold; color: #096eb4;" :pagination-options="{ enabled: true }" theme="polar-bear"
           styleClass="vgt-table striped" compactMode>
-        
+          <template #table-actions> </template>
+          <template #table-row="props">
+            <div v-if="props.column.label == 'Options'" class="flex space-x-2">
+
+
+
+              <!-- 
+              <button type="button" @click="openDispatchDialog(props.row)"
+                class="font-heading inline-flex items-center px-6 py-2.5 border border-blue-400 text-blue-400 font-bold text-xs rounded shadow-md hover:bg-blue-300 hover:text-white hover:shadow-lg focus:outline-none focus:ring-0 active:border-blue-400 active:shadow-lg transition duration-100 ease-in-out capitalize">
+                <TruckIcon class="h-5 w-5 mr-2" />
+                Dispatch
+              </button> -->
+
+
+              <!-- Edit Button with Pencil Icon -->
+              <!--   <button @click="openEditDialog(props.row)"
+                class="text-green-500 hover:text-green-700 transition duration-300">
+                <PencilIcon class="h-5 w-5 inline-block mr-1" />
+                Edit
+              </button> -->
+
+              <!-- Delete Button with Trash Icon -->
+              <button @click="deleteItem(props.row.id)" class="text-red-500 hover:text-red-700 transition duration-300">
+                <TrashIcon class="h-5 w-5 inline-block mr-1" />
+                Delete
+              </button>
+
+            </div>
+          </template>
         </vue-good-table>
 
         <!-- Edit Loading Plan Dialog -->
-        <EditLoadingPlanDialog :isOpen="isEditDialogOpen" :loadingPlan="selectedLoadingPlan" @close="closeEditDialog"  v-on:update="reloadPage"/>
+        <EditLoadingPlanDialog :isOpen="isEditDialogOpen" :loadingPlan="selectedLoadingPlan" @close="closeEditDialog"
+          v-on:update="reloadPage" />
 
         <DispatchLoadingPlanDialog :isOpen="isDispatchDialogOpen" :loadingPlan="selectedLoadingPlan"
           @close="closeDispatchDialog" v-on:update="reloadPage" />
@@ -74,7 +105,7 @@ import createReportForm from "../../../components/pages/reports/create.component
 import EditLoadingPlanDialog from "../../../components/pages/reports/edit-loading-plan.component.vue";
 
 
-import DispatchLoadingPlanDialog from "../../../components/pages/reports/create.dispatch.component.vue";
+import DispatchLoadingPlanDialog from "../../../components/pages/reports/create.dispatch-planner.component.vue";
 
 import { useSessionStore } from "../../../stores/session.store";
 //INJENCTIONS
@@ -86,6 +117,7 @@ const isLoading = ref(false);
 const breadcrumbs = [
   { name: "Home", href: "/admin/dashboard", current: false },
   { name: "Loading Plans", href: "#", current: true },
+  { name: "Lean Season Response", href: "#", current: true },
 ];
 
 
@@ -121,9 +153,9 @@ const columns = ref([
   },
   {
     label: "Details",
-    field: row => `<span class="from-color">From: ${row.warehouse?.Name}</span><br>` +
-      `<span class="to-color">To: ${row.district?.Name}</span><br>` +
-      `<span class="by-color">By: ${row.transporter?.Name}</span>`,
+    field: row => `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-orange-100 text-orange-800">From: ${row.warehouse?.Name}</span><br>` +
+      `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-800">To: ${row.district?.Name}</span><br>` +
+      `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-800">By: ${row.transporter?.Name}</span>`,
     sortable: true,
     firstSortType: "asc",
     html: true, // This is important to render HTML
@@ -133,12 +165,20 @@ const columns = ref([
   {
     label: "Stocks",
     hidden: false,
-    field: row => `<span class="from-color">Qty: ${row.Quantity} MT</span><br>` +
-      `<span class="to-color">Bal: ${row.Balance !== null ? row.Balance + " MT" : "Pending"}</span>`,
+    field: row => `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-100 text-blue-800">Qty: ${row.Quantity} MT</span><br>` +
+      `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-green-100 text-green-800">Bal: ${row.Balance !== null ? row.Balance + " MT" : "Pending"}</span>`,
     sortable: true,
     firstSortType: "asc",
     html: true, // Important for rendering HTML
     tdClass: "capitalize"
+  },
+
+
+
+  {
+    label: "Options",
+    field: row => row,
+    sortable: false
   }
 
 
@@ -187,7 +227,7 @@ const reloadPage = async () => {
   await getLoadingplans();
 
   // Navigate to the route after the data has been updated
-  $router.push('/manager/loadingplans');
+  $router.push('/planner/loadingplans');
 }
 
 
@@ -246,6 +286,7 @@ const createReport = async (model) => {
 
   // Format the StartDate and EndDate using moment.js
   model.userId = user.value.id
+  model.Balance = model.Quantity
   if (model.StartDate) {
     model.StartDate = moment(model.StartDate).toISOString();
   }
@@ -263,7 +304,7 @@ const createReport = async (model) => {
         confirmButtonText: "Ok"
       });
 
-      $router.push('/admin/loadingplans'); // Use the router's push method to navigate
+      $router.push('/planner/loadingplans'); // Use the router's push method to navigate
 
     })
     .catch(error => {
@@ -278,13 +319,21 @@ const createReport = async (model) => {
 
 
 
-
 const deleteItem = async (id) => {
-  // First, ask for confirmation
   try {
+    // First, ask for confirmation and reason
     const result = await Swal.fire({
       title: "Are you sure?",
-      text: "You won't be able to revert this!",
+      text: "Please enter the reason for deletion:",
+      input: 'textarea',
+      inputAttributes: {
+        'aria-label': 'Type your message here'
+      },
+      inputValidator: (value) => {
+        if (!value) {
+          return 'You need to provide a reason!'
+        }
+      },
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#3085d6",
@@ -292,23 +341,29 @@ const deleteItem = async (id) => {
       confirmButtonText: "Yes, delete it!"
     });
 
-    // If confirmed, proceed to delete
-    if (result.isConfirmed) {
+    // If confirmed and reason provided, proceed to delete
+    if (result.isConfirmed && result.value) {
       isLoading.value = true;
 
-      await loadingPlanStore.remove(id);
+      // Create object with id and reason
+      const deletePayload = {
+        id: id,
+        reason: result.value
+      };
+
+      await loadingPlanStore.removeWithComments(deletePayload);
 
       // Show success message
       await Swal.fire("Deleted!", "Your loading plan has been deleted.", "success");
 
-      // Refresh the loading plans
+      // Refresh the dispatches
       await getLoadingplans();
     }
   } catch (error) {
     // Handle errors here
     Swal.fire({
       title: "Failed",
-      text: "Failed to remove Loading plan (" + error.message + ")",
+      text: "Failed to remove loading plan (" + error.message + ")",
       icon: "error",
       confirmButtonText: "Ok"
     });

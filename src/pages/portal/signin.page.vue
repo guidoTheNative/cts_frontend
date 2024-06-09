@@ -180,7 +180,7 @@ const onSubmit = useSubmitForm((values, actions) => {
       });
 
       // Check the role and redirect accordingly
-      if (result.role === 'warehouse officer') {
+      if (result.role === 'district officer') {
         // Specific redirection for warehouse officer
         $router.push({ path: '/warehouse' });
       }

@@ -22,7 +22,7 @@ const processedChartData = computed(() => {
   return {
     labels: commodities.map(commodity => `${commodity}`),
     datasets: [{
-      label: 'Distribution Percentage',
+      label: 'Distribution Percentage (%)',
       data: distributionPercentages,
       backgroundColor: commodities.map(() => `hsla(${190 + Math.random() * 20}, 70%, 60%, 0.6)`), // More varied colors
       hoverOffset: 4
@@ -56,7 +56,7 @@ onMounted(() => {
         },
         title: {
           display: true,
-          text: 'Commodity Distribution Percentage',
+          text: 'Commodity Type Distributed (%)',
           font: {
             size: 16
           },
@@ -64,6 +64,19 @@ onMounted(() => {
             top: 10,
             bottom: 30
           }
+        },
+        
+        datalabels: {
+          color: '#fff',
+          formatter: (value, context) => {
+            return `${value}%`;
+          },
+          font: {
+            weight: 'bold',
+            size: 14
+          },
+          align: 'center',
+          anchor: 'center'
         }
       }
     }

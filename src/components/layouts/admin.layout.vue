@@ -17,7 +17,10 @@
 
 
           <!-- Admin Text in the Middle (if needed) -->
-          <span class="font-bold text-white mx-4">DODMA CTS | Admin</span>
+          <span class="font-bold text-white mx-4">DODMA CTS
+           | Admin
+           <span class="text-xs font-normal">(v2.0)</span>
+           </span>
 
 
         </div>
@@ -222,12 +225,12 @@ onMounted(() => { });
 function navigation() {
   let navList = [
     { name: "Home", href: "/admin/dashboard", icon: HomeIcon, current: false },
-    { name: "Plan & Dispatch", href: "/admin/dispatch-management", icon: AdjustmentsIcon, current: false },
-   /*  { name: "Commodities", href: "/admin/commodity-tracking", icon: CollectionIcon, current: false },
+  /*   { name: "Plan & Dispatch", href: "/admin/dispatch-management", icon: AdjustmentsIcon, current: false },
+   */ /*  { name: "Commodities", href: "/admin/commodity-tracking", icon: CollectionIcon, current: false },
     { name: "Requisitions", href: "/admin/requisition-management", icon: IdentificationIcon, current: false },
     { name: "Project Management", href: "/admin/project-management", icon: IdentificationIcon, current: false },
-  */   { name: "Receipts", href: "/admin/receipt-management", icon: DocumentDuplicateIcon, current: false },
-
+  */  /*  { name: "Receipts", href: "/admin/receipt-management", icon: DocumentDuplicateIcon, current: false },
+ */
     { name: "Reports", href: "/admin/report-management", icon: DocumentDuplicateIcon, current: false },
     { name: "System", href: "/admin/system", icon: AdjustmentsIcon, current: false },
 

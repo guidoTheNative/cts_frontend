@@ -17,7 +17,10 @@
 
 
           <!-- Admin Text in the Middle (if needed) -->
-          <span class="font-bold text-white mx-4">DODMA CTS | Planner </span>
+          <span class="font-bold text-white mx-4">DODMA CTS | Planner 
+            <span class="text-xs font-normal">(v2.0)</span>
+        
+          </span>
 
 
         </div>

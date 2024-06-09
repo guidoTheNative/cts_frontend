@@ -323,6 +323,12 @@ const routes = [
       },
 
       {
+        path: "/manager/lean-season-damages",
+        name: "manager-lean-season-damages",
+        component: () => import("../pages/manager/damages/damages.page.vue"),
+      },
+
+      {
         path: "/manager/dispatches",
         name: "manager-dispatches",
         component: () => import("../pages/manager/dispatch/dispatches.page.vue"),
@@ -796,9 +802,6 @@ const routes = [
     },
   },
 
-
-
-
   //warehouse
   {
     path: "/warehouse",
@@ -827,50 +830,41 @@ const routes = [
         name: "warehouse-manage-user",
         component: () => import("../pages/warehouse/users/manage.page.vue"),
       },
-
       {
         path: "/warehouse/dispatch-management",
         name: "warehouse-dispatch-management",
         component: () => import("../pages/warehouse/dispatch/index.page.vue"),
       },
-
       {
         path: "/warehouse/warehouses",
         name: "warehouse-warehouses-management",
         component: () => import("../pages/warehouse/warehouses/index.page.vue"),
       },
-
-
       {
         path: "/warehouse/warehouses/manage/:id",
         name: "warehouse-manage-warehouses",
         component: () => import("../pages/warehouse/warehouses/manage.page.vue"),
       },
-
       {
         path: "/warehouse/dispatches",
         name: "warehouse-dispatches",
         component: () => import("../pages/warehouse/dispatch/dispatches.page.vue"),
       },
-
       {
         path: "/warehouse/loadingplans",
         name: "warehouse-loadingplans",
         component: () => import("../pages/warehouse/loadingplans/index.page.vue"),
       },
-
       {
         path: "/warehouse/stock-management",
         name: "warehouse-stock-management",
         component: () => import("../pages/warehouse/stock/index.page.vue"),
       },
-
       {
         path: "/warehouse/stock-management/manage/:id",
         name: "warehouse-manage-stock",
         component: () => import("../pages/warehouse/stock/manage.page.vue"),
       },
-
       {
         path: "/warehouse/commodity-tracking",
         name: "warehouse-commodity-tracking",
@@ -881,40 +875,31 @@ const routes = [
         name: "warehouse-manage-commodity-tracking",
         component: () => import("../pages/warehouse/commodities/manage.page.vue"),
       },
-
-
       {
         path: "/warehouse/receipt-management",
         name: "warehouse-receipt-management",
         component: () => import("../pages/warehouse/receipts/index.page.vue"),
       },
-
-
       {
         path: "/warehouse/receipts",
         name: "warehouse-receipts",
         component: () => import("../pages/warehouse/receipts/receipts.page.vue"),
       },
-
       {
         path: "/warehouse/receipt-management/manage/:id",
         name: "warehouse-manage-receipt-management",
         component: () => import("../pages/warehouse/receipts/manage.page.vue"),
       },
-
-
       {
         path: "/warehouse/warehouse-management/",
         name: "warehouse-manage-management",
         component: () => import("../pages/warehouse/warehouse/index.page.vue"),
       },
-
       {
         path: "/warehouse/warehouse-management/manage/:id",
         name: "warehouse-manage-warehouse-management",
         component: () => import("../pages/warehouse/warehouse/manage.page.vue"),
       },
-
       {
         path: "/warehouse/requisition-management",
         name: "warehouse-requisition-management",
@@ -925,8 +910,6 @@ const routes = [
         name: "warehouse-manage-requisition-management",
         component: () => import("../pages/warehouse/requisitions/manage.page.vue"),
       },
-
-
       {
         path: "/warehouse/instruction-management",
         name: "warehouse-instruction-management",
@@ -937,37 +920,26 @@ const routes = [
         name: "warehouse-manage-instruction-management",
         component: () => import("../pages/warehouse/instruction/manage.page.vue"),
       },
-
-
-
-
       {
         path: "/warehouse/system",
         name: "warehouse-system",
         component: () => import("../pages/warehouse/system/index.page.vue"),
       },
-
-
       {
         path: "/warehouse/project-management",
         name: "warehouse-project-management",
         component: () => import("../pages/warehouse/projects/index.page.vue"),
       },
-
-
-
       {
         path: "/warehouse/report-management",
         name: "warehouse-report-management",
         component: () => import("../pages/warehouse/reports/index.page.vue"),
       },
-
-
     ],
     beforeEnter: (to, from, next) => {
       let role = JSON.parse(sessionStorage.getItem("RLE"));
       if (role != null && typeof role.name != "undefined") {
-        if (role.name == "warehouse officer") {
+        if (role.name == "district officer") {
           next();
         } else {
           next({ name: "portal-signin" });
@@ -1012,6 +984,24 @@ const routes = [
         path: "/dodma/dispatch-management",
         name: "dodma-dispatch-management",
         component: () => import("../pages/dodma/dispatch/index.page.vue"),
+      },
+
+      {
+        path: "/dodma/donations",
+        name: "dodma-donation-management",
+        component: () => import("../pages/dodma/donations/donations.page.vue"),
+      },
+
+      {
+        path: "/dodma/lean-season-damages",
+        name: "dodma-lean-season-damage-management",
+        component: () => import("../pages/dodma/damages/damages.page.vue"),
+      },
+
+      {
+        path: "/dodma/required-leanseason",
+        name: "dodma-required-leanseason-management",
+        component: () => import("../pages/dodma/requested/requested-commodities.page.vue"),
       },
 
       {

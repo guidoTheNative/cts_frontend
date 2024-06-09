@@ -54,7 +54,7 @@
                     </div>
 
                     <div class="col-span-6 sm:col-span-3">
-                      <label for="MaxStorage" class="block text-sm font-medium text-gray-700">Max Storage</label>
+                      <label for="MaxStorage (MT)" class="block text-sm font-medium text-gray-700">Max Storage (MT)</label>
                       <input type="number" Name="MaxStorage" id="MaxStorage" v-model="MaxStorage"
                         autocomplete="MaxStorage"
                         class="mt-1 focus:ring-gray-500 focus:border-blue-300 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />

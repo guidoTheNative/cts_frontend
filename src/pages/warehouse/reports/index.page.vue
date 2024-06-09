@@ -31,6 +31,12 @@
               aria-controls="user-settings" aria-selected="false">Commodity Distribution Report</a>
           </li>
 
+          <li class="nav-item mr-1" role="presentation">
+            <a href="#user-lean"
+              class="nav-link block font-bold text-xs leading-tight capitalize border-x-0 border-t-0 border-b-2 border-transparent px-6 py-3 my-1hover:border-transparent hover:bg-blue-100 focus:border-transparent"
+              id="tabs-user-lean" data-bs-toggle="pill" data-bs-target="#user-lean" role="tab"
+              aria-controls="user-settings" aria-selected="false">Lean Season Dispatch Reports</a>
+          </li>
 
 
         </ul>
@@ -44,9 +50,12 @@
             <commodity-distribution-table :data="commodityDistributionData" :screenshotMode="screenshotMode" />
 
           </div>
-          <div class="tab-pane fade" id="user-receipt" role="tabpanel" aria-labelledby="tabs-user-settings">
+          <div class="tab-pane fade" id="user-lean" role="tabpanel" aria-labelledby="tabs-user-lean">
+
+            <user-lean :screenshotMode="screenshotMode" />
 
           </div>
+
         </div>
       </div>
     </div>
@@ -65,13 +74,11 @@ import UserLogs from "../../../components/pages/users/logs.component.vue";
 import UserSettings from "../../../components/pages/instruction/settings.component.vue";
 import CommodityDistributionTable from './CommodityDistributionTable.vue';
 
-import { useSessionStore } from "../../../stores/session.store";
-
-
-const sessionStore = useSessionStore();
-
-const user = ref(sessionStore.getUser);
 import UserRelief from "./StockPositioning.vue";
+
+
+import UserLean from "./leanseason.page.vue";
+
 //SCHEMA//AND//STORES
 
 
@@ -143,8 +150,7 @@ const getWarehouseInventory = async () => {
   warehouseStore
     .inventorydetails()
     .then((result) => {
-      warehousesinventory.push(...result.filter(item => item.district == user.value.district))
-
+      warehousesinventory.push(...result.filter(item => item.warehouse.includes('DODMA')))
     })
     .catch((error) => {
       Swal.fire({

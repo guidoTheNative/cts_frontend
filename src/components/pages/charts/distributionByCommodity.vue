@@ -80,8 +80,23 @@ onMounted(() => {
                         top: 10,
                         bottom: 30
                     }
-                }
+                },
+
+                
+        datalabels: {
+          color: '#fff',
+          formatter: (value, context) => {
+            return `${value} MT`;
+          },
+          font: {
+            weight: 'bold',
+            size: 14
+          },
+          align: 'center',
+          anchor: 'center'
+        }
             },
+            
             maintainAspectRatio: false
         }
     });

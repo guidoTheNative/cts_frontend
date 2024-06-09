@@ -283,6 +283,8 @@ const onSubmit = useSubmitForm((values) => {
     receivedCommodities: receivedCommodities
   };
 
+
+
   emit("create", model);
   open.value = false
 });

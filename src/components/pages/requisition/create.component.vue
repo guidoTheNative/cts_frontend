@@ -72,23 +72,14 @@
                     </div>
 
                     <div class="col-span-12 sm:col-span-12">
-                      <label for="user-district" class="block text-sm font-medium text-gray-700">
-                        Select District</label>
-                      <select id="district" name="district" v-model="districtId" autocomplete="district-name"
-                        class="mt-1 focus:ring-gray-500 focus:border-blue-300 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
-                        <option v-for="district in districts" :key="district.id" :value="district.id" class="uppercase">
-                          {{ district.Name }}
-                        </option>
-                      </select>
-                      <p class="text-red-500 text-xs italic pt-1">
-                        {{ districtIdError }}
-                      </p>
+                      <label for="user-district" class="block text-sm font-bold text-gray-700 mb-2">
+                        District: {{ user.district }}</label>
                     </div>
 
                     <div class="col-span-12 sm:col-span-12">
                       <label for="batch" class="block text-sm font-medium text-gray-700">Affected Households</label>
-                      <input type="number" v-model="AffectedHouseholds" Name="AffectedHouseholds" id="AffectedHouseholds"
-                        autocomplete="off" placeholder="Affected Households"
+                      <input type="number" v-model="AffectedHouseholds" Name="AffectedHouseholds"
+                        id="AffectedHouseholds" autocomplete="off" placeholder="Affected Households"
                         class="mt-1 focus:ring-gray-500 focus:border-blue-300 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" />
                       <p class="text-red-500 text-xs italic pt-1">
                         {{ AffectedHouseholdsError }}
@@ -121,8 +112,7 @@
                     <div class="col-span-12 sm:col-span-12">
                       <h3 class="text-lg font-semibold text-blue-500 mb-3">Relief Items</h3>
                       <div class="space-y-3">
-                        <div v-for="(item, index) in reliefItems" :key="index"
-                          class="flex space-x-4 items-center">
+                        <div v-for="(item, index) in reliefItems" :key="index" class="flex space-x-4 items-center">
                           <div class="flex-1">
                             <label class="block text-sm font-bold text-gray-700">Commodity</label>
                             <select v-model="item.commodityId" @change="validateCommodity(index)"
@@ -135,13 +125,12 @@
                             <p v-if="item.error" class="text-red-500 text-xs italic pt-1">{{ item.error }}</p>
                           </div>
                           <div class="flex-1">
-                            <label class="block text-sm font-bold text-gray-700">Quantity</label>
+                            <label class="block text-sm font-bold text-gray-700">Quantity (MT)</label>
                             <input type="number" v-model.number="item.Quantity"
                               class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm p-2"
                               placeholder="Quantity" />
                           </div>
-                          <button type="button" @click="removeItem(item.id)"
-                            class="text-red-500 hover:text-red-700">
+                          <button type="button" @click="removeItem(item.id)" class="text-red-500 hover:text-red-700">
                             &times; <!-- A simple cross to remove the item -->
                           </button>
                         </div>
@@ -151,7 +140,7 @@
                         </button>
                       </div>
 
-                  </div>
+                    </div>
                   </div>
                 </div>
                 <div class="px-4 py-3 bg-gray-50 text-right sm:px-6">
@@ -225,7 +214,7 @@ const disasterStore = useDisasterstore();
 const disasters = reactive([])
 
 const props = defineProps({
-  
+
   commodities: Array,
 });
 
@@ -352,9 +341,12 @@ function removeItem(id) {
 const currentDate = ref(moment().format('YYYY-MM-DD HH:mm:ss'));
 
 const onSubmit = useSubmitForm((values, actions) => {
+
+  const district = districts.find(d => d.Name === user.value.district);
+
   let model = {
     disasterId: disasterId.value,
-    districtId: districtId.value,
+    districtId: district.id, // Use the district's ID if found, otherwise null
     activityId: activityId.value,
     AffectedAreas: AffectedAreas.value.join(),
     AffectedHouseholds: AffectedHouseholds.value,
@@ -362,6 +354,7 @@ const onSubmit = useSubmitForm((values, actions) => {
     reliefItems: reliefItems.value,
     CreatedOn: currentDate.value
   };
+
   emit("create", model);
   open.value = false;
   actions.resetForm();

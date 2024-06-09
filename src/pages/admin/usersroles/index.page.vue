@@ -45,7 +45,7 @@
               new user
             </button>
           </router-link> -->
-         <!--  <create-user-form v-on:create="createUser" />
+          <!--  <create-user-form v-on:create="createUser" />
            -->
         </div>
       </div>
@@ -56,7 +56,7 @@
         <vue-good-table :columns="columns" :rows="users" :search-options="{ enabled: true }"
           style="font-weight: bold; color: #096eb4;" :pagination-options="{ enabled: true }" theme="polar-bear"
           styleClass="vgt-table striped" compactMode>
-          
+
         </vue-good-table>
       </div>
     </div>
@@ -112,13 +112,26 @@ const columns = ref([
     firstSortType: "asc",
     tdClass: "capitalize"
   },
- 
+
 
   {
     label: "Description",
     field: row => row.description,
     sortable: true,
     firstSortType: "asc"
+  },
+  {
+    label: "Status",
+    field: row => {
+      return row.isArchived == true
+        ? '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-red-100 text-red-800">Disabled</span>'
+        :
+        '<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-100 text-blue-800">Active</span>';
+    },
+    sortable: true,
+    firstSortType: "asc",
+    html: true,
+    tdClass: "capitalize"
   },
 
 ]);

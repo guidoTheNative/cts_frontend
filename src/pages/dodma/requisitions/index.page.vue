@@ -141,7 +141,7 @@
                             Commodity</th>
                           <th
                             class="py-2 px-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-b">
-                            Quantity</th>
+                            Quantity (MT)</th>
                           <th
                             class="py-2 px-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-b">
                             Unit</th>
@@ -153,7 +153,7 @@
                           <td class="py-2 px-4 border-b">{{ index + 1 }}</td>
                           <td class="py-2 px-4 border-b">{{ item.commodity.Name }}</td>
                           <td class="py-2 px-4 border-b">{{ item.Quantity }}</td>
-                          <td class="py-2 px-4 border-b">{{ item.commodity.Unit }}</td>
+                          <td class="py-2 px-4 border-b">{{item.commodity.PackSize }}{{ item.commodity.Unit }}</td>
                         </tr>
                       </tbody>
                     </table>
@@ -224,7 +224,8 @@ const toggleDropdown = (rowId) => {
 const isLoading = ref(false);
 const breadcrumbs = [
   { name: "Home", href: "/field/dashboard", current: false },
-  { name: "Requisition Management", href: "#", current: true }
+  { name: "Requisition Management", href: "#", current: true },
+  { name: "Emergency Response", href: "#", current: true }
 ];
 const requisitionsStore = userequisitionstore();
 const instructionStore = useinstructionstore()

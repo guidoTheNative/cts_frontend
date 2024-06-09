@@ -123,7 +123,7 @@ const columns = ref([
  
 
   {
-    label: "Max Storage",
+    label: "Max Storage (MT)",
     field: row => row.MaxStorage,
     sortable: true,
     firstSortType: "asc"
