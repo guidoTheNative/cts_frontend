@@ -94,10 +94,17 @@
                   </a>
                 </MenuItem>
                 <MenuItem v-slot="{ active }">
+                  <button @click="onAbout()" :class="menuItemClasses(active, true)">
+                    About System
+                  </button>
+                </MenuItem>
+                <MenuItem v-slot="{ active }">
                   <button @click="onSignout" :class="menuItemClasses(active, true)">
                     Sign out
                   </button>
                 </MenuItem>
+
+             
               </MenuItems>
             </transition>
           </Menu>
@@ -118,7 +125,7 @@
     <!-- Footer -->
     <footer class="text-white text-center p-4" style="background-color: #096eb4;">
       <span class="inline-block align-middle text-sm">
-        © 2024 Designed by WFP Malawi Supply Chain Unit
+        © WFP Malawi Supply Chain Unit | DoDMA
       </span>
     </footer>
   </div>
@@ -288,6 +295,12 @@ const onSignout = async () => {
   } catch (error) {
     console.error("Sign out error:", error);
   }
+};
+
+
+const onAbout = async () => {
+   $router.push({ path: "/warehouse/about-system" })
+  
 };
 
 const newInstructionsCount = ref(0)

@@ -98,10 +98,16 @@
                 </button>
                 </MenuItem>
                 <MenuItem v-slot="{ active }">
+                  <button @click="onAbout()" :class="menuItemClasses(active, true)">
+                    About System
+                  </button>
+                </MenuItem>
+                <MenuItem v-slot="{ active }">
                 <button @click="onSignout" :class="menuItemClasses(active, true)">
                   Sign out
                 </button>
                 </MenuItem>
+               
               </MenuItems>
             </transition>
           </Menu>
@@ -124,7 +130,7 @@
     <footer class="text-white text-center p-4" style="background-color: #096eb4;">
       <span class="inline-block align-middle text-sm">
 
-        © 2024 Designed by WFP Malawi Supply Chain Unit
+        © WFP Malawi Supply Chain Unit | DoDMA
       </span>
     </footer>
   </div>
@@ -191,6 +197,11 @@ const role = ref(sessionStore.getRole);
 
 const isDropdownOpen = ref(false);
 
+
+const onAbout = async () => {
+   $router.push({ path: "/admin/about-system" })
+  
+};
 
 const menuItemClasses = (active, isButton = false) => [
   active ? 'bg-gray-100 text-gray-900' : 'text-gray-700',

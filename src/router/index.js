@@ -267,6 +267,12 @@ const routes = [
         name: "admin-project-management",
         component: () => import("../pages/admin/projects/index.page.vue"),
       },
+      {
+        path: "/admin/about-system",
+        name: "admin-about-system",
+        component: () => import("../pages/about/index.page.vue"),
+      },
+
 
 
 
@@ -410,6 +416,13 @@ const routes = [
         component: () => import("../pages/manager/reports/index.page.vue"),
       },
 
+      {
+        path: "/manager/about-system",
+        name: "manager-about-system",
+        component: () => import("../pages/about/index.page.vue"),
+      },
+
+
 
     ],
     beforeEnter: (to, from, next) => {
@@ -540,6 +553,13 @@ const routes = [
         component: () => import("../pages/dispatcher/dispatch/dispatches.page.vue"),
       },
 
+      
+      {
+        path: "/dispatcher/about-system",
+        name: "dispatcher-about-system",
+        component: () => import("../pages/about/index.page.vue"),
+      },
+
 
     ],
     beforeEnter: (to, from, next) => {
@@ -668,6 +688,11 @@ const routes = [
         component: () => import("../pages/planner/projects/index.page.vue"),
       },
 
+      {
+        path: "/planner/about-system",
+        name: "planner-about-system",
+        component: () => import("../pages/about/index.page.vue"),
+      },
 
 
     ],
@@ -785,6 +810,11 @@ const routes = [
         component: () => import("../pages/recipient/projects/index.page.vue"),
       },
 
+      {
+        path: "/recipient/about-system",
+        name: "recipient-about-system",
+        component: () => import("../pages/about/index.page.vue"),
+      },
 
 
     ],
@@ -947,6 +977,12 @@ const routes = [
         path: "/warehouse/report-management",
         name: "warehouse-report-management",
         component: () => import("../pages/warehouse/reports/index.page.vue"),
+      },
+
+      {
+        path: "/warehouse/about-system",
+        name: "warehouse-about-system",
+        component: () => import("../pages/about/index.page.vue"),
       },
     ],
     beforeEnter: (to, from, next) => {

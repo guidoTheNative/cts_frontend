@@ -103,10 +103,16 @@
                 </button>
                 </MenuItem> -->
                 <MenuItem v-slot="{ active }">
+                  <button @click="onAbout()" :class="menuItemClasses(active, true)">
+                    About System
+                  </button>
+                </MenuItem>
+                <MenuItem v-slot="{ active }">
                 <button @click="onSignout" :class="menuItemClasses(active, true)">
                   Sign out
                 </button>
                 </MenuItem>
+               
               </MenuItems>
             </transition>
           </Menu>
@@ -129,7 +135,7 @@
     <footer class="text-white text-center p-4" style="background-color: #096eb4;">
       <span class="inline-block align-middle text-sm">
 
-        © 2024 Designed by WFP Malawi Supply Chain Unit
+        © WFP Malawi Supply Chain Unit | DoDMA
       </span>
     </footer>
   </div>
@@ -210,6 +216,11 @@ function signOut() {
   userStore.signOut(); // Your sign-out logic
   isDropdownOpen.value = false;
 }
+
+const onAbout = async () => {
+   $router.push({ path: "/dispatcher/about-system" })
+  
+};
 
 
 function gotoSystemsettings() {

@@ -103,8 +103,7 @@
 
             <div class="mt-10">
               <p class="text-sm text-gray-600 text-re">
-                &copy; {{ moment().format('YYYY') }} {{ system.name }} . All
-                rights reserved.
+                &copy; {{ moment().format('YYYY') }} {{ system.name }} 
               </p>
             </div>
           </div>
