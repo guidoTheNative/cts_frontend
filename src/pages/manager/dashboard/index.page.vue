@@ -38,6 +38,13 @@
               <TemplateIcon class="h-5 w-5 mr-2" />
               Lean Season Response Dashboard
             </button>
+
+            <button @click="toggleView('Donations')" type="button"
+              class="tab-button font-body inline-flex items-center px-6 py-2.5 font-medium text-xs leading-tight rounded shadow-md transition duration-100 ease-in-out capitalize"
+              :class="{ 'active-tab': currentView === 'Donations' }">
+              <HeartIcon class="h-5 w-5 mr-2" />
+              Donations
+            </button>
           </div>
         </div>
 
@@ -62,14 +69,14 @@
 
                     <div class="mt-1 flex justify-right gap-x-2 sm:mt-0">
                       <button @click="exportToExcel"
-                        v-if="currentView !== 'dashboard' && currentView !== 'leanSeasonDashboard'" type="button"
+                      v-if="currentView !== 'dashboard' && currentView !== 'leanSeasonDashboard' && currentView !== 'Donations'" type="button"
                         class="tab-button font-body inline-flex items-center px-6 py-2.5 font-medium text-xs leading-tight rounded shadow-md transition duration-100 ease-in-out capitalize"
                         :class="{ 'active-tab': false }">
                         <DocumentDownloadIcon class="h-5 w-5 mr-2" />
                         Export to Excel
                       </button>
 
-                      <button @click="takeScreenshot" v-if="currentView !== 'dashboard'" type="button"
+                      <button @click="takeScreenshot" v-if="currentView !== 'dashboard' && currentView !== 'Donations'" type="button"
                         class="tab-button font-body inline-flex items-center px-6 py-2.5 font-medium text-xs leading-tight rounded shadow-md transition duration-100 ease-in-out capitalize"
                         :class="{ 'active-tab': false }">
                         <CameraIcon class="h-5 w-5 mr-2" />
@@ -83,6 +90,17 @@
 
             <section ref="commodityTable">
               <!-- Chart and image container -->
+              
+              <div class="bg-gray-100 p-5" v-show="currentView === 'Donations'">
+             
+             <div class="bg-gray-100 p-5">
+             <!-- Commodity distribution table view -->
+             <donations-table :data="donations"
+               :screenshotMode="screenshotMode" />
+             <!-- Other components for stats, etc... -->
+           </div>
+           </div>
+
               <div class="bg-gray-100 p-5" v-show="currentView === 'charts'">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <!-- Aligned images in the center -->
@@ -353,8 +371,11 @@ import distributionByDistrict from '../../../components/pages/charts/distributio
 import distributionPercentage from '../../../components/pages/charts/distributionPercentage.vue'; // Adjust path as needed
 import damageSummaryLean from '../../../components/pages/charts/damageSummaryLean.vue'; // Adjust path as needed
 import damageSummaryLeans from '../../../components/pages/charts/damageSummaryLeans.vue'; // Adjust path as needed
+import DonationsTable from './DonationsTable.vue';
+import { usedonationstore } from "../../../stores/donation.store";
 
 import stockSummaryLean from '../../../components/pages/charts/stocksummarylean.vue'; // Adjust path as needed
+const donationstore = usedonationstore();
 
 import { useListingStore } from "../../../stores/catalogue.store";
 import { usebookingstore } from "../../../stores/booking.store";
@@ -407,6 +428,8 @@ import {
   DocumentDuplicateIcon,
   CollectionIcon,
   IdentificationIcon,
+  
+  HeartIcon,
   DocumentTextIcon,
   OfficeBuildingIcon,
   DocumentIcon,
@@ -423,6 +446,7 @@ const screenshotMode = ref(false);
 const commodityDistributionData = ref([]);
 const commodityDispatchData = ref([]);
 
+const donations = reactive([]);
 const currentView = ref('dashboard'); // The initial view can be 'dashboard' or 'charts'
 
 const toggleView = (view) => {
@@ -430,6 +454,19 @@ const toggleView = (view) => {
 };
 
 const showTooltip = ref(false);
+const getDonations = async () => {
+  donationstore
+    .get()
+    .then(result => {
+      donations.length = 0; //empty array
+      donations.push(...result);
+    })
+    .catch(error => {
+      console.error("Failed to load donations:", error);
+    })
+    .finally(() => {
+    });
+};
 
 const districtstore = usedistrictstore();
 const commoditystore = usecommoditiestore();
@@ -558,6 +595,7 @@ onMounted(async () => {
   } finally {
     isLoading.value = false;
   }
+  getDonations();
   getCatalogue();
   getUsers();
   getBookings();

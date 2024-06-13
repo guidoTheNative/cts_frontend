@@ -159,7 +159,7 @@
 
 
                     <div class="mb-12">
-                      <span class="text-sm font-bold text-gray-700">Total Quantitye: </span>
+                      <span class="text-sm font-bold text-gray-700">Total Quantity: </span>
                       <span class="text-sm text-gray-600"> {{ loadingPlan.Quantity }} MT</span>
                     </div>
 

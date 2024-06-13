@@ -226,12 +226,15 @@ function navigation() {
     { name: "Project Management", href: "/warehouse/project-management", icon: IdentificationIcon, current: false },
     ...(user.value.privileges.includes("Warehouse management") || user.value.privileges.includes("All") ? [{ name: "Warehouse Management", href: "/warehouse/warehouse-management", icon: OfficeBuildingIcon, current: false }] : []),
     { name: "Reports", href: "/warehouse/report-management", icon: DocumentTextIcon, current: false },
+    { name: "Receipts", href: "/warehouse/receipt-management", icon: DocumentDuplicateIcon, current: false },
+
   ];
 
   const currentRouteBase = $router.currentRoute.value.fullPath.split("/").slice(0, 3).join("/");
   navList.forEach(navItem => {
     const isMatched = currentRouteBase === navItem.href ||
       (navItem.name === "Warehouse Management" && (currentRouteBase.startsWith("/warehouse/warehouses") || currentRouteBase.startsWith("/warehouse/stock-management") || currentRouteBase.startsWith("/warehouse/receipts"))) ||
+      (navItem.name === "Project Management" && (currentRouteBase.startsWith("/warehouse/loadingplans") || currentRouteBase.startsWith("/warehouse/dispatches") || currentRouteBase.startsWith("/warehouse/receipts"))) ||
       (navItem.name === "Receipts" && (currentRouteBase.startsWith("/warehouse/receipts")));
     navItem.current = isMatched;
   });
@@ -256,8 +259,8 @@ const open = ref(false);
 //FUNCTIONS
 
 const navItems = computed(() => navigation());
-const dropdownItems = computed(() => navItems.value.filter(item => item.name === "Warehouse Management" || item.name === "Reports"));
-const mainItems = computed(() => navItems.value.filter(item => item.name !== "Warehouse Management" && item.name !== "Reports"));
+const dropdownItems = computed(() => navItems.value.filter(item => item.name === "Warehouse Management" || item.name === "Reports" || item.name === "Receipts"));
+const mainItems = computed(() => navItems.value.filter(item => item.name !== "Warehouse Management" && item.name !== "Reports" && item.name !== "Receipts"));
 const remainingItems = computed(() => mainItems.value.slice(5));
 
 const itemClasses = (item) => [

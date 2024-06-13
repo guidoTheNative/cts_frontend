@@ -39,6 +39,7 @@ import {
   TruckIcon,
   ArchiveIcon,
   ReceiptRefundIcon,
+  TemplateIcon, HeartIcon, LightningBoltIcon,
   ClipboardIcon
 } from "@heroicons/vue/outline";
 
@@ -48,11 +49,9 @@ const breadcrumbs = [
   { name: "Receipt Management", href: "#", current: true },
 ];
 const options = ref([
-  /* { label: 'Instructions', icon: ClipboardListIcon, path: '/instructions' },
-  { label: 'Instructed Dispatches', icon: TruckIcon, path: '/instructed-dispatches' },
-  { label: 'Instructed Commodities', icon: ArchiveIcon, path: '/instructed-commodities' },
-  { label: 'Instructed Receipts', icon: ReceiptRefundIcon, path: '/instructed-receipts' },
-  */ { label: 'Receipts', icon: ClipboardIcon, path: '/manager/receipts' },
+  { label: 'Lean Season Response Receipts', icon: TemplateIcon, path: '/field/receipts/leanseason' },
+  { label: 'Emergency Response Receipts', icon: LightningBoltIcon, path: '/field/receipts/emergency' },
+
 ]);
 </script>
 

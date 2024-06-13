@@ -10,7 +10,7 @@
       <div class="md:flex md:items-center md:justify-between">
         <div class="flex-1 min-w-0">
           <h2 class="font-bold leading-7 text-white sm:text-2xl sm:truncate">
-            Warehouse Management
+            Commodity Damages
           </h2>
         </div>
       </div>
@@ -38,25 +38,22 @@ import {
   ClipboardListIcon,
   TruckIcon,
   ArchiveIcon,
-  WarehouseRefundIcon,
-  OfficeBuildingIcon,
+  ReceiptRefundIcon,
   ClipboardIcon
 } from "@heroicons/vue/outline";
 
 const isLoading = ref(false); // Example reactive state
 const breadcrumbs = [
-  { name: "Home", href: "/manager/dashboard", current: false },
-  { name: "Warehouse Management", href: "#", current: true },
+  { name: "Home", href: "/dodma/dashboard", current: false },
+  { name: "Commodity Damages", href: "#", current: true },
+  { name: "Lean Season Response", href: "#", current: true },
 ];
 const options = ref([
   /* { label: 'Instructions', icon: ClipboardListIcon, path: '/instructions' },
   { label: 'Instructed Dispatches', icon: TruckIcon, path: '/instructed-dispatches' },
   { label: 'Instructed Commodities', icon: ArchiveIcon, path: '/instructed-commodities' },
-  { label: 'Instructed Warehouses', icon: WarehouseRefundIcon, path: '/instructed-receipts' },
-  */ { label: 'Warehouses', icon: OfficeBuildingIcon, path: '/warehouse/warehouses' },
-  { label: 'Stock Register', icon: ClipboardIcon, path: '/warehouse/stock-management' },
- /*  { label: 'Receipts', icon: ClipboardIcon, path: '/warehouse/receipts' },
-  */
+  { label: 'Instructed Receipts', icon: ReceiptRefundIcon, path: '/instructed-receipts' },
+  */ { label: 'Commodity Damages', icon: ClipboardIcon, path: '/manager/receipts' },
 ]);
 </script>
 

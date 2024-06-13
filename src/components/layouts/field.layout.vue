@@ -266,9 +266,11 @@ function navigation() {
    /*  { name: "Commodities", href: "/warehouse/commodity-tracking", icon: CollectionIcon, current: false },
     { name: "Requisitions", href: "/warehouse/requisition-management", icon: IdentificationIcon, current: false },
     { name: "Project Management", href: "/warehouse/project-management", icon: IdentificationIcon, current: false },
-  */   { name: "Dispatches", href: "/field/dispatch-management", icon: AdjustmentsIcon, current: false },
- 
-  { name: "Disaster Management", href: "/field/emergency-management", icon: ExclamationIcon, current: false },
+  */  /*  { name: "Dispatches", href: "/field/dispatch-management", icon: AdjustmentsIcon, current: false },
+  */
+  { name: "Project Management", href: "/field/project-management", icon: IdentificationIcon, current: false },
+  
+  { name: "Disasters", href: "/field/emergency-management", icon: ExclamationIcon, current: false },
 
   { name: "Receipts", href: "/field/receipts", icon: DocumentDuplicateIcon, current: false },
 

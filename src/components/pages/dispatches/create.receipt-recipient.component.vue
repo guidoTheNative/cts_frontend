@@ -261,10 +261,6 @@ const submitReceipt = async () => {
 
   receipt.value.Quantity = computedTonnage.value
 
-
-
-
-
   receipt.value.RecipientId = user.value.id
   receipt.value.dispatchId = props.dispatch.id
 
@@ -284,7 +280,7 @@ const submitReceipt = async () => {
         cancelButtonColor: '#aaa', // Optional: style the cancel button
       }).then((result) => {
         closeDialog();
-        $router.push('/recipient/receipts');
+        $router.push('/field/receipts');
       });
 
 

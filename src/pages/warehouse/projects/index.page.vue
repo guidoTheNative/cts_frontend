@@ -58,8 +58,8 @@ const breadcrumbs = [
 ];
 const options = ref([
   { label: 'Lean Season Response', icon: TemplateIcon, path: '/warehouse/dispatch-management', showDropdown: false },
-  { label: 'Emergency Response', icon: LightningBoltIcon, path: '/activities' },
-  { label: 'Donation Management', icon: HeartIcon, path: '/donations' },
+  /* { label: 'Emergency Response', icon: LightningBoltIcon, path: '/activities' },
+   */{ label: 'Donation Management', icon: HeartIcon, path: '/warehouse/donations' },
   // ... other options as needed
 ]);
 

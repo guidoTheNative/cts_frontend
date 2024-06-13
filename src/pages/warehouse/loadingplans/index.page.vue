@@ -96,6 +96,8 @@ const isLoading = ref(false);
 const breadcrumbs = [
   { name: "Home", href: "/admin/dashboard", current: false },
   { name: "Loading Plans", href: "#", current: true },
+  { name: "Lean Season Response", href: "#", current: true },
+
 ];
 
 import { useloadingplanstore } from "../../../stores/loadingplans.store";

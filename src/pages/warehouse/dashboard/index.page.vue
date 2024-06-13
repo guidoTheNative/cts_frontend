@@ -11,7 +11,15 @@
             Dashboard
           </h2>
         </div>
+      
+        <button type="button"
+          class="font-body inline-block px-6 py-2.5 bg-green-600 text-white font-medium text-xs leading-tight rounded shadow-md hover:bg-green-600 hover:shadow-lg focus:bg-green-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-green-400 active:shadow-lg transition duration-100 ease-in-out capitalize"
+          @click="navigateToLeanSeasonLoadingPlans">
+          Manage Lean Season Dispatches
+        </button>
+       
       </div>
+
       <!-- Main 3 column grid -->
       <div class="grid grid-cols-1 gap-4 items-start lg:grid-cols-3 lg:gap-8">
         <!-- Left column -->
@@ -478,6 +486,9 @@ const actions = [
   },
 ];
 const dispatchstatus = ref(0)
+const navigateToLeanSeasonLoadingPlans = () => {
+  $router.push("/warehouse/loadingplans");
+};
 </script>
 
 <style scoped>
@@ -485,15 +496,19 @@ const dispatchstatus = ref(0)
   border-radius: 10px;
   overflow: hidden;
 }
+
 .bg-blue-500 {
   background-color: #096eb4;
 }
+
 .h-20 {
   height: 80px;
 }
+
 .mr-4 {
   margin-right: 16px;
 }
+
 img.img-fluid {
   max-width: 100%;
   height: auto;

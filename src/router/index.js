@@ -819,6 +819,11 @@ const routes = [
         name: "warehouse-dashboard",
         component: () => import("../pages/warehouse/dashboard/index.page.vue"),
       },
+      {
+        path: "/warehouse/donations",
+        name: "warehouse-donation-management",
+        component: () => import("../pages/warehouse/donations/donations.page.vue"),
+      },
       //Users
       {
         path: "/warehouse/users",
@@ -880,10 +885,18 @@ const routes = [
         name: "warehouse-receipt-management",
         component: () => import("../pages/warehouse/receipts/index.page.vue"),
       },
+   
+      
       {
-        path: "/warehouse/receipts",
-        name: "warehouse-receipts",
-        component: () => import("../pages/warehouse/receipts/receipts.page.vue"),
+        path: "/warehouse/receipts/emergency",
+        name: "warehouse-receipts-emergency",
+        component: () => import("../pages/warehouse/receipts/emergency.receipts.page.vue"),
+      },
+
+      {
+        path: "/warehouse/receipts/leanseason",
+        name: "warehouse-receipts-leanseason",
+        component: () => import("../pages/warehouse/receipts/leanseason.receipts.page.vue"),
       },
       {
         path: "/warehouse/receipt-management/manage/:id",
@@ -1147,8 +1160,11 @@ const routes = [
       {
         path: "/field/dispatch-management",
         name: "field-dispatch-management",
-        component: () => import("../pages/field/dispatch/index.page.vue"),
+        component: () => import("../pages/field/dispatch/dispatches.page.vue"),
       },
+
+
+     
 
       {
         path: "/field/dispatches",
@@ -1189,7 +1205,19 @@ const routes = [
       {
         path: "/field/receipts",
         name: "field-receipts",
-        component: () => import("../pages/field/receipts/receipts.page.vue"),
+        component: () => import("../pages/field/receipts/index.page.vue"),
+      },
+
+      {
+        path: "/field/receipts/emergency",
+        name: "field-receipts-emergency",
+        component: () => import("../pages/field/receipts/emergency.receipts.page.vue"),
+      },
+
+      {
+        path: "/field/receipts/leanseason",
+        name: "field-receipts-leanseason",
+        component: () => import("../pages/field/receipts/leanseason.receipts.page.vue"),
       },
 
       {

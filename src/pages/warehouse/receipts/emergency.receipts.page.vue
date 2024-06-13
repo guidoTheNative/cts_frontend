@@ -43,7 +43,7 @@
               <button @click="openDispatchDialog(props.row)"
                 class="text-blue-400 hover:text-blue-300 transition duration-300">
                 <EyeIcon class="h-5 w-5 inline-block mr-1" />
-                View
+                View Receipt
               </button>
 
 
@@ -84,7 +84,7 @@ import spinnerWidget from "../../../components/widgets/spinners/default.spinner.
 import breadcrumbWidget from "../../../components/widgets/breadcrumbs/admin.breadcrumb.vue";
 
 
-import ReceiptViewDialog from "../../../components/pages/dispatches/view.receipt.component.vue";
+import ReceiptViewDialog from "../../../components/pages/dispatches/view.instructed-receipt.component.vue";
 
 
 import EditReceiptDialog from "../../../components/pages/dispatches/edit-dispatch.component.vue";
@@ -106,8 +106,10 @@ const Swal = inject("Swal");
 //VARIABLES
 const isLoading = ref(false);
 const breadcrumbs = [
-  { name: "Home", href: "/admin/dashboard", current: false },
+  { name: "Home", href: "/warehouse/dashboard", current: false },
   { name: "Receipts", href: "#", current: true },
+    { name: "Emergency Response", href: "#", current: true },
+
 ];
 
 
@@ -150,9 +152,9 @@ const columns = ref([
   {
     label: "Details",
     hidden: false,
-    field: row => `<span >D.N: ${row.dispatch?.DeliveryNote !== undefined ? row.dispatch?.DeliveryNote : "N/A"}</span><br>`
+    field: row => `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-800" >D.N: ${row.instructedDispatch?.DeliveryNote !== undefined ? row.instructedDispatch?.DeliveryNote : "N/A"}</span><br>`
       +
-      `<span>To: ${row.FinalDestinationPoint !== null ? row.FinalDestinationPoint : "N/A"}</span><br>`,
+      `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-800">To: ${row.instructedDispatch?.FinalDestinationPoint !== null ? row.instructedDispatch?.FinalDestinationPoint : "N/A"}</span><br>`,
     sortable: true,
     firstSortType: "asc",
     html: true, // Important for rendering HTML
@@ -161,9 +163,9 @@ const columns = ref([
   },
 
   {
-    label: "Quantity",
+    label: "Truck Number",
     field: row => `
-    <span class="by-color"> ${row.Quantity + " MT" || "Unknown"}</span>`,
+    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-800"> ${row.instructedDispatch?.TruckNumber || "Unknown"}</span>`,
     sortable: true,
     firstSortType: "asc",
     html: true, // This is important to render HTML
@@ -193,7 +195,7 @@ const selectedReceipt = ref(null);
 
 const generateExcel = () => {
   const wb = XLSX.utils.book_new();
-  const wsName = 'Receipts';
+  const wsName = 'EmergencyReponseReceipts';
   // Create a worksheet from the flattened data array
 
 
@@ -204,23 +206,21 @@ const generateExcel = () => {
     id: receipt.id,
     CreatedOn: moment(receipt.CreatedOn).format("DD/MM/YYYY"),
     UpdatedOn: moment(receipt.UpdatedOn).format("DD/MM/YYYY"),
-    NoBags: receipt.NoBags,
     Quantity: receipt.Quantity,
     FinalDestinationPoint: receipt.FinalDestinationPoint,
-    Remarks: receipt.Remarks
   }))
 
 
   const ws = XLSX.utils.json_to_sheet(flattenedData);
   XLSX.utils.book_append_sheet(wb, ws, wsName);
   // Export the workbook
-  XLSX.writeFile(wb, 'Receipts.xlsx');
+  XLSX.writeFile(wb, 'EmergencyReponseReceipts.xlsx');
 };
 
 
 // Function to open the edit dialog
-const openDispatchDialog = (dispatch) => {
-  selectedReceipt.value = dispatch;
+const openDispatchDialog = (instructedDispatch) => {
+  selectedReceipt.value = instructedDispatch;
   isReceiptDialogOpen.value = true;
 };
 
@@ -231,8 +231,8 @@ const isEditDialogOpen = ref(false);
 
 
 // Function to open the edit dialog
-const openEditDialog = (dispatch) => {
-  selectedReceipt.value = dispatch;
+const openEditDialog = (instructedDispatch) => {
+  selectedReceipt.value = instructedDispatch;
   isEditDialogOpen.value = true;
 };
 
@@ -246,8 +246,8 @@ const closeEditDialog = () => {
 const isReceiptDialogOpen = ref(false);
 
 // Function to open the edit dialog
-const openReceiptDialog = (dispatch) => {
-  selectedReceipt.value = dispatch;
+const openReceiptDialog = (instructedDispatch) => {
+  selectedReceipt.value = instructedDispatch;
   isReceiptDialogOpen.value = true;
 };
 

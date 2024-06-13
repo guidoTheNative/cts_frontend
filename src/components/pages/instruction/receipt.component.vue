@@ -39,6 +39,9 @@
               class="inline-block align-top bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:align-start sm:my-8 sm:max-w-4xl sm:w-full">
               <div
                 class="modal-header flex flex-shrink-0 items-center justify-between p-3 border-b border-gray-200 rounded-t-md bg-white">
+                <h5 class="text-md font-bold leading-normal text-gray-800 mb-1 mr-2" id="formModalLabel">
+                  Emergency Response Dispatch 
+                </h5>
                 <h5 class="text-md font-medium leading-normal text-gray-800 mb-1" id="formModalLabel">
                   Create Receipt for Instruction (<b>ID: {{ props.rowId }} </b>)
                 </h5>

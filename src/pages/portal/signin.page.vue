@@ -14,6 +14,9 @@
       </div>
       <h2 class="mt-6 text-3xl font-extrabold text-white">
         DoDMA Commodity Tracking System
+        <span class="text-sm font-normal">(v2.0)</span>
+         
+
       </h2>
     </div>
 

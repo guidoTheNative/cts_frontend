@@ -91,29 +91,63 @@
 
           <!-- Actions panel -->
           <section aria-labelledby="quick-links-title" class="shadow-2xl bg-white rounded-table">
-            <p class="text-center text-gray-600 mt-4 font-bold"> Recent Dispatches</p>
+            <p class="text-center text-gray-600 mt-4 font-bold mb-2"> Recent Dispatches</p>
 
-            <div class="align-middle inline-block min-w-full mt-1 rounded-table mx-0">
-              <vue-good-table :columns="columns" :rows="dispaches" :search-options="{ enabled: true }"
-          style="font-weight: bold; color: #096eb4;" :pagination-options="{ enabled: true }" theme="polar-bear"
-          styleClass="vgt-table striped" compactMode>
-          <template #table-actions> </template>
+            <div class="align-middle inline-block min-w-full mt-1 rounded-md">
+              <div class="tabs">
+                <button :class="{ 'active-tab rounded-md mx-3': activeTab === 'lean' }" @click="activeTab = 'lean'">Lean
+                  Season</button>
+                <button :class="{ 'active-tab rounded-md': activeTab === 'emergency' }"
+                  @click="activeTab = 'emergency'">Emergency
+                  Response</button>
+              </div>
 
-          <template #table-row="props">
-            <span v-if="props.column.label == 'Options'">
+              <div v-if="activeTab === 'lean'">
+                <vue-good-table :columns="columns" :rows="expectedDispatches" :search-options="{ enabled: true }"
+                  style="font-weight: bold; color: #096eb4;" :pagination-options="{ enabled: true }" theme="polar-bear"
+                  styleClass="vgt-table striped" compactMode>
+                  <template #table-actions> </template>
+                  <template #table-row="props">
+                    <span v-if="props.column.label == 'Options'">
+                      <button type="button" @click="openDispatchDialog(props.row)"
+                        class="font-heading inline-flex items-center px-6 py-2.5 border border-blue-400 text-blue-400 font-bold text-xs rounded shadow-md hover:bg-blue-300 hover:text-white hover:shadow-lg focus:outline-none focus:ring-0 active:border-blue-400 active:shadow-lg transition duration-100 ease-in-out capitalize">
+                        <DocumentTextIcon class="h-5 w-5 mr-2" />
+                        Receive
+                      </button>
 
-              <div class="flex space-x-2">
+                    </span>
+                  </template>
+                </vue-good-table>
 
-                <!-- Create Instruction Button -->
-                <create-instruction-receipt-form :row-id="props.row.id" v-on:create="createReceipt"
-                  :dispatch="props.row" />
-
+                <ReceiptLoadingPlanDialog :isOpen="isReceiptDialogOpen" :dispatch="selectedDispatch"
+                  @close="closeReceiptDialog" v-on:update="reloadPage" />
 
 
               </div>
-            </span>
-          </template>
-        </vue-good-table>
+
+              <div v-if="activeTab === 'emergency'">
+                <vue-good-table :columns="columns2" :rows="dispaches" :search-options="{ enabled: true }"
+                  style="font-weight: bold; color: #096eb4;" :pagination-options="{ enabled: true }" theme="polar-bear"
+                  styleClass="vgt-table striped" compactMode>
+                  <template #table-actions> </template>
+
+                  <template #table-row="props">
+                    <span v-if="props.column.label == 'Options'">
+
+                      <div class="flex space-x-2">
+
+                        <!-- Create Instruction Button -->
+                        
+                        <create-instruction-receipt-form :row-id="props.row.id" v-on:create="createReceipt"
+                          :dispatch="props.row" />
+
+
+
+                      </div>
+                    </span>
+                  </template>
+                </vue-good-table>
+              </div>
             </div>
           </section>
 
@@ -137,6 +171,7 @@ import * as XLSX from 'xlsx';
 import "jspdf-autotable";
 import breadcrumbWidget from "../../../components/widgets/breadcrumbs/admin.breadcrumb.vue";
 import { useUserStore } from "../../../stores/user.store";
+import { useDispatcherStore } from "../../../stores/dispatch.store";
 
 import { useInstructedDispatchesStore } from "../../../stores/instructedDispatches.store";
 import ChartComponent from '../../../components/pages/charts/dashboardcharts.vue'; // Adjust path as needed
@@ -198,8 +233,31 @@ import { SearchIcon } from "@heroicons/vue/solid";
 
 const screenshotMode = ref(false);
 
+const activeTab = ref('lean');
+const expectedDispatches = reactive([]);
+
+import ReceiptLoadingPlanDialog from "../../../components/pages/dispatches/create.receipt-recipient.component.vue";
 
 
+const isEditDialogOpen = ref(false);
+const selectedDispatch = ref(null);
+
+const openEditDialog = (dispatch) => {
+  selectedDispatch.value = dispatch;
+  isEditDialogOpen.value = true;
+};
+
+const closeEditDialog = () => {
+  isEditDialogOpen.value = false;
+};
+
+const isReceiptDialogOpen = ref(false);
+
+const openDispatchDialog = (dispatch) => {
+  selectedDispatch.value = dispatch;
+  isReceiptDialogOpen.value = true;
+
+};
 const currentView = ref('dashboard'); // The initial view can be 'dashboard' or 'charts'
 
 const toggleView = (view) => {
@@ -242,48 +300,119 @@ const columns = ref([
     tdClass: "capitalize"
   },
   {
-    label: "Origin Warehouse",
+    label: "Loading Plan #",
+    field: row => row.loadingPlan?.LoadingPlanNumber,
+    sortable: true,
+    firstSortType: "asc",
+    tdClass: "capitalize"
+  },
+  {
+    label: "Commodity",
+    field: row => row.commodity,
+    sortable: true,
+    firstSortType: "asc",
+    tdClass: "capitalize"
+  },
+
+  {
+    label: "Status",
+    field: row => {
+      const today = moment();
+      const endDate = moment(row.loadingPlan?.EndDate);
+
+      if (row.IsArchived) {
+        return "<span class='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-800'>Expensed</span>";
+      } else if (!row.IsArchived && endDate.isBefore(today)) {
+        const diffDays = today.diff(endDate, 'days');
+        if (diffDays <= 3) {
+          return "<span class='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-800'>Delayed</span>";
+        } else {
+          return "<span class='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-red-100 text-red-800'>Not Delivered</span>";
+        }
+      } else {
+        return "<span class='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-800'>Pending</span>";
+      }
+    },
+    sortable: true,
+    firstSortType: "asc",
+    html: true,
+    tdClass: "capitalize"
+  },
+
+
+  {
+    label: "Options",
+    field: row => row,
+    sortable: false
+  }
+
+
+
+]);
+
+const columns2 = ref([
+
+  {
+    label: "#",
+    field: (row) => row.originalIndex + 1,
+    sortable: true,
+    firstSortType: "asc",
+    tdClass: "capitalize"
+  },
+  {
+    label: "From Warehouse",
     field: row => row.instruction?.warehouse?.Name,
     sortable: true,
     firstSortType: "asc",
     tdClass: "capitalize"
   },
   {
-    label: "Destination District",
-    field: row => row.instruction?.district?.Name,
+    label: "Dispatched By",
+    field: row => row.Dispatcher?.username.replace(/\./g, ' ') ,
     sortable: true,
     firstSortType: "asc",
     tdClass: "capitalize"
   },
 
   {
-    label: "Date Created",
-    field: row => moment(row.instruction?.CreatedOn).format("DD/MM/yyyy"),
+    label: "Status",
+    field: row => {
+      const today = moment();
+      const endDate = moment(row.loadingPlan?.EndDate);
+
+      if (row.IsArchived) {
+        return "<span class='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-800'>Expensed</span>";
+      } else if (!row.IsArchived && endDate.isBefore(today)) {
+        const diffDays = today.diff(endDate, 'days');
+        if (diffDays <= 3) {
+          return "<span class='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-yellow-100 text-yellow-800'>Delayed</span>";
+        } else {
+          return "<span class='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-red-100 text-red-800'>Not Delivered</span>";
+        }
+      } else {
+        return "<span class='inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-800'>Pending</span>";
+      }
+    },
     sortable: true,
     firstSortType: "asc",
+    html: true,
     tdClass: "capitalize"
   },
 
- 
-  
 
-{
-  label: "Options",
-  field: row => row,
-  sortable: false
-}
- 
+  {
+    label: "Options",
+    field: row => row,
+    sortable: false
+  }
+
 
 
 ]);
 
 
-
 const loadingPlanStore = useloadingplanstore();
 const loadingplans = reactive([]);
-
-
-
 
 const requisitionStore = userequisitionstore();
 const requisitions = reactive([]);
@@ -304,6 +433,9 @@ const sessionStore = useSessionStore();
 const userStore = useUserStore();
 
 const dispatchStore = useInstructedDispatchesStore();
+
+const leanseasondispatchStore = useDispatcherStore();
+
 
 const catalogueStore = useListingStore();
 const bookingStore = usebookingstore();
@@ -330,11 +462,14 @@ let userCount = ref(0);
 let bookingCount = ref(0);
 
 const receiptcount = ref(0)
+const expectedDispatchCount = ref(0);
+
 
 const dispatchcount = ref(0)
 //MOUNTEDgetCatalogue
 onMounted(() => {
   getCatalogue();
+  getExpectedDispatches()
   getUsers();
   getBookings();
   getDispatches();
@@ -348,6 +483,29 @@ onMounted(() => {
   getDisasters();
 });
 //WATCH
+
+
+const getExpectedDispatches = async () => {
+
+  leanseasondispatchStore
+    .expected(user.value.district)
+    .then((result) => {
+
+      expectedDispatchCount.value = result.length
+
+
+      expectedDispatches.length = 0; //empty array
+
+      let sorteddata = result.reverse();
+      expectedDispatches.push(...sorteddata);
+
+
+    })
+    .catch((error) => {
+
+    })
+
+};
 
 const getCatalogue = async () => {
   catalogueStore.count().then((result) => {
@@ -590,16 +748,16 @@ const stats = ref([
     percentageText: null
   },
 
- 
-   {
-     label: 'Requisitions',
-     value: requisitionCount,
-     icon: ClipboardListIcon,
-     iconColor: 'gray-400',
-     percentageText: '',
-     textColor: 'gray-600',
-     showProgress: false
-   },
+
+  {
+    label: 'Requisitions',
+    value: requisitionCount,
+    icon: ClipboardListIcon,
+    iconColor: 'gray-400',
+    percentageText: '',
+    textColor: 'gray-600',
+    showProgress: false
+  },
 ]);
 const actions = [
   {
@@ -623,56 +781,6 @@ const actions = [
 
 
 const dispatchstatus = ref(0)
-
-
-const createReceipt = async (originalModel) => {
-
-// Separate relief items from the original model
-const { receivedCommodities, ...receiptModel } = originalModel;
-
-try {
-  // Create the dispatch without the relief items
-  const createdReceipt = await receiptStore.create(receiptModel);
-  const receiptId = createdReceipt.id;
-
-  // Pass the dispatch ID and the original relief items to create dispatched commodities
-  await createReceivedCommodities(receiptId, originalModel.receivedCommodities);
-
-  Swal.fire({
-    title: "Success",
-    text: "Created a receipt and associated commodities successfully",
-    icon: "success",
-    confirmButtonText: "Ok"
-  });
-  await dispatchStore.get()
-} catch (error) {
-  Swal.fire({
-    title: "Creation Failed",
-    text: `Failed to create dispatch and associated commodities: ${error}`,
-    icon: "error",
-    confirmButtonText: "Ok"
-  });
-} finally {
-  isLoading.value = false;
-}
-};
-
-const createReceivedCommodities = async (receiptId, receivedCommodities) => {
-  const receivedCommodityPromises = receivedCommodities.map((item) => {
-    const receiptModel = {
-      instructedReceiptId: receiptId,
-      commodityId: item.commodityId,
-      BatchNumber: item.BatchNumber,
-      Quantity: item.Quantity,
-    };
-
-    return receivedCommodityStore.create(receiptModel); // Assuming receivedCommodityStore is the correct reference
-  });
-
-  // Wait for all promises to complete
-  await Promise.all(receivedCommodityPromises);
-};
-
 
 
 </script>
@@ -703,5 +811,28 @@ const createReceivedCommodities = async (receiptId, receivedCommodities) => {
 img.img-fluid {
   max-width: 100%;
   height: auto;
+}
+
+.tabs {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.tabs button {
+  background-color: #e2e8f0;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.tabs button.active-tab {
+  background-color: #3182ce;
+  color: white;
+}
+
+.tabs button:not(.active-tab):hover {
+  background-color: #cbd5e0;
 }
 </style>
