@@ -227,7 +227,7 @@ const reloadPage = async () => {
   await getLoadingplans();
 
   // Navigate to the route after the data has been updated
-  $router.push('/planner/loadingplans');
+  $router.push('/dodma/loadingplans');
 }
 
 
@@ -304,7 +304,7 @@ const createReport = async (model) => {
         confirmButtonText: "Ok"
       });
 
-      $router.push('/planner/loadingplans'); // Use the router's push method to navigate
+      $router.push('/dodma/loadingplans'); // Use the router's push method to navigate
 
     })
     .catch(error => {

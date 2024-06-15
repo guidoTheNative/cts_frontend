@@ -95,11 +95,17 @@
 
             <div class="align-middle inline-block min-w-full mt-1 rounded-md">
               <div class="tabs">
-                <button :class="{ 'active-tab rounded-md mx-3': activeTab === 'lean' }" @click="activeTab = 'lean'">Lean
-                  Season</button>
-                <button :class="{ 'active-tab rounded-md': activeTab === 'emergency' }"
-                  @click="activeTab = 'emergency'">Emergency
-                  Response</button>
+                <button :class="{ 'active-tab rounded-md mx-3 rounded-md': activeTab === 'lean' }"
+                  @click="activeTab = 'lean'">
+                  Lean Season
+                  <span v-if="leanSeasonCount > 0" class="badge badge-red">{{ leanSeasonCount }}</span>
+                </button>
+                <button :class="{ 'active-tab rounded-md mx-3 rounded-md': activeTab === 'emergency' }"
+                  @click="activeTab = 'emergency'">
+                  Emergency Response
+                  <span v-if="emergencyCount > 0" class="badge badge-red">{{ emergencyCount }}</span>
+                </button>
+
               </div>
 
               <div v-if="activeTab === 'lean'">
@@ -137,7 +143,7 @@
                       <div class="flex space-x-2">
 
                         <!-- Create Instruction Button -->
-                        
+
                         <create-instruction-receipt-form :row-id="props.row.id" v-on:create="createReceipt"
                           :dispatch="props.row" />
 
@@ -158,7 +164,7 @@
 </template>
 
 <script setup>
-import { inject, ref, watch, reactive, onMounted, toRefs } from "vue";
+import { inject, ref, watch, reactive, onMounted, toRefs, computed } from "vue";
 import { useRouter } from "vue-router";
 import { useSessionStore } from "../../../stores/session.store";
 import createInstructionReceiptForm from "../../../components/pages/instruction/receipt.component.vue";
@@ -190,6 +196,8 @@ import html2canvas from 'html2canvas';
 
 
 import { usereceiptstore } from "../../../stores/receipt.store";
+
+import { useInstructedReceiptsStore } from "../../../stores/instructedReceipts.store";
 
 import createReportForm from "../../../components/pages/reports/create.component.vue";
 import {
@@ -238,7 +246,7 @@ const expectedDispatches = reactive([]);
 
 import ReceiptLoadingPlanDialog from "../../../components/pages/dispatches/create.receipt-recipient.component.vue";
 
-
+import { useReceivedCommoditiesStore } from "../../../stores/receivedCommodities.store";
 const isEditDialogOpen = ref(false);
 const selectedDispatch = ref(null);
 
@@ -269,6 +277,13 @@ const showTooltip = ref(false);
 
 const maizeTable = ref(null);
 
+
+
+const closeReceiptDialog = () => {
+  isReceiptDialogOpen.value = false;
+};
+
+
 const takeScreenshot = () => {
   screenshotMode.value = true;
 
@@ -290,6 +305,7 @@ const takeScreenshot = () => {
     });
   }
 };
+
 const columns = ref([
 
   {
@@ -299,18 +315,41 @@ const columns = ref([
     firstSortType: "asc",
     tdClass: "capitalize"
   },
+
+
   {
-    label: "Loading Plan #",
-    field: row => row.loadingPlan?.LoadingPlanNumber,
+    label: "Quantity",
+    hidden: false,
+    field: row => `
+    <span >${row.Quantity !== null ? row.Quantity + " MT" : "Pending"}</span>`,
     sortable: true,
     firstSortType: "asc",
+    html: true, // Important for rendering HTML
+    tdClass: "capitalize"
+  }
+  ,
+
+  {
+    label: "Details",
+    hidden: false,
+    field: row => `<span >D.N: ${row.DeliveryNote}</span><br>`
+      +
+      `<span>To: ${row.FinalDestinationPoint !== null ? row.FinalDestinationPoint : "N/A"}</span><br>`,
+    sortable: true,
+    firstSortType: "asc",
+    html: true, // Important for rendering HTML
     tdClass: "capitalize"
   },
+
   {
-    label: "Commodity",
-    field: row => row.commodity,
+    label: "Dispatch Details",
+    field: row => `
+    <span class="from-color">Driver: ${row.DriverName || "Driver Not Specified"}</span><br>
+    <span class="to-color">Truck: ${row.TruckNumber || "Not Available"}</span><br>
+    <span class="by-color">By: ${row.Dispatcher?.username.replace(/\./g, ' ') || "Unknown"}</span>`,
     sortable: true,
     firstSortType: "asc",
+    html: true, // This is important to render HTML
     tdClass: "capitalize"
   },
 
@@ -337,8 +376,8 @@ const columns = ref([
     firstSortType: "asc",
     html: true,
     tdClass: "capitalize"
-  },
-
+  }
+  ,
 
   {
     label: "Options",
@@ -347,8 +386,8 @@ const columns = ref([
   }
 
 
-
 ]);
+
 
 const columns2 = ref([
 
@@ -368,7 +407,7 @@ const columns2 = ref([
   },
   {
     label: "Dispatched By",
-    field: row => row.Dispatcher?.username.replace(/\./g, ' ') ,
+    field: row => row.Dispatcher?.username.replace(/\./g, ' '),
     sortable: true,
     firstSortType: "asc",
     tdClass: "capitalize"
@@ -422,6 +461,9 @@ const disasters = reactive([]);
 
 
 const recieptStore = usereceiptstore();
+
+const instructedreceiptStore = useInstructedReceiptsStore();
+
 const receipts = reactive([]);
 
 const $router = useRouter();
@@ -436,6 +478,7 @@ const dispatchStore = useInstructedDispatchesStore();
 
 const leanseasondispatchStore = useDispatcherStore();
 
+const receivedCommodityStore = useReceivedCommoditiesStore();
 
 const catalogueStore = useListingStore();
 const bookingStore = usebookingstore();
@@ -450,6 +493,14 @@ const breadcrumbs = [
 ];
 
 let catalogueCount = ref(0);
+
+const emergencyCount = computed(() => {
+  return dispaches.length;
+});
+
+const leanSeasonCount = computed(() => {
+  return expectedDispatches.length;
+});
 
 const users = reactive([]);
 
@@ -477,13 +528,70 @@ onMounted(() => {
   getDispatchesCount();
   getLoadingPlansPending();
   getloadingplansSummary();
-  getdispatchSummary();
   getloadingplansSummaryByCommodity();
   getRequisitions();
   getDisasters();
 });
 //WATCH
 
+
+// Create dispatched commodities with the dispatch ID
+const createReceivedCommodities = async (receiptId, receivedCommodities) => {
+
+
+  const receivedCommodityPromises = receivedCommodities.map((item) => {
+    const receiptModel = {
+      instructedReceiptId: receiptId,
+      commodityId: item.commodityId,
+      BatchNumber: item.BatchNumber,
+      Quantity: item.Quantity,
+      Remarks: item.Remarks,
+    };
+
+    return receivedCommodityStore.create(receiptModel); // Assuming receivedCommodityStore is the correct reference
+  });
+
+  // Wait for all promises to complete
+  await Promise.all(receivedCommodityPromises);
+
+  getExpectedDispatches();
+  
+  getDispatches();
+};
+
+
+
+const createReceipt = async (originalModel) => {
+
+  // Separate relief items from the original model
+  const { receivedCommodities, ...receiptModel } = originalModel;
+
+  try {
+    // Create the dispatch without the relief items
+    const createdReceipt = await instructedreceiptStore.create(receiptModel);
+    const receiptId = createdReceipt.id;
+
+    // Pass the dispatch ID and the original relief items to create dispatched commodities
+    await createReceivedCommodities(receiptId, originalModel.receivedCommodities);
+
+    Swal.fire({
+      title: "Success",
+      text: "Created a receipt and associated commodities successfully",
+      icon: "success",
+      confirmButtonText: "Ok"
+    });
+    await getReceipts()
+  } catch (error) {
+    Swal.fire({
+      title: "Creation Failed",
+      text: `Failed to create dispatch and associated commodities: ${error}`,
+      icon: "error",
+      confirmButtonText: "Ok"
+    });
+  } finally {
+    isLoading.value = false;
+  }
+};
 
 const getExpectedDispatches = async () => {
 
@@ -630,7 +738,7 @@ const getLoadingPlansPending = async () => {
 }
 
 
-const getdispatchSummary = async () => {
+/* const getdispatchSummary = async () => {
   // isLoading.value = true;
   dispatchStore
     .getdispatchSummary()
@@ -643,7 +751,7 @@ const getdispatchSummary = async () => {
 
       receivedPercentage.value = result.dispatchPercentage.toFixed(2)
     })
-}
+} */
 
 
 const getloadingplansSummary = async () => {
@@ -696,40 +804,6 @@ const getBookings = async () => {
 };
 
 
-const createReport = async (model) => {
-  isLoading.value = true;
-
-  // Format the StartDate and EndDate using moment.js
-  model.userId = user.value.id
-  if (model.StartDate) {
-    model.StartDate = moment(model.StartDate).toISOString();
-  }
-  if (model.EndDate) {
-    model.EndDate = moment(model.EndDate).toISOString();
-  }
-
-  loadingPlanStore
-    .create(model)
-    .then(result => {
-      Swal.fire({
-        title: "Success",
-        text: "Created a new loading plan successfully",
-        icon: "success",
-        confirmButtonText: "Ok"
-      });
-
-      $router.push('/admin/loadingplans'); // Use the router's push method to navigate
-
-    })
-    .catch(error => {
-      // Handling error
-    })
-    .finally(() => {
-      isLoading.value = false;
-      getDispatches();
-      getLoadingPlans();
-    });
-};
 
 const formatDate = (date) => {
   const options = { year: "numeric", month: "long", day: "numeric" };
@@ -834,5 +908,22 @@ img.img-fluid {
 
 .tabs button:not(.active-tab):hover {
   background-color: #cbd5e0;
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.25em 0.5em;
+  font-size: 0.75em;
+  font-weight: bold;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+  border-radius: 0.25rem;
+}
+
+.badge-red {
+  background-color: rgba(255, 0, 0, 0.874);
+  color: white;
 }
 </style>

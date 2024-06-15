@@ -105,6 +105,9 @@
                       <span class="text-sm font-bold text-gray-700">Created On: </span>
                       <span class="text-sm text-gray-600"> {{ moment(dispatch.createdOn).format("DD/MM/YYYY") }}</span>
                     </div>
+
+                 
+
                     <div class="mb-12">
                       <span class="text-sm font-bold text-gray-700">Final Destination: </span>
                       <span class="text-sm text-gray-600"> {{ dispatch.FinalDestinationPoint }}</span>
@@ -258,7 +261,6 @@ const submitReceipt = async () => {
 
   receipt.value.Quantity = computedTonnage.value
 
-
   receipt.value.RecipientId = user.value.id
   receipt.value.dispatchId = props.dispatch.id
 
@@ -278,7 +280,7 @@ const submitReceipt = async () => {
         cancelButtonColor: '#aaa', // Optional: style the cancel button
       }).then((result) => {
         closeDialog();
-        $router.push('/admin/receipts');
+        $router.push('/field/receipts');
       });
 
 

@@ -88,9 +88,9 @@
                         {{ warehouse.Name }}
                       </option>
                     </select>
-                    <span class="text-md text-blue-500 mb-5 text-italic text-lg"
+                   <!--  <span class="text-md text-blue-500 mb-5 text-italic text-lg"
                       v-if="reports.commodityId && reports.warehouseId"> Commodity Balance: {{ availableBalance
-                      }}</span>
+                      }}</span> -->
 
                   </div>
                 </div>

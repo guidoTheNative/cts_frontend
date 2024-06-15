@@ -1199,6 +1199,11 @@ const routes = [
         component: () => import("../pages/field/dispatch/dispatches.page.vue"),
       },
 
+      {
+        path: "/field/dispatches/emergency",
+        name: "field-emergency-dispatch-management",
+        component: () => import("../pages/field/dispatch/emergencydispatches.page.vue"),
+      },
 
      
 

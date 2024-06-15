@@ -12,11 +12,14 @@
           </h2>
         </div>
       
+     
+        
         <button type="button"
-          class="font-body inline-block px-6 py-2.5 bg-green-600 text-white font-medium text-xs leading-tight rounded shadow-md hover:bg-green-600 hover:shadow-lg focus:bg-green-500 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-green-400 active:shadow-lg transition duration-100 ease-in-out capitalize"
-          @click="navigateToLeanSeasonLoadingPlans">
-          Manage Lean Season Dispatches
-        </button>
+              class="tab-button active-tab font-body inline-flex items-center px-6 py-2.5 font-medium text-xs leading-tight rounded shadow-md transition duration-100 ease-in-out capitalize"
+              @click="navigateToLeanSeasonLoadingPlans">
+              <TemplateIcon class="h-5 w-5 mr-2" />
+             Manage Lean Season Dispatches
+            </button>
        
       </div>
 
@@ -495,6 +498,11 @@ const navigateToLeanSeasonLoadingPlans = () => {
 .rounded-table {
   border-radius: 10px;
   overflow: hidden;
+}
+
+.active-tab {
+  background-color: #248cd6;
+  color: white;
 }
 
 .bg-blue-500 {

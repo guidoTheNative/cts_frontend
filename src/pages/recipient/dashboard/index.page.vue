@@ -330,10 +330,7 @@ const getExpectedDispatches = async () => {
     .then((result) => {
 
       expectedDispatchCount.value = result.length
-
-
       expectedDispatches.length = 0; //empty array
-
       let sorteddata = result.reverse();
       expectedDispatches.push(...sorteddata);
 

@@ -82,6 +82,15 @@
                             <span class="text-sm text-gray-600">{{ receipt.dispatch.TruckNumber }}</span>
                           </td>
                         </tr>
+
+                        <tr>
+                          <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="text-sm font-bold text-gray-700  mr-2">Delivery Note:</span>
+                            <span class="text-sm text-gray-600">{{ receipt.dispatch.DeliveryNote }}</span>
+                          </td>
+                          
+                        </tr>
+                      
                       </tbody>
                     </table>
                   </div>

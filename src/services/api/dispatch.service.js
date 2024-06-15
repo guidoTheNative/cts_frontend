@@ -6,37 +6,34 @@ export default class DispatcherService {
     if (id == null) {
       return axios
         .get(resource + `?filter={"include": [
-        {
-          "relation": "loadingPlan",
-          "scope": {
-            "include": [
-              {
-                  "relation": "district"
+          {
+            "relation": "loadingPlan",
+            "scope": {
+              "include": [
+                {
+                    "relation": "district"
+                 },
+                 {
+                  "relation": "transporter"
                },
+  
                {
-                "relation": "transporter"
-             },
-
-             {
-              "relation": "warehouse"
-           }
-           ,
-
+                "relation": "warehouse"
+             }
+             
+           ,  {"relation":"commodity","scope":{"include":[{"relation":"commodityType"}]}},
+  
            {
-            "relation": "commodity"
+            "relation": "activity"
          },
-
+  
          {
-          "relation": "activity"
-       },
-
-       {
-        "relation": "user"
-     }
-            ]
+          "relation": "user"
+       }
+              ]
+            }
           }
-        }
-        , "Dispatcher", "receipts"]}`, {
+          , "Dispatcher"]}`, {
           headers: {
             "Access-Control-Allow-Origin": "*",
             "Content-type": "Application/json",
@@ -54,7 +51,35 @@ export default class DispatcherService {
         });
     } else if (id != null) {
       return axios
-        .get(resource + `/` + id + `?filter={"include":  ["loadingPlan", "Dispatcher"]}`, {
+        .get(resource + `/` + id + `?filter={"include": [
+          {
+            "relation": "loadingPlan",
+            "scope": {
+              "include": [
+                {
+                    "relation": "district"
+                 },
+                 {
+                  "relation": "transporter"
+               },
+  
+               {
+                "relation": "warehouse"
+             }
+             
+           ,  {"relation":"commodity","scope":{"include":[{"relation":"commodityType"}]}},
+  
+           {
+            "relation": "activity"
+         },
+  
+         {
+          "relation": "user"
+       }
+              ]
+            }
+          }
+          , "Dispatcher"]}`, {
           headers: {
             "Access-Control-Allow-Origin": "*",
             "Content-type": "Application/json",
@@ -92,11 +117,8 @@ export default class DispatcherService {
              {
               "relation": "warehouse"
            }
-           ,
-
-           {
-            "relation": "commodity"
-         },
+           
+         ,  {"relation":"commodity","scope":{"include":[{"relation":"commodityType"}]}},
 
          {
           "relation": "activity"

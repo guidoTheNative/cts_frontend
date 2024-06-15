@@ -429,6 +429,7 @@ import { usedistrictstore } from "../../../stores/districts.store";
 import { useDisasterstore } from "../../../stores/disaster.store";
 import { usecommoditiestore } from "../../../stores/commodity.store";
 import { usecommoditytypestore } from "../../../stores/commodity-type.store";
+import CommodityDistributionTable from './CommodityDistributionTable.vue';
 
 import createReportForm from "../../../components/pages/reports/create.component.vue";
 import {
