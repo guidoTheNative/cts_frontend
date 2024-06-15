@@ -890,15 +890,13 @@ const damagedStockStats = computed(() => {
     return [];
   }
   const commodities = [...new Set(commodityDispatchData.value[0].commoditySummary.map(item => item.commodity))];
-  const totalDamaged = commodityDispatchData.value[0].commoditySummary.reduce((acc, item) => acc + item.totalQuantity, 0);
-
+  
   return commodities.map((commodity, index) => {
     const totalForCommodity = commodityDispatchData.value[0].commoditySummary
       .filter(item => item.commodity === commodity)
-      .reduce((acc, item) => acc + item.totalQuantity, 0);
     return {
       commodity,
-      percentage: (totalForCommodity / totalDamaged * 100).toFixed(2),
+      percentage: totalForCommodity[0].damagePercentage.toFixed(2),
       color: colors[index % colors.length]
     };
   });

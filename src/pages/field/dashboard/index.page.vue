@@ -555,7 +555,7 @@ const createReceivedCommodities = async (receiptId, receivedCommodities) => {
   await Promise.all(receivedCommodityPromises);
 
   getExpectedDispatches();
-  
+
   getDispatches();
 };
 
@@ -581,6 +581,7 @@ const createReceipt = async (originalModel) => {
       confirmButtonText: "Ok"
     });
     await getReceipts()
+    $router.push({ path: '/field/receipts/emergency' });
   } catch (error) {
     Swal.fire({
       title: "Creation Failed",

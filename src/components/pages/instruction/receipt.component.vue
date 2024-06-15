@@ -132,7 +132,6 @@
                     Submit Receipt
                   </button>
                 </div>
-                <div v-if="errorMessage" class="text-red-600 text-sm">{{ errorMessage }}</div>
               </form>
             </div>
           </TransitionChild>
@@ -146,7 +145,7 @@ import { ref, reactive, inject } from "vue";
 import { defineProps, defineEmits } from "vue";
 import { PlusCircleIcon, MinusCircleIcon, XIcon, CheckCircleIcon } from "@heroicons/vue/solid";
 import { Dialog, DialogOverlay, TransitionChild, TransitionRoot } from "@headlessui/vue";
-import { useForm, useField, useSubmitForm } from "vee-validate";
+import { useForm, useSubmitForm } from "vee-validate";
 import { CreateRequisitionSchema } from "../../../services/schema/requisition.schema";
 import { useSessionStore } from "../../../stores/session.store";
 
@@ -177,31 +176,28 @@ const { meta } = useForm({
 });
 
 const receivedCommodities = reactive([]);
-const errorMessage = ref('');
+//const errorMessage = ref('');
 
 const addRemark = (index) => {
   if (!props.dispatch.dispatchedCommodities[index].remarks) {
     props.dispatch.dispatchedCommodities[index].remarks = [];
   }
 
-  // Check if the remark already exists
-  const existingRemark = props.dispatch.dispatchedCommodities[index].remarks.find(remark => remark.remark === '');
+  // Check if there is already an empty remark or if a remark of the same type exists
+/*   const existingRemark = props.dispatch.dispatchedCommodities[index].remarks.find(remark => remark.remark === '' || remark.remark === 'received in good condition');
   if (existingRemark) {
     // Display an error message or take appropriate action
     return;
   }
-
+ */
   props.dispatch.dispatchedCommodities[index].remarks.push({ remark: '', quantity: 0 });
 };
-
 
 const removeRemark = (itemIndex, remarkIndex) => {
   props.dispatch.dispatchedCommodities[itemIndex].remarks.splice(remarkIndex, 1);
 };
 
-
 const onSubmit = useSubmitForm((values) => {
-
   props.dispatch.dispatchedCommodities.forEach((item) => {
     if (item.remarks && item.remarks.length > 0) {
       item.remarks.forEach((remark) => {
