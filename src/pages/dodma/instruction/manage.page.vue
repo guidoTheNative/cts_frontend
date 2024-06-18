@@ -30,6 +30,12 @@
               id="tabs-user-settings" data-bs-toggle="pill" data-bs-target="#user-settings" role="tab"
               aria-controls="user-settings" aria-selected="false">Instruction Management</a>
           </li>
+          <li class="nav-item" role="presentation">
+            <a href="#user-file"
+              class="nav-link block ml-1 font-bold text-xs leading-tight capitalize border-x-0 border-t-0 border-b-2 border-transparent px-6 py-3 my-1hover:border-transparent hover:bg-blue-100 focus:border-transparent"
+              id="tabs-user-file" data-bs-toggle="pill" data-bs-target="#user-file" role="tab"
+              aria-controls="user-file" aria-selected="false">File Management</a>
+          </li>
           <li class="nav-item ml-auto mb-4" role="presentation">
             <button @click="showPrintModal = true"
               class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-md">
@@ -152,6 +158,7 @@
               </div>
             </div>
           </li>
+          
         </ul>
         <div class="tab-content" id="tabs-user-options">
           <div class="tab-pane fade show active mt-3" id="user-relief" role="tabpanel"
@@ -161,6 +168,14 @@
           <div class="tab-pane fade" id="user-settings" role="tabpanel" aria-labelledby="tabs-user-settings">
             <user-settings v-bind:model="model" v-on:update="updateInstruction" :key="model.id + 'settings'" />
           </div>
+
+          <div class="tab-pane fade" id="user-file" role="tabpanel" aria-labelledby="tabs-user-file">
+            <user-files v-bind:model="files" :key="refresh + 'File'" 
+          v-on:refresh="getFiles()" />
+ 
+          </div>
+
+       
         </div>
       </div>
     </div>
@@ -178,6 +193,8 @@ import UserProfile from "../../../components/pages/users/profile.component.vue";
 import UserLogs from "../../../components/pages/users/logs.component.vue";
 import UserSettings from "../../../components/pages/instruction/settings.component.vue";
 
+import UserFiles from "../../../components/pages/instruction/file.component.vue";
+
 import UserRelief from "../../../components/pages/instruction/relief.component.vue";
 //SCHEMA//AND//STORES
 
@@ -194,7 +211,9 @@ const moment = inject("moment");
 const Swal = inject("Swal");
 import html2canvas from 'html2canvas';
 import jsPDF from 'jspdf';
+import { useFileStore } from "../../../stores/file.store";
 
+const fileStore = useFileStore();
 //VARIABLES
 const id = ref(null);
 const isLoading = ref(false);
@@ -211,6 +230,8 @@ const model = ref({
 
 });
 
+
+const files = reactive([]);
 // Instruction header and details
 
 const instructedCommodities = reactive([]);
@@ -220,6 +241,7 @@ const instructedCommodities = reactive([]);
 onMounted(() => {
   id.value = $route.params.id;
   getInstruction();
+  getFiles()
   getInstructedCommodities();
 });
 ///FORM
@@ -248,6 +270,26 @@ const getInstructedCommodities = async () => {
     .finally(() => {
       isLoading.value = false;
     });
+};
+
+
+const getFiles = async () => {
+ 
+  fileStore
+    .getByReference({ id: id.value, type: "DOCUMENT" })
+    .then((result) => {
+      files.length = 0;
+      files.push(...result);
+    })
+    .catch((error) => {
+    /*   Swal.fire({
+        title: "Failed",
+        text: "failed to get files error (" + error + ")",
+        icon: "error",
+        confirmButtonText: "Ok",
+      }); */
+    })
+    
 };
 
 const getInstruction = async () => {

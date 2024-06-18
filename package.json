@@ -6,6 +6,7 @@
     "serve": "node --max_old_space_size=6096 node_modules/@vue/cli-service/bin/vue-cli-service.js serve",
     "build": "node --max_old_space_size=6096 node_modules/@vue/cli-service/bin/vue-cli-service.js build"
   },
+  "author": "John Guido Chalera",
   "dependencies": {
     "@headlessui/vue": "^1.5.0",
     "@heroicons/vue": "^1.0.6",

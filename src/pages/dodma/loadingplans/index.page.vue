@@ -56,9 +56,9 @@
               </button> -->
 
               <!-- Delete Button with Trash Icon -->
-              <button @click="deleteItem(props.row.id)" class="text-red-500 hover:text-red-700 transition duration-300">
+              <button v-if="props.row.Balance > 0" @click="deleteItem(props.row.id)" class="text-red-500 hover:text-red-700 transition duration-300">
                 <TrashIcon class="h-5 w-5 inline-block mr-1" />
-                Delete
+                Delete 
               </button>
 
             </div>

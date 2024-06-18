@@ -31,7 +31,7 @@
                     </select>
                 </div>
 
-                <div class="flex flex-col">
+                <div class="flex flex-col w-40">
                     <label for="commodity" class="text-sm font-medium text-gray-700 mb-2">Commodity</label>
                     <select id="commodity" v-model="selectedCommodity"
                         class="focus:ring-gray-500 focus:border-blue-300 block shadow-sm sm:text-sm border-gray-300 rounded-md">

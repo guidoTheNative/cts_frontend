@@ -136,7 +136,7 @@
                       <div class="flex flex-col">
                         <label for="commodity" class="text-sm font-medium text-gray-700">Commodity</label>
                         <select id="commodity" v-model="selectedCommodity"
-                          class="focus:ring-gray-500 focus:border-blue-300 block shadow-sm sm:text-sm border-gray-300 rounded-md">
+                          class="focus:ring-gray-500 w-40 focus:border-blue-300 block shadow-sm sm:text-sm border-gray-300 rounded-md">
                           <option value="">All Commodities</option>
                           <option v-for="commodity in commodities" :key="commodity.Name" :value="commodity.Name">
                             {{ commodity.Name }}
@@ -235,7 +235,7 @@
                       <div class="flex flex-col">
                         <label for="commodity" class="text-sm font-medium text-gray-700">Commodity</label>
                         <select id="commodity" v-model="selectedCommodity"
-                          class="focus:ring-gray-500 focus:border-blue-300 block shadow-sm sm:text-sm border-gray-300 rounded-md">
+                          class="focus:ring-gray-500 w-40 focus:border-blue-300 block shadow-sm sm:text-sm border-gray-300 rounded-md">
                           <option value="">All Commodities</option>
                           <option v-for="commodity in commodities" :key="commodity.Name" :value="commodity.Name">
                             {{ commodity.Name }}

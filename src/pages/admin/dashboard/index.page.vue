@@ -49,6 +49,7 @@
                 <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
                   <!-- Stats Cards -->
                   <div v-for="stat in stats" :key="stat.label"
+                    @click="navigateTo(stat.href)"
                     class="bg-white border border-gray-200 rounded-lg shadow-sm p-4 flex flex-col justify-between">
                     <div>
                       <div class="flex items-center justify-between">
@@ -341,6 +342,10 @@ const getCatalogue = async () => {
 };
 
 
+const navigateTo = (href) => {
+  $router.push(href);
+};
+
 const getReceipts = async () => {
   recieptStore.count().then((result) => {
     receiptcount.value = result.count;
@@ -616,14 +621,18 @@ const stats = ref([
     value: userCount,
     icon: UserIcon,
     iconColor: 'green-500',
-    percentageText: null
+    percentageText: null,
+    
+    href: '/admin/users'
   },
   {
     label: 'Warehouses',
     value: warehouseCount,
     icon: OfficeBuildingIcon,
     iconColor: 'blue-500',
-    percentageText: null
+    percentageText: null,
+    
+    href: '/admin/warehouses'
   },
   {
     label: 'Transporters',
@@ -632,7 +641,8 @@ const stats = ref([
     iconColor: 'gray-400',
     percentageText: '',
     textColor: 'gray-600',
-    showProgress: false
+    showProgress: false, 
+    href: '#'
   },
   {
     label: 'Districts',
@@ -641,7 +651,8 @@ const stats = ref([
     iconColor: 'gray-400',
     percentageText: '',
     textColor: 'gray-600',
-    showProgress: false
+    showProgress: false,  
+    href: '/admin/districts'
   },
   {
     label: 'Organisations',
@@ -650,7 +661,8 @@ const stats = ref([
     iconColor: 'gray-400',
     percentageText: '',
     textColor: 'gray-600',
-    showProgress: false
+    showProgress: false,
+    href: '/admin/organisations'
   }
 ]);
 const actions = [

@@ -14,7 +14,7 @@
             <!-- Commodity Selector -->
             <span class="mr-3 font-bold">Commodity:</span>
             <select v-model="selectedCommodity"
-                class="mb-2 focus:ring-gray-500 focus:border-blue-300 block shadow-sm sm:text-sm border-gray-300 rounded-md">
+                class="mb-2 focus:ring-gray-500 w-40 focus:border-blue-300 block shadow-sm sm:text-sm border-gray-300 rounded-md">
                 <option value="">All Commodities</option>
                 <option v-for="commodity in commodities" :key="commodity.Name" :value="commodity.Name">
                     {{ commodity.Name }}
