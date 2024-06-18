@@ -1147,6 +1147,13 @@ const routes = [
         component: () => import("../pages/dodma/reports/index.page.vue"),
       },
 
+      {
+        path: "/dodma/about-system",
+        name: "dodma-about-system",
+        component: () => import("../pages/about/index.page.vue"),
+      },
+
+
 
     ],
     beforeEnter: (to, from, next) => {
@@ -1327,6 +1334,12 @@ const routes = [
         path: "/field/report-management",
         name: "field-report-management",
         component: () => import("../pages/field/reports/index.page.vue"),
+      },
+
+      {
+        path: "/field/about-system",
+        name: "field-about-system",
+        component: () => import("../pages/about/index.page.vue"),
       },
 
 

@@ -81,6 +81,10 @@ import UserLean from "./leanseason.page.vue";
 
 //SCHEMA//AND//STORES
 
+import { useSessionStore } from "../../../stores/session.store";
+
+const sessionStore = useSessionStore();
+const user = ref(sessionStore.getUser);
 
 import { UpdateUserSchema } from "../../../services/schema/user.schema";
 import { useInstructedCommoditiesStore } from "../../../stores/instructedCommodities.store";

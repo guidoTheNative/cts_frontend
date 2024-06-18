@@ -89,7 +89,7 @@
                         <td class="border px-4 py-2">{{ receipt.instructedDispatch?.instruction?.VehicleRegNo }}</td>
                         <td class="border px-4 py-2">{{ item?.commodity?.Name }}</td>
                         <td class="border px-4 py-2">
-                          {{ receipt.receivedCommodities?.Quantity }} MT
+                          {{ item?.Quantity }} {{ item.commodity.commodityTypeId == 1 ? "MT" : "Units" }}
                         </td>
                       </tr>
                     </tbody>
@@ -108,13 +108,13 @@
                       </p>
                     </div>
                     <div>
-                      <label class="block text-sm font-bold text-gray-700">Authorized  By:</label>
+                      <label class="block text-sm font-bold text-gray-700">Authorized By:</label>
                       <p class="text-sm text-gray-600">
                         {{ receipt.instructedDispatch?.instruction?.ApprovedBy }}
                       </p>
                     </div>
                     <div>
-                      <label class="block text-sm font-bold text-gray-700">Received  By:</label>
+                      <label class="block text-sm font-bold text-gray-700">Received By:</label>
                       <p class="text-sm text-gray-600">
                         {{ receipt.Recipient?.firstname }}
 
@@ -122,7 +122,7 @@
                       </p>
                     </div>
                     <div>
-                      <label class="block text-sm font-bold text-gray-700">Driver  Name:</label>
+                      <label class="block text-sm font-bold text-gray-700">Driver Name:</label>
                       <p class="text-sm text-gray-600">
                         {{ receipt.instructedDispatch?.instruction?.DriverName }}
                       </p>
@@ -138,8 +138,9 @@
                 @click="closeDialog">
                 Close
               </button>
-              <button @click="printPDF" class="mr-3 bg-green-500 text-white px-4 py-2 rounded-md  no-print">Print</button>
-            
+              <button @click="printPDF"
+                class="mr-3 bg-green-500 text-white px-4 py-2 rounded-md  no-print">Print</button>
+
             </div>
           </div>
         </TransitionChild>

@@ -15,6 +15,36 @@
             <div class="overflow-hidden sm:rounded-md">
               <div class="px-4 py-5 bg-white sm:p-6">
                 <div class="space-y-4">
+
+                  <div class="mt-6">
+                    <h3 class="text-lg font-bold leading-6 text-gray-900 capitalize">Summary of Requested Commodities
+                    </h3>
+                    <table class="min-w-full divide-y divide-gray-200 mt-2">
+                      <thead class="bg-gray-100">
+                        <tr>
+                          <th scope="col"
+                            class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                            Commodity
+                          </th>
+                          <th scope="col"
+                            class="px-6 py-3 text-left text-xs font-medium text-gray-600 uppercase tracking-wider">
+                            Requested Quantity
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody class="bg-white divide-y divide-gray-200">
+                        <tr v-for="item in model.requisition?.requestedCommodities" :key="item.id">
+                          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            {{ item.commodity?.Name }}
+                          </td>
+                          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                            {{ item.Quantity }} {{ item.commodity?.commodityType?.Name == "Food" ? " MT" : "Units" }}
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    <hr>
+                  </div>
                   <!-- Loop to Add Multiple Relief Items -->
                   <div v-for="(item, index) in reliefItems" :key="index" class="flex space-x-4 items-center">
                     <div class="flex-1">
@@ -27,8 +57,9 @@
                         </option>
                       </select>
                       <!-- Display Error Message if the Commodity is Duplicated -->
-                      <span class="text-md text-red-500 mb-5 text-italic font-medium text-sm" v-if="item.commodityId">
-                        {{ availableBalance }}</span>
+                      <!--    <span class="text-md text-red-500 font-italic text-xs" v-if="item.commodityId">
+                        {{ availableBalance == 0 ? "" : availableBalance }}</span>
+                   -->
                     </div>
 
                     <div class="flex-1">
@@ -39,8 +70,10 @@
                     </div>
 
                     <!-- Remove Item Button -->
-                    <button type="button" @click="removeItem(item.id)" class="text-red-500 hover:text-red-700">
-                      &times; <!-- A simple cross to remove the item -->
+
+                    <button @click="removeItem(item.id)" type="button"
+                      class="ml-2 mt-6 inline-flex items-center p-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                      <MinusCircleIcon class="h-5 w-5" />
                     </button>
                   </div>
 
@@ -75,6 +108,8 @@ import { useRouter, useRoute } from "vue-router";
 import { useForm, useField, useSubmitForm, useIsFormValid } from "vee-validate";
 //COMPONENTS
 //SCHEMA AND STORES
+import { PlusCircleIcon, MinusCircleIcon, XIcon, CheckCircleIcon } from "@heroicons/vue/solid";
+
 import { UpdateUserSchema } from "../../../services/schema/commoditytype.schema";
 import { useRoleStore } from "../../../stores/role.store";
 import { useInstructedCommoditiesStore } from "../../../stores/instructedCommodities.store";
@@ -157,8 +192,6 @@ const removeItem = async (index) => {
     cancelButtonText: "Cancel",
   });
 
-
-  // Proceed only if user confirmed the action
   if (result.isConfirmed) {
     try {
       // Attempt to remove the item
@@ -182,6 +215,7 @@ const removeItem = async (index) => {
     }
   }
 };
+
 
 
 // Check if a Commodity is Duplicated

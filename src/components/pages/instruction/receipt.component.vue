@@ -67,6 +67,7 @@
                               </tr>
                             </thead>
                             <tbody class="divide-y divide-gray-200">
+                           
                               <tr v-for="(item, index) in dispatch.dispatchedCommodities" :key="index"
                                 class="hover:bg-gray-100">
                                 <td class="py-2 px-4 border-b">{{ index + 1 }}</td>

@@ -85,7 +85,7 @@
 
                 <!-- Create Instruction Button -->
 
-                <create-instruction-form :row-id="props.row.id" v-on:create="createInstruction" />
+                <create-instruction-form :row-id="props.row.id" :district="props.row.district" v-on:create="createInstruction" />
 
 
               </div>

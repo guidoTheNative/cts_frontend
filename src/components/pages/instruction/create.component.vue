@@ -74,19 +74,15 @@
 
                     </div>
 
-
                     <div class="col-span-12 sm:col-span-12">
                       <label for="user-district" class="block text-sm font-medium text-gray-700">
-                        Select District (To)</label>
-                      <select id="district" name="district" v-model="districtId" autocomplete="district-name"
-                        class="mt-1 focus:ring-gray-500 focus:border-blue-300 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
-                        <option v-for="district in districts" :key="district.id" :value="district.id" class="uppercase">
-                          {{ district.Name }}
-                        </option>
-                      </select>
-                      <p class="text-red-500 text-xs italic pt-1">
-                        {{ districtIdError }}
+                        District (To)</label>
+                    
+
+                      <p class="mt-1 focus:ring-gray-500 font-bold focus:border-blue-300 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md">
+                        {{ props.district?.Name }}
                       </p>
+                     
                     </div>
 
                     <div class="col-span-12 sm:col-span-12">
@@ -232,6 +228,11 @@ const props = defineProps({
   rowId: {
     type: [String, Number],
     required: true
+  },
+
+  district: {
+    type: Object,
+    required: true
   }
 });
 
@@ -302,8 +303,7 @@ const { meta } = useForm({
   },
 });
 ///FIELDS
-const { value: districtId, errorMessage: districtError } =
-  useField("districtId");
+
 const { value: AffectedHouseholds, errorMessage: AffectedHouseholdsError } = useField("AffectedHouseholds")
 const { value: disasterId, errorMessage: disasterError } = useField("disasterId");
 const { value: activityId, errorMessage: activityError } = useField("activityId");
@@ -351,8 +351,9 @@ const getWarehouses = async () => {
     .then(result => {
 
       warehouses.length = 0; //empty array
-      warehouses.push(...result);
-
+      warehouses.push(...result.filter(item => item.organisationId == 2));
+  
+  
     })
     .catch(error => {
 
@@ -431,7 +432,7 @@ const currentDate = ref(moment().format('YYYY-MM-DD HH:mm:ss'));
 const onSubmit = useSubmitForm((values, actions) => {
   let model = {
     warehouseId: warehouseId.value,
-    districtId: districtId.value,
+    districtId: props.district?.id,
     transporterId: transporterId.value,
     Remarks: Remarks.value,
     userId: user.value.id,

@@ -241,6 +241,7 @@ const createDispatch = async (originalModel) => {
       icon: "success",
       confirmButtonText: "Ok"
     });
+    getInstructions()
   } catch (error) {
     Swal.fire({
       title: "Creation Failed",
@@ -283,7 +284,7 @@ const getInstructions = async () => {
       //   instructions.push(...result);
       // }
       instructions.length = 0; //empty array
-      instructions.push(...result.filter(item => (item.district.Name == user.value.district) && item.IsApproved));
+      instructions.push(...result.filter(item => (item.district.Name == user.value.district) && item.IsApproved && !item.IsArchived));
 
     })
     .catch(error => {

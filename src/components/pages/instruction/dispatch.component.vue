@@ -58,12 +58,12 @@
                         <p class="mb-4"><strong>Purpose:</strong> {{ instruction.Purpose }}</p>
                         <p class="mb-4"><strong>Vehicle Reg #:</strong> {{ instruction.VehicleRegNo }}</p>
                         <p class="mb-4"><strong>Driver Name:</strong> {{ instruction.DriverName }}</p>
-                        <p class="mb-4"><strong>Warehouse (From):</strong> {{ instruction.warehouse.Name }}</p>
+                        <p class="mb-4"><strong>Warehouse (From):</strong> <br>{{ instruction.warehouse.Name }}</p>
                         <p class="mb-4"><strong>District (To):</strong> {{ instruction.district.Name }}</p>
                         <p class="mb-4"><strong>Transporter:</strong> {{ instruction.transporter.Name }}</p>
 
                         <!-- Table for Goods List -->
-                        <h3 class="text-lg font-semibold text-blue-500 mb-3">List of Goods Required: </h3>
+                        <h3 class="text-lg font-semibold text-blue-500 mb-3">List of Items Required: </h3>
                         <div>
                           <table class="min-w-full bg-white border border-0 rounded-lg">
                             <thead class="bg-blue-100">
@@ -86,7 +86,7 @@
                               <tr v-for="(item, index) in commodities" :key="index" class="hover:bg-gray-100">
                                 <td class="py-2 px-4 border-b">{{ index + 1 }}</td>
                                 <td class="py-2 px-4 border-b">{{ item.commodity.Name }}</td>
-                                <td class="py-2 px-4 border-b">{{ item.Quantity }}</td>
+                                <td class="py-2 px-4 border-b">{{ item.Quantity }} {{ item.commodity.commodityTypeId == 1 ? "MT": "Units" }}</td>
                                 <td class="py-2 px-4 border-b">{{ item.commodity.PackSize }} {{ item.commodity.Unit }}
                                 </td>
                               </tr>
@@ -144,7 +144,7 @@
                                 </div>
 
                                 <div class="flex-1">
-                                  <label class="block text-sm font-bold text-gray-700">Quantity</label>
+                                  <label class="block text-sm font-bold text-gray-700">Quantity ({{ item.commodityId?.commodity?.commodityTypeId == 1 ? "MT": "Units" }})</label>
                                   <input type="number" v-model.number="item.Quantity"
                                   class="mt-1 focus:ring-gray-500 focus:border-blue-300 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
                                     placeholder="Quantity" />

@@ -8,7 +8,32 @@ export default class InstructionService {
         .get(
           resource +
           `?filter={"include": [
-            "district", "user", "transporter", "warehouse", "requisition"
+            "district", "user", "transporter", "warehouse",
+            {
+              "relation": "requisition",
+              "scope": {
+                "include": [
+                  {
+                    "relation": "requestedCommodities",
+                    "scope": {
+                      "include": [
+                     
+                        {
+                          "relation": "commodity",
+                          "scope": {
+                            "include": [
+                              {
+                                "relation": "commodityType"
+                              }
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  }
+                ]
+              }
+            }
           ]}`,
           {
             headers: {
@@ -31,7 +56,32 @@ export default class InstructionService {
     } else if (id != null) {
       return axios
         .get(resource + `/` + id + `?filter={"include": [
-          "district", "user", "transporter", "warehouse", "requisition"
+          "district", "user", "transporter", "warehouse",
+          {
+            "relation": "requisition",
+            "scope": {
+              "include": [
+                {
+                  "relation": "requestedCommodities",
+                  "scope": {
+                    "include": [
+                   
+                      {
+                        "relation": "commodity",
+                        "scope": {
+                          "include": [
+                            {
+                              "relation": "commodityType"
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                }
+              ]
+            }
+          }
         ]}`, {
           headers: {
             "Access-Control-Allow-Origin": "*",

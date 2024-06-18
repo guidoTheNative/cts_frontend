@@ -85,7 +85,7 @@
                           <tr v-for="(item, index) in commodities" :key="index" class="hover:bg-gray-100">
                             <td class="py-2 px-4 border-b">{{ index + 1 }}</td>
                             <td class="py-2 px-4 border-b">{{ item.commodity.Name }}</td>
-                            <td class="py-2 px-4 border-b">{{ item.Quantity }}</td>
+                            <td class="py-2 px-4 border-b">{{ item.Quantity }} {{  item.commodity.commodityTypeId == 1 ? "MT": "Units" }}</td>
                             <td class="py-2 px-4 border-b">{{ item.commodity.PackSize }} {{ item.commodity.Unit }}</td>
                           </tr>
                         </tbody>

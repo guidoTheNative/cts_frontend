@@ -224,6 +224,8 @@ const updateInstruction = async (newValues) => {
         text: "Successfully updated instruction",
         icon: "success",
       });
+      
+      getInstructions()
     })
     .catch((error) => {
       Swal.fire({

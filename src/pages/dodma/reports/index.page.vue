@@ -91,6 +91,11 @@ import { userequisitionstore } from "../../../stores/requisition.store";
 import { usewarehousestore } from "../../../stores/warehouse.store";
 const requisitionStore = userequisitionstore();
 
+import { useSessionStore } from "../../../stores/session.store";
+
+const sessionStore = useSessionStore();
+const user = ref(sessionStore.getUser);
+
 //INJENCTIONS
 const $router = useRouter();
 const $route = useRoute();

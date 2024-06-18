@@ -217,6 +217,7 @@ function gotoSystemsettings() {
   $router.push({ path: '/warehouse/system' });
 }
 
+
 const iconClasses = (item) => [
   item.current ? "text-gray-500" : "text-white group-hover:text-white",
   "mr-1 flex-shrink-0 h-6 w-6",
@@ -311,9 +312,8 @@ const getInstructions = async () => {
     instructions.length = 0;
     instructions.push(
       ...result.filter(item =>
-        item.district.Name === user.value.district &&
-        !item.IsApproved &&
-        !item.IsArchived
+        (item.district.Name == user.value.district) &&(
+        !item.IsArchived) && item.IsApproved
       )
     );
     newInstructionsCount.value = instructions.length;

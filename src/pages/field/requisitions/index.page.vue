@@ -155,7 +155,7 @@
                             Commodity</th>
                           <th
                             class="py-2 px-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-b">
-                            Quantity (MT)</th>
+                            Quantity</th>
                           <th
                             class="py-2 px-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-b">
                             Unit</th>
@@ -166,7 +166,7 @@
                           class="hover:bg-gray-100">
                           <td class="py-2 px-4 border-b">{{ index + 1 }}</td>
                           <td class="py-2 px-4 border-b">{{ item.commodity.Name }}</td>
-                          <td class="py-2 px-4 border-b">{{ item.Quantity }}</td> 
+                          <td class="py-2 px-4 border-b">{{ item.Quantity }} {{item.commodity.commodityTypeId == 1 ? " MT": " Units"}}</td> 
                           <td class="py-2 px-4 border-b">{{item.commodity.PackSize }} {{ item.commodity.Unit }}</td>
                         </tr>
                       </tbody>

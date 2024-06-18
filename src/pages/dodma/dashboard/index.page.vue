@@ -75,6 +75,13 @@
                         <CameraIcon class="h-5 w-5 mr-2" />
                         Take Screenshot
                       </button>
+
+                      <button @click="gotoLeanseason" v-if="currentView == 'leanSeasonDashboard'" type="button"
+                        class="tab-button font-body inline-flex items-center px-6 py-2.5 font-medium text-xs leading-tight rounded shadow-md transition duration-100 ease-in-out capitalize"
+                        :class="{ 'active-tab': false }">
+                        <CameraIcon class="h-5 w-5 mr-2" />
+                        Goto Lean Season Dispatches
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -590,6 +597,10 @@ const getCatalogue = async () => {
 const instructions = reactive([])
 const newInstructionsCount = ref(0)
 
+const gotoLeanseason = async () => {
+
+  $router.push('/dodma/loadingplans');
+}
 const getDisasters = async () => {
   disasterStore
     .get()
@@ -804,7 +815,7 @@ const createReport = async (model) => {
         confirmButtonText: "Ok"
       });
 
-      $router.push('/admin/loadingplans');
+      $router.push('/dodma/loadingplans');
     })
     .catch(error => {
       console.error("Failed to create loading plan:", error);
@@ -874,7 +885,7 @@ const actions = [
   {
     icon: OfficeBuildingIcon,
     name: "Enquiries",
-    href: "/admin/bookings",
+    href: "/dodma/bookings",
     iconForeground: "text-gray-500",
     iconBackground: "bg-gray-50",
     details: "Manage all Enquiries made to services",

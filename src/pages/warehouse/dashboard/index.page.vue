@@ -11,16 +11,16 @@
             Dashboard
           </h2>
         </div>
-      
-     
-        
+
+
+
         <button type="button"
-              class="tab-button active-tab font-body inline-flex items-center px-6 py-2.5 font-medium text-xs leading-tight rounded shadow-md transition duration-100 ease-in-out capitalize"
-              @click="navigateToLeanSeasonLoadingPlans">
-              <TemplateIcon class="h-5 w-5 mr-2" />
-             Manage Lean Season Dispatches
-            </button>
-       
+          class="tab-button active-tab font-body inline-flex items-center px-6 py-2.5 font-medium text-xs leading-tight rounded shadow-md transition duration-100 ease-in-out capitalize"
+          @click="navigateToLeanSeasonLoadingPlans">
+          <TemplateIcon class="h-5 w-5 mr-2" />
+          Manage Lean Season Dispatches
+        </button>
+
       </div>
 
       <!-- Main 3 column grid -->
@@ -58,7 +58,8 @@
               </div>
 
               <div class="bg-gray-100 p-5">
-                <div :class="`grid gap-4 ${user.privileges.includes('Warehouse management') || user.privileges.includes('All') ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-2' : 'grid-cols-1'}`">
+                <div
+                  :class="`grid gap-4 ${user.privileges.includes('Warehouse management') || user.privileges.includes('All') ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-2' : 'grid-cols-1'}`">
                   <!-- Stats Cards -->
                   <div v-for="stat in statsToShow" :key="stat.label"
                     class="bg-white border border-gray-200 rounded-lg shadow-sm p-4 flex flex-col justify-between">
@@ -72,11 +73,12 @@
                       </div>
 
                       <div class="text-sm font-medium text-gray-600 mt-2">{{ stat.label }}</div>
-                    
+
                     </div>
                     <div v-if="stat.percentageText" class="mt-4">
                       <div class="flex items-center justify-between">
-                        <span :class="stat.progress >= 50 ? 'text-green-500' : 'text-red-500'">{{ stat.percentageText }}</span>
+                        <span :class="stat.progress >= 50 ? 'text-green-500' : 'text-red-500'">{{ stat.percentageText
+                          }}</span>
                         <component :is="stat.progress >= 50 ? ArrowUpIcon : ArrowDownIcon" class="h-5 w-5"
                           :class="stat.progress >= 50 ? 'text-green-500' : 'text-red-500'" />
                       </div>
@@ -92,10 +94,10 @@
                         to="/warehouse/instruction-management" class="text-blue-500 hover:underline">
                         View Details
                       </router-link>
-                  
+
                     </div>
                   </div>
-                  
+
                 </div>
               </div>
             </div>
@@ -280,7 +282,7 @@ const getCatalogue = async () => {
 const getWarehouses = async () => {
   warehouseStore.get().then((result) => {
     warehouseCount.value = result.filter(item => item.district.Name == user.value.district).length;
- 
+
   });
 };
 const getReceipts = async () => {
@@ -294,12 +296,12 @@ const instructions = reactive([]);
 const newInstructionsCount = ref(0)
 //FUNCTIONS
 const getInstructions = async () => {
-   instructionsStore
+  instructionsStore
     .get()
     .then((result) => {
       instructions.length = 0;
-      instructions.push(result.filter(item => (item.district.Name == user.value.district) && item.IsApproved).length);
-      newInstructionsCount.value = instructions.length;
+      instructions.push(result.filter(item => (item.district.Name == user.value.district) && !item.IsArchived && item.IsApproved));
+      newInstructionsCount.value = instructions[0].length;
     })
 };
 const exportToExcel = () => {
@@ -446,7 +448,7 @@ const formatDate = (date) => {
 // Dummy data for stats
 const stats = ref([
   {
-    label: 'Number of Warehouses',
+    label: computed(() => `Number of Warehouses in ${user.value.district}`),
     value: warehouseCount,
     icon: ClipboardListIcon,
     iconColor: 'green-500',
