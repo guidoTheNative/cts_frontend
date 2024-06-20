@@ -40,7 +40,7 @@
               <div
                 class="modal-header flex flex-shrink-0 items-center justify-between p-4 border-b border-gray-200 rounded-t-md bg-white">
                 <h5 class="text-md font-medium leading-normal text-gray-800">
-                  Approve Instruction
+                  Approve Loading Plan
                 </h5>
                 <button type="button" @click="open = false"
                   class="btn-close box-content w-4 h-4 p-1 text-black border-none rounded-none opacity-50 focus:shadow-none focus:outline-none focus:opacity-100 hover:text-black hover:opacity-75 hover:no-underline">
@@ -53,44 +53,16 @@
                 <div class="flex gap-8">
                   <!-- Left: Instructions Panel -->
                   <div class="flex-1 bg-white rounded-table">
-                    <h3 class="text-xl font-semibold mb-4">Instruction Details</h3>
-                    <p class="mb-4"><strong>Purpose:</strong> {{ instruction.Purpose }}</p>
-                    <p class="mb-4"><strong>Vehicle Reg #:</strong> {{ instruction.VehicleRegNo }}</p>
-                    <p class="mb-4"><strong>Driver Name:</strong> {{ instruction.DriverName }}</p>
-                    <p class="mb-4"><strong>Warehouse (From):</strong> {{ instruction.warehouse.Name }}</p>
-                    <p class="mb-4"><strong>District (To):</strong> {{ instruction.district.Name }}</p>
-                    <p class="mb-4"><strong>Transporter:</strong> {{ instruction.transporter.Name }}</p>
+                    <h3 class="text-xl font-semibold mb-4">Loading Plan Details</h3> 
+                    <p class="mb-4"><strong>Loading Plan Number:</strong> {{ emergencyResponseInstructions.LoadingPlanNumber }}</p>
+                    <p class="mb-4"><strong>Quantity:</strong> {{ emergencyResponseInstructions.Quantity }} {{ emergencyResponseInstructions?.commodity?.commodityTypeId == 1 ? " MT": " Units" }}</p>
+                    <p class="mb-4"><strong>Start Date:</strong> {{ formatDate(emergencyResponseInstructions.StartDate) }}</p>
+                    <p class="mb-4"><strong>End Date:</strong> {{ formatDate(emergencyResponseInstructions.EndDate) }}</p>
+                    <p class="mb-4"><strong>Warehouse (From):</strong> {{ emergencyResponseInstructions.warehouse.Name }}</p>
+                    <p class="mb-4"><strong>District (To):</strong> {{ emergencyResponseInstructions.district.Name }}</p>
+                    <p class="mb-4"><strong>Transporter:</strong> {{ emergencyResponseInstructions.transporter.Name }}</p>
 
-                    <!-- Table for Goods List -->
-                    <h3 class="text-lg font-semibold text-blue-500 mb-3">List of Goods Required: </h3>
-                    <div>
-                      <table class="min-w-full bg-white border border-0 rounded-lg">
-                        <thead class="bg-blue-100">
-                          <tr>
-                            <th
-                              class="py-2 px-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-b">
-                              #</th>
-                            <th
-                              class="py-2 px-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-b">
-                              Commodity</th>
-                            <th
-                              class="py-2 px-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-b">
-                              Quantity</th>
-                            <th
-                              class="py-2 px-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-b">
-                              Unit</th>
-                          </tr>
-                        </thead>
-                        <tbody class="divide-y divide-gray-200">
-                          <tr v-for="(item, index) in commodities" :key="index" class="hover:bg-gray-100">
-                            <td class="py-2 px-4 border-b">{{ index + 1 }}</td>
-                            <td class="py-2 px-4 border-b">{{ item.commodity.Name }}</td>
-                            <td class="py-2 px-4 border-b">{{ item.Quantity }} {{  item.commodity.commodityTypeId == 1 ? "MT": "Units" }}</td>
-                            <td class="py-2 px-4 border-b">{{ item.commodity.PackSize }} {{ item.commodity.Unit }}</td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
+                   
                   </div>
                 </div>
 
@@ -101,7 +73,7 @@
                   <button type="submit"
                     class="px-4 py-2 mr-3 bg-green-500 text-white rounded hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400 inline-flex items-center">
                     <CheckCircleIcon class="h-5 w-5 mr-1" />
-                    Approve Instruction
+                    Approve Loading Plan
                   </button>
                 </div>
               </form>
@@ -112,9 +84,7 @@
     </TransitionRoot>
   </div>
 </template>
-
 <script setup>
-
 import {
   SearchIcon,
   EyeIcon,
@@ -123,7 +93,6 @@ import {
   CheckCircleIcon,
   PencilIcon, PlusCircleIcon
 } from "@heroicons/vue/solid";
-
 import {
   Dialog,
   DialogOverlay,
@@ -136,32 +105,26 @@ import {
 import { XIcon } from "@heroicons/vue/outline";
 import { inject, ref, reactive, onMounted } from "vue";
 import { useRouter, useRoute } from "vue-router";
-import { useForm, useField, useSubmitForm, useIsFormValid } from "vee-validate";
-//COMPONENTS
+import { useForm, useSubmitForm } from "vee-validate";
+
+
+// COMPONENTS
 import spinnerWidget from "../../../components/widgets/spinners/default.spinner.vue";
-//SCHEMA AND STORES
+
+// SCHEMA AND STORES
 import { CreateRequisitionSchema } from "../../../services/schema/requisition.schema";
 import { useRoleStore } from "../../../stores/role.store";
 import { useUserStore } from "../../../stores/user.store";
-
 import { usedistrictstore } from "../../../stores/districts.store";
-
 import { useDisasterstore } from "../../../stores/disaster.store";
-
-
 import { useactivitiestore } from "../../../stores/activity.store";
-
 import { usewarehousestore } from "../../../stores/warehouse.store";
 import { usetransporterstore } from "../../../stores/transporter.store";
-
-
-
 import { userequisitionstore } from "../../../stores/requisition.store";
-
 import { useSessionStore } from "../../../stores/session.store";
-//INJENCTIONS
-const $router = useRouter();
 
+// INJECTIONS
+const $router = useRouter();
 const $route = useRoute();
 const showForm = ref(false);
 const props = defineProps({
@@ -169,26 +132,21 @@ const props = defineProps({
     type: [String, Number],
     required: true
   },
-  instruction: Object,
-  commodities: Array,
-  commodity: Array
+  emergencyResponseInstructions: Object,
+  
 });
 
 const moment = inject("moment");
 const emit = defineEmits(["create"]);
-//VARIABLES
+
+// VARIABLES
 const open = ref(false);
-
-
-
 const requisitionStore = userequisitionstore();
-const requisitions = reactive([])
-
+const requisitions = reactive([]);
 const sessionStore = useSessionStore();
-
 const user = ref(sessionStore.getUser);
 
-//FORM
+// FORM
 const { meta } = useForm({
   validationSchema: CreateRequisitionSchema,
   initialValues: {
@@ -197,53 +155,40 @@ const { meta } = useForm({
     commodityId: "",
     warehouseId: "",
     userId: ""
-
   },
 });
-///FIELDS
 
-
-//MOUNTED
+// MOUNTED
 onMounted(() => {
   getRequisition();
 });
-//FUNCTIONS
 
-
-
-
-
-
+// FUNCTIONS
 const getRequisition = async () => {
   requisitionStore
     .get()
     .then(result => {
-
-      requisitions.length = 0; //empty array
+      requisitions.length = 0; // empty array
       requisitions.push(...result);
-
     })
     .catch(error => {
-
+      console.error(error);
     })
     .finally(() => {
     });
 };
 
-
-
 const onSubmit = useSubmitForm((values, actions) => {
-
   let model = {
     id: props.rowId,
     IsApproved: true,
     ApprovedBy: user.value.username.replace('.', ' ').split(' ').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ')
-  }
+  };
   emit("create", model);
-  
   open.value = false
 });
 
-
-
+const formatDate = (dateString) => {
+  return moment(dateString).format('MMMM Do YYYY');
+};
 </script>

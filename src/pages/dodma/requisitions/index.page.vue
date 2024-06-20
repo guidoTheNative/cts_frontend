@@ -219,6 +219,8 @@ const toggleDropdown = (rowId) => {
   isDropdownOpen.value = isDropdownOpen.value === rowId ? null : rowId;
 };
 
+import eventBus from '../../../services/events/eventbus';
+
 
 //VARIABLES
 const isLoading = ref(false);
@@ -330,7 +332,7 @@ const createInstruction = async model => {
   isLoading.value = true;
   instructionStore
     .create(model)
-    .then(result => {
+    .then(async result => {
       Swal.fire({
         title: "Success",
         text: "Created a new instructions successfully",
@@ -338,8 +340,11 @@ const createInstruction = async model => {
         confirmButtonText: "Ok"
       });
 
+      await eventBus.emit('requisitionArchived', result.id);
+  
       $router.push({ path: '/dodma/instruction-management/manage/' + result.id });
 
+     
     })
     .catch(error => {
       /*  Swal.fire({

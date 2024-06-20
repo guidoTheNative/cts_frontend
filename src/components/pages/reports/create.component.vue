@@ -72,7 +72,7 @@
 
                 <div class="grid grid-cols-6 gap-2">
                   <div class="col-span-6 sm:col-span-3">
-                    <label for="quantity" class="block text-sm font-bold text-gray-700">Quantity (MT)</label>
+                    <label for="quantity" class="block text-sm font-bold text-gray-700">Quantity ({{selectedCommodityName?.commodityType?.Name == "Food" ? "MT": "Units"}})</label>
 
                     <input type="number" name="quantity" required v-model="reports.Quantity" id="reportFrom"
                       autocomplete="quantity"
@@ -263,6 +263,11 @@ const sessionStore = useSessionStore();
 
 //MOUNTED
 onMounted(() => { getCommodityInventories(); getActivities(); getCommodities(); getDistricts(); getLoadingplan(); getProjects(); getTransporters(); getWarehouses(); });
+
+const selectedCommodityName = computed(() => {
+  const selectedCommodity = commodities.find(commodity => commodity.id === reports.value.commodityId);
+  return selectedCommodity;
+});
 
 const reports = ref({});
 //FUNCTIONS

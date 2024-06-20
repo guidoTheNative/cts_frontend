@@ -148,6 +148,8 @@ const commodities = reactive([]);
 const CommodityStore = usecommoditiestore();
 const commodity = reactive([]);
 
+import eventBus from '../../../services/events/eventbus';
+
 const columns = ref([
 
   {
@@ -285,11 +287,12 @@ const getInstructions = async () => {
       // }
       instructions.length = 0; //empty array
       instructions.push(...result.filter(item => (item.district.Name == user.value.district) && item.IsApproved && !item.IsArchived));
-
+      eventBus.emit('instructionArchived', result.id);
+   
     })
     .catch(error => {
       Swal.fire({
-        title: "User Retrieval Failed",
+        title: "instructions Failed",
         text: "failed to get instructions (Please refresh to try again)",
         icon: "error",
         confirmButtonText: "Ok"

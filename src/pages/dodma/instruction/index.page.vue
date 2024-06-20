@@ -172,7 +172,7 @@ const getInstructions = async () => {
       instructions.length = 0; //empty array
       instructions.push(...result);
 
-    
+      
     })
     .catch(error => {
       Swal.fire({

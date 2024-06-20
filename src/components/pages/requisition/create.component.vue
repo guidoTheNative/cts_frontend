@@ -125,7 +125,7 @@
                             <p v-if="item.error" class="text-red-500 text-xs italic pt-1">{{ item.error }}</p>
                           </div>
                           <div class="flex-1">
-                            <label class="block text-sm font-bold text-gray-700">Quantity (MT)</label>
+                            <label class="block text-sm font-bold text-gray-700">Quantity {{ commodityUnit }}</label>
                             <input type="number" v-model.number="item.Quantity"
                               class="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm p-2"
                               placeholder="Quantity" />
@@ -322,9 +322,19 @@ const getActivities = async () => {
 };
 
 const reliefItems = ref([{ id: 1, commodityId: '', Quantity: '', error: '' }]);
-
+const commodityUnit = ref("")
 function validateCommodity(index) {
   const selectedCommodity = reliefItems.value[index].commodityId;
+
+  const commodity = props.commodities.find(c => c.id === selectedCommodity);
+
+  if (commodity) {
+    // Use the commodity details as needed
+    commodityUnit.value = commodity?.commodityType?.Name == "Food" ? "(MT)" : "(Units)"; // Assuming the commodity object has a 'unit' field
+    console.log("Selected Commodity:", commodityUnit.value);
+
+  }
+
   const isDuplicate = reliefItems.value.some((item, idx) => item.commodityId === selectedCommodity && idx !== index);
   reliefItems.value[index].error = isDuplicate ? "Commodity already added. Please select another." : "";
 }

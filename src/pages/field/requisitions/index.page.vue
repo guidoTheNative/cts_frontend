@@ -65,7 +65,7 @@
               <div>
                 <span v-if="props.row.IsArchived"
                   class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-800">
-                  Completed
+                  Approved
                 </span>
                 <span v-else
                   class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-red-100 text-red-800">
@@ -78,20 +78,20 @@
               <div class="flex space-x-2">
                 <!-- Manage Button -->
                 <button @click.prevent="openRequisitionDetails(props.row)" class="
-          inline-flex
-          items-center
-          px-3
-          py-2
-          text-sm
-          font-medium
-          text-green-500
-          hover:text-green-900
-          bg-white
-          rounded-md
-          border
-          border-gray-200
-          hover:bg-gray-100
-        ">
+                    inline-flex
+                    items-center
+                    px-3
+                    py-2
+                    text-sm
+                    font-medium
+                    text-green-500
+                    hover:text-green-900
+                    bg-white
+                    rounded-md
+                    border
+                    border-gray-200
+                    hover:bg-gray-100
+                  ">
                   <!-- Heroicon Pencil (Manage) -->
                   <EyeIcon class="h-5 w-5 mr-1" />
 

@@ -85,6 +85,7 @@ import EditLoadingPlanDialog from "../../../components/pages/reports/edit-loadin
 
 
 import DispatchLoadingPlanDialog from "../../../components/pages/reports/create.dispatch-dispatcher.component.vue";
+import eventBus from '../../../services/events/eventbus';
 
 import { useSessionStore } from "../../../stores/session.store";
 //INJENCTIONS
@@ -215,9 +216,11 @@ const getLoadingplans = async () => {
     // Empty the loadingplans array and then push the reversed and filtered results
     loadingplans.length = 0;
 
-    const filterByDistrict = reversedFilteredLoadingPlans.filter(plan => plan.district?.Name == user.value.district);
+    const filterByDistrict = reversedFilteredLoadingPlans.filter(plan => (plan.district?.Name == user.value.district) && plan.IsApproved);
 
     loadingplans.push(...filterByDistrict);
+    eventBus.emit('loadingplanArchived', result.id);
+   
   } catch (error) {
     // Handle any errors that occur during the get, filter, or reverse
     console.error('Failed to fetch, filter, and reverse loading plans:', error);

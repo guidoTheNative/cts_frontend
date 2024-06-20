@@ -25,13 +25,13 @@
               <component :is="item.icon" :class="iconClasses(item)" aria-hidden="true" />
               {{ item.name }}
               <!-- Notification Bell for "Instructions" -->
-              <div v-if="item.name === 'Instructions' && newInstructionsCount > 0" class="relative ml-2 mx-4">
+             <!--  <div v-if="item.name === 'Instructions' && newInstructionsCount > 0" class="relative ml-2 mx-4">
                 <span
                   class="absolute -top-3 -right-3 flex items-center justify-center px-1 py-0.5 text-xs font-bold text-white bg-red-600 rounded-full"
                 >
                   {{ newInstructionsCount }}
                 </span>
-              </div>
+              </div> -->
             </a>
           </router-link>
 
@@ -51,42 +51,68 @@
           </div>
         </div>
 
+        
+     
         <!-- User Menu -->
-        <div class="relative ml-5">
-          <Menu as="div" class="flex-shrink-0 relative">
-            <div>
-              <MenuButton class="rounded-full flex focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-300">
-                <span class="sr-only">Open user menu</span>
-                <span class="lowercase m-2 text-white">{{ user.username.replace(/\./g, ' ') }}</span>
-                <span style="background-color: gray"
-                  class="inline-flex items-center px-3 rounded-full text-sm font-medium text-white uppercase">
-                  {{ user.username.match(/\b(\w)/g).join("") }}
-                </span>
-              </MenuButton>
-            </div>
-            <transition enter-active-class="transition ease-out duration-100"
-              enter-from-class="transform opacity-0 scale-95" enter-to-class="transform opacity-100 scale-100"
-              leave-active-class="transition ease-in duration-75" leave-from-class="transform opacity-100 scale-100"
-              leave-to-class="transform opacity-0 scale-95">
-              <MenuItems class="origin-top-right absolute z-10 right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 py-1 focus:outline-none">
-                <MenuItem v-for="item in userNavigation" :key="item.name" v-slot="{ active }">
-                  <a :href="item.href" :class="menuItemClasses(active, false)">
-                    {{ item.name }}
-                  </a>
-                </MenuItem>
-                <MenuItem v-slot="{ active }">
-                  <button @click="onAbout()" :class="menuItemClasses(active, true)">
-                    About System
-                  </button>
-                </MenuItem>
-                <MenuItem v-slot="{ active }">
-                  <button @click="onSignout" :class="menuItemClasses(active, true)">Sign out</button>
-                </MenuItem>
-                
-              </MenuItems>
-            </transition>
-          </Menu>
-        </div>
+        <div class="flex items-center justify-between">
+  <!-- BellIcon on the left -->
+  <div class="relative">
+    <button @click="toggleNotifications" class="text-gray-50 hover:text-gray-50 hover:bg-blue-400 px-2 py-2 text-sm font-medium rounded-md">
+      <BellIcon class="h-6 w-6 text-white" aria-hidden="true" />
+      <span v-if="notificationsCount > 0" class="absolute top-0 right-0 flex items-center justify-center h-4 w-4 text-xs font-bold text-white bg-red-600 rounded-full">
+        {{ notificationsCount }}
+      </span>
+    </button>
+    <div v-if="isNotificationsOpen" class="absolute right-0 mt-2 w-64 bg-white rounded-md shadow-lg z-10">
+      <div class="py-2 px-4 text-xs text-gray-700">
+        <p v-if="notifications.length === 0">No new notifications</p>
+        <ul v-else>
+          <li v-for="(notification, index) in notifications" :key="index" class="py-1 border-b border-gray-200">
+            <router-link :to="notification.href" class="text-blue-500 hover:underline">
+              {{ notification.message }}
+            </router-link>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Menu on the right -->
+  <div class="relative ml-5">
+    <Menu as="div" class="flex-shrink-0 relative">
+      <div>
+        <MenuButton class="rounded-full flex focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-300">
+          <span class="sr-only">Open user menu</span>
+          <span class="lowercase m-2 text-white">{{ user.username.replace(/\./g, ' ') }}</span>
+          <span style="background-color: gray" class="inline-flex items-center px-3 rounded-full text-sm font-medium text-white uppercase">
+            {{ user.username.match(/\b(\w)/g).join("") }}
+          </span>
+        </MenuButton>
+      </div>
+      <transition enter-active-class="transition ease-out duration-100"
+        enter-from-class="transform opacity-0 scale-95" enter-to-class="transform opacity-100 scale-100"
+        leave-active-class="transition ease-in duration-75" leave-from-class="transform opacity-100 scale-100"
+        leave-to-class="transform opacity-0 scale-95">
+        <MenuItems class="origin-top-right absolute z-10 right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 py-1 focus:outline-none">
+          <MenuItem v-for="item in userNavigation" :key="item.name" v-slot="{ active }">
+            <a :href="item.href" :class="menuItemClasses(active, false)">
+              {{ item.name }}
+            </a>
+          </MenuItem>
+          <MenuItem v-slot="{ active }">
+            <button @click="onAbout()" :class="menuItemClasses(active, true)">
+              About System
+            </button>
+          </MenuItem>
+          <MenuItem v-slot="{ active }">
+            <button @click="onSignout" :class="menuItemClasses(active, true)">Sign out</button>
+          </MenuItem>
+        </MenuItems>
+      </transition>
+    </Menu>
+  </div>
+</div>
+
       </div>
     </nav>
 
@@ -108,12 +134,15 @@
 </template>
 
 <script setup>
-import { inject, ref, computed, reactive, onMounted } from "vue";
+import { inject, ref, computed, reactive, onMounted , onBeforeUnmount } from "vue";
 import { useRouter } from "vue-router";
-import { Menu, MenuButton, MenuItem, MenuItems, TransitionChild, BellIcon } from "@headlessui/vue";
-import { AdjustmentsIcon, HomeIcon } from "@heroicons/vue/outline";
+import { Menu, MenuButton, MenuItem, MenuItems, TransitionChild } from "@headlessui/vue";
+import { AdjustmentsIcon, HomeIcon, BellIcon } from "@heroicons/vue/outline";
 import { useSessionStore } from "../../stores/session.store";
 import { useinstructionstore } from "../../stores/instructions.store";
+
+import { useloadingplanstore } from "../../stores/loadingplans.store";
+import eventBus from '../../services/events/eventbus';
 
 // Initialize variables
 const sessionStore = useSessionStore();
@@ -121,14 +150,45 @@ const user = ref(sessionStore.getUser);
 const isDropdownOpen = ref(false);
 const newInstructionsCount = ref(0);
 
+const newLoadingplanCount = ref(0);
+
 const Swal = inject("Swal");
 const $router = useRouter();
 const instructionsStore = useinstructionstore();
 const instructions = reactive([]);
 
+const loadingplanStore = useloadingplanstore();
+const loadingplans = reactive([]);
+
+
+const notificationsCount = computed(() => notifications.value.length);
+const isNotificationsOpen = ref(false);
+
+const toggleNotifications = () => {
+  isNotificationsOpen.value = !isNotificationsOpen.value;
+};
+
 
 onMounted(() => {
   getInstructions();
+  getLoadingPlans();
+  eventBus.on('instructionArchived', (instructionId) => {
+    // Update the notification count
+    getInstructions();
+    updateNotifications();
+  });
+
+  eventBus.on('loadingplanArchived', (lpId) => {
+    // Update the notification count
+    getLoadingPlans();
+    updateNotifications();
+  });
+
+});
+
+onBeforeUnmount(() => {
+  eventBus.off('instructionArchived');
+  eventBus.off('loadingplanArchived');
 });
 
 // Helper functions
@@ -155,6 +215,30 @@ const closeDropdown = () => {
 const onAbout = async () => {
    $router.push({ path: "/commissioner/about-system" })
   
+};
+
+const notifications = ref([
+]);
+const updateNotifications = () => {
+  notifications.value = [];
+
+  if (newInstructionsCount.value > 0) {
+    notifications.value.push({
+      message: `Lean Season Instructions (${newInstructionsCount.value})`,
+      href: "/commissioner/instruction-management"
+    });
+
+  }
+
+  if (newLoadingplanCount.value > 0) {
+    notifications.value.push({
+      message: `Emergency Response Instructions (${newLoadingplanCount.value})`,
+      href: "/commissioner/instruction-management"
+    });
+
+  }
+
+
 };
 
 const onSignout = async () => {
@@ -218,6 +302,8 @@ const getInstructions = async () => {
 
       // Update the count of new instructions
       newInstructionsCount.value = instructions.length;
+      
+      updateNotifications()
     })
     .catch((error) => {
       Swal.fire({
@@ -233,5 +319,36 @@ const getInstructions = async () => {
 };
 
 
+
+const getLoadingPlans = async () => {
+  isLoading.value = true;
+  loadingplanStore
+    .get()
+    .then((result) => {
+      // Clear the existing array
+      loadingplans.length = 0;
+
+
+      // Push the filtered instructions into the array
+      loadingplans.push(...result.filter(item => !item.IsApproved));
+
+
+      // Update the count of new instructions
+      newLoadingplanCount.value = loadingplans.length;
+      
+      updateNotifications()
+    })
+    .catch((error) => {
+      Swal.fire({
+        title: "User Retrieval Failed",
+        text: "Failed to get loading plans (Please refresh to try again)",
+        icon: "error",
+        confirmButtonText: "Ok",
+      });
+    })
+    .finally(() => {
+      isLoading.value = false;
+    });
+};
 
 </script>

@@ -19,7 +19,7 @@
           <!-- Admin Text in the Middle (if needed) -->
           <span class="font-bold text-white mx-4">DODMA CTS | Central Officer
             <span class="text-xs font-normal">(v2.0)</span>
-        
+
           </span>
 
 
@@ -70,6 +70,32 @@
 
         </div>
 
+        <div class="flex items-center space-x-4">
+          <!-- Notification Button -->
+          <div class="relative">
+            <button @click="toggleNotifications"
+              class="text-gray-50 hover:text-gray-50 hover:bg-blue-400 px-2 py-2 text-sm font-medium rounded-md">
+              <BellIcon class="h-6 w-6 text-white" aria-hidden="true" />
+              <span v-if="notificationsCount > 0"
+                class="absolute top-0 right-0 flex items-center justify-center h-4 w-4 text-xs font-bold text-white bg-red-600 rounded-full">
+                {{ notificationsCount }}
+              </span>
+            </button>
+            <div v-if="isNotificationsOpen" class="absolute right-0 mt-2 w-64 bg-white rounded-md shadow-lg z-10">
+              <div class="py-2 px-4 text-xs text-gray-700">
+                <p v-if="notifications.length === 0">No new notifications</p>
+                <ul v-else>
+                  <li v-for="(notification, index) in notifications" :key="index" class="py-1 border-b border-gray-200">
+                    <router-link :to="notification.href" class="text-blue-500 hover:underline">
+                      {{ notification.message }}
+                    </router-link>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <div class="relative ml-5">
           <Menu as="div" class="flex-shrink-0 relative">
             <div>
@@ -102,16 +128,11 @@
 
 
                 <MenuItem v-slot="{ active }">
-                  <button @click="onAbout()" :class="menuItemClasses(active, true)">
-                    About System
-                  </button>
-                </MenuItem>
-                <MenuItem v-slot="{ active }">
                 <button @click="onSignout" :class="menuItemClasses(active, true)">
                   Sign out
                 </button>
                 </MenuItem>
-                
+
               </MenuItems>
             </transition>
           </Menu>
@@ -134,7 +155,7 @@
     <footer class="text-white text-center p-4" style="background-color: #096eb4;">
       <span class="inline-block align-middle text-sm">
 
-        © WFP Malawi Supply Chain Unit | DoDMA
+        © 2024 Designed by WFP Malawi Supply Chain Unit
       </span>
     </footer>
   </div>
@@ -142,7 +163,7 @@
 
 
 <script setup>
-import { inject, ref, watch, reactive, onMounted, computed, toRefs } from "vue";
+import { inject, ref, watch, reactive, onMounted, computed, toRefs, onBeforeUnmount } from "vue";
 import { useSessionStore } from "../../stores/session.store";
 import { useRouter } from "vue-router";
 import {
@@ -186,6 +207,9 @@ import {
   SelectorIcon,
 } from "@heroicons/vue/solid";
 
+import eventBus from '../../services/events/eventbus';
+
+
 import { userequisitionstore } from "../../stores/requisition.store";
 const requisitionsStore = userequisitionstore();
 const requisitions = reactive([]);
@@ -206,6 +230,14 @@ const sessionStore = useSessionStore();
 const user = ref(sessionStore.getUser);
 const role = ref(sessionStore.getRole);
 
+const notifications = ref([
+]);
+const notificationsCount = computed(() => notifications.value.length);
+const isNotificationsOpen = ref(false);
+
+const toggleNotifications = () => {
+  isNotificationsOpen.value = !isNotificationsOpen.value;
+};
 
 const newRequisitionsCount = ref(0);
 const isDropdownOpen = ref(false);
@@ -218,8 +250,8 @@ const menuItemClasses = (active, isButton = false) => [
 ];
 
 const onAbout = async () => {
-   $router.push({ path: "/dodma/about-system" })
-  
+  $router.push({ path: "/dodma/about-system" })
+
 };
 
 const toggleDropdown = () => {
@@ -247,8 +279,15 @@ const isLoading = ref(false)
 
 //MOUNTED
 onMounted(() => {
-
   getRequisitions();
+
+  eventBus.on('requisitionArchived', (requisitionId) => {
+    // Update the notification count
+    getRequisitions();
+
+    updateNotifications();
+  });
+
 });
 //WAT
 function navigation() {
@@ -274,7 +313,7 @@ function navigation() {
     // Check if the current route base matches the nav item's href
     // Or if it's the "Loading Plans" item and the current route base starts with /planner/loadingplans or /planner/dispatches
     const isMatched = currentRouteBase === navItem.href ||
-      (navItem.name === "Project Management" && (currentRouteBase.startsWith("/dodma/dispatch-management") || currentRouteBase.startsWith("/dodma/loadingplans") || currentRouteBase.startsWith("/dodma/dispatches") )) ||
+      (navItem.name === "Project Management" && (currentRouteBase.startsWith("/dodma/dispatch-management") || currentRouteBase.startsWith("/dodma/loadingplans") || currentRouteBase.startsWith("/dodma/dispatches"))) ||
       (navItem.name === "Receipts" && (currentRouteBase.startsWith("/warehouse/receipts")));
     navItem.current = isMatched;
   });
@@ -298,8 +337,8 @@ const open = ref(false);
 //FUNCTIONS
 
 const navItems = computed(() => navigation());
-const firstFiveItems = computed(() => navItems.value.slice(0, 5));
-const remainingItems = computed(() => navItems.value.slice(5));
+const firstFiveItems = computed(() => navItems.value.slice(0, 3));
+const remainingItems = computed(() => navItems.value.slice(3));
 
 const itemClasses = (item) => [
   item.current ? 'bg-white text-black' : 'text-gray-50 hover:text-gray-50 hover:bg-blue-400',
@@ -330,7 +369,19 @@ const onSignout = async () => {
 };
 
 
+const updateNotifications = () => {
+  notifications.value = [];
 
+  if (newRequisitionsCount.value > 0) {
+    notifications.value.push({
+      message: `Pending Requisitions (${newRequisitionsCount.value})`,
+      href: "/dodma/requisition-management"
+    });
+
+  }
+
+
+};
 
 //FUNCTIONS
 const getRequisitions = async () => {
@@ -341,14 +392,14 @@ const getRequisitions = async () => {
       // Clear the existing array
       requisitions.length = 0;
 
-
-
       // Push the filtered instructions into the array
       requisitions.push(...result.filter(item => item.IsArchived == false || item.IsArchived == null));
 
 
       // Update the count of new instructions
       newRequisitionsCount.value = requisitions.length;
+
+      updateNotifications()
     })
 
 
@@ -356,5 +407,10 @@ const getRequisitions = async () => {
       isLoading.value = false;
     });
 };
+
+
+onBeforeUnmount(() => {
+  eventBus.off('requisitionArchived');
+});
 
 </script>
