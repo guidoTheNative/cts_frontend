@@ -318,7 +318,7 @@
                 </div>
                 <!-- Damaged Stock Stats -->
                 <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-3">
-                  <div class="text-xl font-bold text-gray-600 mb-1">Damaged Stock Statistics </div>
+                  <div class="text-xl font-bold text-gray-600 mb-1">Stock Loss Statistics </div>
                   <div class="text-sm font-bold text-gray-500 mb-4">Lean Season Response </div>
 
                   <div v-for="(stat, index) in damagedStockStats " :key="index"
@@ -328,7 +328,7 @@
                       <div>
                         <div class="text-lg font-medium text-gray-800">{{ stat.commodity }}</div>
                         <div class="text-sm text-gray-500">
-                          <router-link to="/dodma/lean-season-damages" class="text-blue-500 hover:underline">
+                          <router-link to="/dodma/Lean-season-losses" class="text-blue-500 hover:underline">
                             View Details
                           </router-link>
                         </div>

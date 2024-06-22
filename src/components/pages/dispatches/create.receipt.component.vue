@@ -70,7 +70,7 @@
                         <option value="other">Other (please specify)</option>
                       </select>
 
-                      <textarea v-if="receipt.Remarks === 'other'" v-model="receipt.Remarks" id="CustomRemark" rows="3"
+                      <textarea v-if="receipt.Remarks === 'other'" v-model="receipt.Comments" id="CustomRemark" rows="3"
                         class="mt-2 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
                         placeholder="Enter your custom remark here"></textarea>
                     </div>

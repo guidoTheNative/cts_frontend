@@ -36,24 +36,35 @@
           styleClass="vgt-table striped" compactMode>
           <template #table-actions> </template>
           <template #table-row="props">
+
+            <span v-if="props.column.label === 'Status'">
+                <div>
+                  <span v-if="props.row.IsApproved"
+                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-800">
+                    Approved
+                  </span>
+                  <span v-else
+                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-red-100 text-red-800">
+                    Not Approved
+                  </span>
+                </div>
+              </span>
             <div v-if="props.column.label == 'Options'" class="flex space-x-2">
 
 
 
-              <!-- 
-              <button type="button" @click="openDispatchDialog(props.row)"
-                class="font-heading inline-flex items-center px-6 py-2.5 border border-blue-400 text-blue-400 font-bold text-xs rounded shadow-md hover:bg-blue-300 hover:text-white hover:shadow-lg focus:outline-none focus:ring-0 active:border-blue-400 active:shadow-lg transition duration-100 ease-in-out capitalize">
-                <TruckIcon class="h-5 w-5 mr-2" />
-                Dispatch
-              </button> -->
+            
 
-
-              <!-- Edit Button with Pencil Icon -->
-              <!--   <button @click="openEditDialog(props.row)"
+            <button @click="openEditDialog(props.row)"
                 class="text-green-500 hover:text-green-700 transition duration-300">
                 <PencilIcon class="h-5 w-5 inline-block mr-1" />
                 Edit
-              </button> -->
+              </button> 
+
+              <button @click="openAttachmentDialog(props.row)" class="text-blue-500 hover:text-blue-500 transition duration-300">
+                <PaperclipIcon class="h-5 w-5 inline-block mr-1" />
+                Attachments
+              </button>
 
               <!-- Delete Button with Trash Icon -->
               <button v-if="props.row.Balance > 0" @click="deleteItem(props.row.id)" class="text-red-500 hover:text-red-700 transition duration-300">
@@ -73,6 +84,8 @@
           @close="closeDispatchDialog" v-on:update="reloadPage" />
 
 
+          <AttachDocumentsDialog :isOpen="isAttachmentDialogOpen" :loadingPlan="selectedLoadingPlan" @close="closeAttachmentForm" @submit="submitAttachments" />
+      
       </div>
 
     </div>
@@ -88,6 +101,7 @@ import {
   SearchIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
+  PaperclipIcon,
   PencilIcon, TrashIcon, TruckIcon
 } from "@heroicons/vue/solid";
 //COMPONENTS
@@ -103,6 +117,8 @@ import createReportForm from "../../../components/pages/reports/create.component
 
 
 import EditLoadingPlanDialog from "../../../components/pages/reports/edit-loading-plan.component.vue";
+
+import AttachDocumentsDialog from "../../../components/pages/reports/attach-documents.component.vue"; // Import your AttachDocumentsDialog component
 
 
 import DispatchLoadingPlanDialog from "../../../components/pages/reports/create.dispatch-planner.component.vue";
@@ -173,6 +189,14 @@ const columns = ref([
     tdClass: "capitalize"
   },
 
+  {
+    label: "Status",
+    hidden: false,
+    field: row => row.IsApproved,
+    sortable: true,
+    firstSortType: "asc",
+    tdClass: "capitalize"
+  },
 
 
   {
@@ -190,6 +214,7 @@ const selectedLoadingPlan = ref(null);
 
 // Function to open the edit dialog
 const openEditDialog = (loadingPlan) => {
+
   selectedLoadingPlan.value = loadingPlan;
   isEditDialogOpen.value = true;
 };
@@ -202,6 +227,7 @@ const closeEditDialog = () => {
 
 
 const isDispatchDialogOpen = ref(false);
+const isAttachmentDialogOpen = ref(false); // Add this variable
 
 // Function to open the edit dialog
 const openDispatchDialog = (loadingPlan) => {
@@ -212,6 +238,22 @@ const openDispatchDialog = (loadingPlan) => {
 // Function to close the edit dialog
 const closeDispatchDialog = () => {
   isDispatchDialogOpen.value = false;
+};
+
+
+
+
+const closeAttachmentForm = () => {
+  isAttachmentDialogOpen.value = false;
+};
+
+const submitAttachments = (attachments) => {
+  // Logic for submitting the attachments
+};
+
+const openAttachmentDialog = (loadingPlan) => {
+  selectedLoadingPlan.value = loadingPlan;
+  isAttachmentDialogOpen.value = true;
 };
 
 //MOUNTED

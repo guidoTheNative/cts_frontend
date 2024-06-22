@@ -10,7 +10,7 @@
       <div class="md:flex md:items-center md:justify-between">
         <div class="flex-1 min-w-0">
           <h2 class="font-bold leading-7 text-white sm:text-2xl sm:truncate">
-            Commodity Damages
+            Commodity Losses
           </h2>
         </div>
         <button type="button"
@@ -68,7 +68,7 @@ const Swal = inject("Swal");
 const isLoading = ref(false);
 const breadcrumbs = [
   { name: "Home", href: "/dodma/dashboard", current: false },
-  { name: "Lean Season Damages", href: "#", current: true },
+  { name: "Lean Season Losses", href: "#", current: true },
 ];
 
 
@@ -172,7 +172,7 @@ const columns = ref([
 
 const generateExcel = () => {
   const wb = XLSX.utils.book_new();
-  const wsName = 'Lean-season-damages';
+  const wsName = 'Lean-season-losses';
   // Create a worksheet from the flattened data array
 
 
@@ -186,14 +186,16 @@ const generateExcel = () => {
     "Transporter": damage.transporter,
     "Quantity Dispatched (MT)": damage.originQuantity,
     "Quantity Damaged (MT)": damage.totalQuantity,
+    "Type of Loss": damage.typeOfLoss,
     "Percentage Damaged (%)": damage.damagePercentage,
+    "Comments": damage.comments,
   }))
 
 
   const ws = XLSX.utils.json_to_sheet(flattenedData);
   XLSX.utils.book_append_sheet(wb, ws, wsName);
   // Export the workbook
-  XLSX.writeFile(wb, 'Lean-season-damages.xlsx');
+  XLSX.writeFile(wb, 'Lean-season-losses.xlsx');
 };
 
 

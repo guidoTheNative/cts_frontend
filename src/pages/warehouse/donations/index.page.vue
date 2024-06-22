@@ -10,7 +10,7 @@
       <div class="md:flex md:items-center md:justify-between">
         <div class="flex-1 min-w-0">
           <h2 class="font-bold leading-7 text-white sm:text-2xl sm:truncate">
-            Commodity Damages
+            Commodity Losses
           </h2>
         </div>
       </div>
@@ -45,7 +45,7 @@ import {
 const isLoading = ref(false); // Example reactive state
 const breadcrumbs = [
   { name: "Home", href: "/dodma/dashboard", current: false },
-  { name: "Commodity Damages", href: "#", current: true },
+  { name: "Commodity Losses", href: "#", current: true },
   { name: "Lean Season Response", href: "#", current: true },
 ];
 const options = ref([
@@ -53,7 +53,7 @@ const options = ref([
   { label: 'Instructed Dispatches', icon: TruckIcon, path: '/instructed-dispatches' },
   { label: 'Instructed Commodities', icon: ArchiveIcon, path: '/instructed-commodities' },
   { label: 'Instructed Receipts', icon: ReceiptRefundIcon, path: '/instructed-receipts' },
-  */ { label: 'Commodity Damages', icon: ClipboardIcon, path: '/manager/receipts' },
+  */ { label: 'Commodity Losses', icon: ClipboardIcon, path: '/manager/receipts' },
 ]);
 </script>
 

@@ -61,7 +61,7 @@
                                 <MinusCircleIcon class="h-5 w-5" />
                               </button>
                             </div>
-                            <textarea v-if="remark.Remarks === 'other'" v-model="remark.Remarks" id="CustomRemark" rows="3" class="mt-2 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" placeholder="Enter your custom remark here"></textarea>
+                            <textarea v-if="remark.Remarks === 'other'" v-model="remark.Comments" id="CustomRemark" rows="3" class="mt-2 focus:ring-blue-500 focus:border-blue-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md" placeholder="Enter your custom remark here"></textarea>
                           </div>
                         </div>
                         <button @click="addRemark(index)" type="button" class="mt-2 inline-flex items-center px-3 py-2 text-sm font-medium text-green-600 hover:text-green-900 bg-white rounded-md border border-gray-200 hover:bg-gray-100">

@@ -329,8 +329,8 @@ const routes = [
       },
 
       {
-        path: "/manager/lean-season-damages",
-        name: "manager-lean-season-damages",
+        path: "/manager/Lean-season-losses",
+        name: "manager-Lean-season-losses",
         component: () => import("../pages/manager/damages/damages.page.vue"),
       },
 
@@ -1042,7 +1042,7 @@ const routes = [
       },
 
       {
-        path: "/dodma/lean-season-damages",
+        path: "/dodma/Lean-season-losses",
         name: "dodma-lean-season-damage-management",
         component: () => import("../pages/dodma/damages/damages.page.vue"),
       },
@@ -1381,6 +1381,13 @@ const routes = [
         path: "/commissioner/users",
         name: "commissioner-users",
         component: () => import("../pages/commissioner/users/index.page.vue"),
+      },
+
+      
+      {
+        path: "/commissioner/Lean-season-losses",
+        name: "commissioner-lean-season-damage-management",
+        component: () => import("../pages/commissioner/damages/damages.page.vue"),
       },
       {
         path: "/commissioner/users/manage/:id",

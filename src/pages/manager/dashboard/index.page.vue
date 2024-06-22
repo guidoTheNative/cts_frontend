@@ -135,7 +135,7 @@
                       <div class="flex flex-col">
                         <label for="commodity" class="text-sm font-medium text-gray-700">Commodity</label>
                         <select id="commodity" v-model="selectedCommodity"
-                          class="focus:ring-gray-500 focus:border-blue-300 block shadow-sm sm:text-sm border-gray-300 rounded-md">
+                          class="focus:ring-gray-500 w-40 focus:border-blue-300 block shadow-sm sm:text-sm border-gray-300 rounded-md">
                           <option value="">All Commodities</option>
                           <option v-for="commodity in commodities" :key="commodity.Name" :value="commodity.Name">
                             {{ commodity.Name }}
@@ -323,7 +323,7 @@
                 </div>
                 <!-- Damaged Stock Stats -->
                 <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-3">
-                  <div class="text-xl font-bold text-gray-600 mb-1">Damaged Stock Statistics </div>
+                  <div class="text-xl font-bold text-gray-600 mb-1">Stock Loss Statistics </div>
                   <div class="text-sm font-bold text-gray-500 mb-4">Lean Season Response </div>
 
                   <div v-for="(stat, index) in damagedStockStats " :key="index"
@@ -333,7 +333,7 @@
                       <div>
                         <div class="text-lg font-medium text-gray-800">{{ stat.commodity }}</div>
                         <div class="text-sm text-gray-500">
-                          <router-link to="/manager/lean-season-damages" class="text-blue-500 hover:underline">
+                          <router-link to="/manager/Lean-season-losses" class="text-blue-500 hover:underline">
                             View Details
                           </router-link>
                         </div>

@@ -165,6 +165,8 @@ import { Dialog, DialogOverlay, TransitionRoot, TransitionChild } from '@headles
 
 import { inject, ref, reactive, onMounted, watch, computed } from "vue";
 
+import AttachDocumentsDialog from "../../../components/pages/reports/attach-documents.component.vue"; // Import your AttachDocumentsDialog component
+
 
 const Swal = inject("Swal");
 const moment = inject("moment");
@@ -234,7 +236,7 @@ const updateLoadingPlan = async () => {
   try {
     loadingPlan.value.UpdatedOn = new Date();
 
-    const { commodity, district, transporter, warehouse, user, originalIndex, vgt_id, IsActive, IsArchived, activityId, NoBags, ...updatedLoadingPlan } = loadingPlan.value;
+    const { commodity, district, transporter, warehouse, user, originalIndex, vgt_id, IsActive, IsArchived, activityId, NoBags, dispatches, ...updatedLoadingPlan } = loadingPlan.value;
 
     // Ensure ATCNumber is a string
     updatedLoadingPlan.ATCNumber = updatedLoadingPlan.ATCNumber?.toString() || '';

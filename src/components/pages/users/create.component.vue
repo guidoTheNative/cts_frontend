@@ -125,6 +125,31 @@
                       </div>
                       <p class="text-red-500 text-xs italic pt-1">{{ privilegeError }}</p>
                     </div>
+
+
+
+                 
+
+                    <div class="col-span-12 sm:col-span-12" v-if="roleId == 'ADMIN9'">
+                      <label for="privileges" class="block text-sm font-medium text-gray-700">
+                        Account Delegations
+                      </label>
+                      <div class="flex flex-wrap items-center border-gray-300 rounded-md border p-2 mt-1">
+                        <span v-for="(item, index) in delegations" :key="index"
+                          class="mr-2 mb-2 px-2 py-1 bg-blue-200 text-blue-800 rounded-lg text-sm flex items-center">
+                          {{ item }}
+                          <button @click="removeTag(index)" class="ml-1 text-red-500">&times;</button>
+                        </span>
+
+                        <!-- Input for adding new tags -->
+                        <input type="text" v-model="newDelegate" @keydown.enter.prevent="addTag"
+                          placeholder="Add an email address then place enter..."
+                          class="flex-grow focus:ring-gray-500 focus:border-blue-300 border-none shadow-sm sm:text-sm" />
+                        
+                        </div>
+                        <p class="text-red-500 text-xs italic pt-1">{{ DelegateError }}</p>
+                  
+                    </div>
                   </div>
 
                   <div class="grid grid-cols-6 gap-6 mt-3">
@@ -234,6 +259,32 @@ onMounted(() => {
 });
 //FUNCTIONS
 
+const props = defineProps({
+    users: Array,
+});
+
+const delegations = ref([]); // Array of tags (places)
+const newDelegate = ref(''); // Input value for new tags
+const DelegateError = ref(''); // Error message (if applicable)
+
+const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+// Methods
+function addTag() {
+  const delegate = newDelegate.value.trim();
+  const emailExists = props.users.some(user => user.email.includes(delegate));
+  if (delegate && emailPattern.test(delegate) && !delegations.value.includes(delegate) && !emailExists) {
+    delegations.value.push(delegate);
+    newDelegate.value = '';
+    DelegateError.value = '';
+  } else {
+    DelegateError.value = emailExists ? 'Delegation must not be an existing system user!' : 'Please enter a valid email address!';
+  }
+}
+
+function removeTag(index) {
+  delegations.value.splice(index, 1);
+}
+
 const getDistricts = async () => {
   districtstore
     .get()
@@ -261,7 +312,8 @@ const onSubmit = useSubmitForm((values, actions) => {
     status: status.value,
     roleId: roleId.value,
     district: district.value,
-    privileges: privileges.value.join()
+    privileges: privileges.value.join(),
+    delegations: delegations.value.join()
   };
   emit("create", model);
   open.value = false;
@@ -276,7 +328,7 @@ const getRoles = async () => {
       if (user.value.roleId == "ADMIN2") {
         roles.push(...result.filter((item) => item.id !== "ADMIN1"));
       } else {
-        roles.push(...result);
+        roles.push(...result.filter((item) => !item.isArchived));
       }
     })
     .catch((error) => {
