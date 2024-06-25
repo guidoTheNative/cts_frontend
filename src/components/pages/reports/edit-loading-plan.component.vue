@@ -236,7 +236,7 @@ const updateLoadingPlan = async () => {
   try {
     loadingPlan.value.UpdatedOn = new Date();
 
-    const { commodity, district, transporter, warehouse, user, originalIndex, vgt_id, IsActive, IsArchived, activityId, NoBags, dispatches, ...updatedLoadingPlan } = loadingPlan.value;
+    const { commodity, district, transporter, warehouse, user, originalIndex, vgt_id, IsActive, IsArchived, activityId, NoBags, dispatches, ApprovedBy, IsApproved, ...updatedLoadingPlan } = loadingPlan.value;
 
     // Ensure ATCNumber is a string
     updatedLoadingPlan.ATCNumber = updatedLoadingPlan.ATCNumber?.toString() || '';

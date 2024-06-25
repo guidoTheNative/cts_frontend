@@ -137,6 +137,48 @@ export default class ReceivedCommoditiesService {
         }
       });
   }
+
+  getdispatchDamageSummary(id) {
+    if (id == null) {
+      return axios
+        .get(resource + '/damaged-summary' + `?filter={}`, {
+          headers: {
+            "Access-Control-Allow-Origin": "*",
+            "Content-type": "Application/json",
+            Authorization: `Bearer ${sessionStorage.getItem("JWT")}`,
+          },
+        })
+        .then((response) => {
+          var result = response.data;
+          return result;
+        })
+        .catch((error) => {
+          if (error.response) {
+            throw error.response.data.error;
+          }
+        });
+    } else if (id != null) {
+      return axios
+        .get(resource + `/` + id + `?filter={}`, {
+          headers: {
+            "Access-Control-Allow-Origin": "*",
+            "Content-type": "Application/json",
+            Authorization: `Bearer ${sessionStorage.getItem("JWT")}`,
+          },
+        })
+        .then((response) => {
+          var result = response.data;
+          return result;
+        })
+        .catch((error) => {
+          if (error.response) {
+            throw error.response.data.error;
+          }
+        });
+    }
+  }
+
+
   remove(id) {
     return axios
       .delete(resource + `/` + id, {

@@ -22,10 +22,16 @@
       <!-- Tabs -->
       <div class="tabs">
         <button @click="currentTab = 'leanSeason'" class="rounded-md"
-          :class="{ active: currentTab === 'leanSeason' }">Lean Season Instructions</button>
+          :class="{ active: currentTab === 'leanSeason' }">
+          Lean Season Instructions
+          <span v-if="emergencyResponseInstructions.length > 0" class="badge badge-red">{{ emergencyResponseInstructions.length }}</span>
+        </button>
         <button @click="currentTab = 'emergencyResponse'" class="rounded-md"
-          :class="{ active: currentTab === 'emergencyResponse' }">Emergency Response Instructions</button>
-      </div>
+          :class="{ active: currentTab === 'emergencyResponse' }">
+          Emergency Response Instructions
+          <span v-if="leanSeasonInstructions.length > 0" class="badge badge-red">{{ leanSeasonInstructions.length }}</span>
+        </button>
+       </div>
 
       <!-- Content for Tabs -->
       <div v-if="currentTab === 'emergencyResponse'">
@@ -433,5 +439,22 @@ const columns2 = ref([
 .rounded-table {
   border-radius: 10px;
   overflow: hidden;
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.25em 0.5em;
+  font-size: 0.75em;
+  font-weight: bold;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+  border-radius: 0.25rem;
+}
+
+.badge-red {
+  background-color: rgba(255, 0, 0, 0.874);
+  color: white;
 }
 </style>

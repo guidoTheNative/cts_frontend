@@ -122,7 +122,7 @@ const submit = () => {
   let newValues = {
     attachment: files.value,
     referenceId: props.loadingPlan.id,
-    type: "DOCUMENT",
+    type: "LP-DOCUMENT",
     name: "DRAWDOWNMEMO-DODMA-" + props.loadingPlan.id,
     metadata: {
       publicationDate: moment(new Date()).format(
@@ -223,7 +223,7 @@ const create = async (data) => {
 
 
 const getFiles = async () => {
-  fileStore.getByReference({ id: props.loadingPlan.id, type: "DOCUMENT" })
+  fileStore.getByReference({ id: props.loadingPlan.id, type: "LP-DOCUMENT" })
     .then((result) => {
       files.value = result;
     })

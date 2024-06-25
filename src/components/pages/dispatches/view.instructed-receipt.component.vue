@@ -79,6 +79,7 @@
                         <th class="px-4 py-2">Warehouse</th>
                         <th class="px-4 py-2">Vehicle Reg No</th>
                         <th class="px-4 py-2">Commodity</th>
+                        <th class="px-4 py-2">Condition</th>
                         <th class="px-4 py-2">Qty</th>
                       </tr>
                     </thead>
@@ -88,6 +89,7 @@
                         <td class="border px-4 py-2">{{ receipt.instructedDispatch?.instruction?.warehouse?.Name }}</td>
                         <td class="border px-4 py-2">{{ receipt.instructedDispatch?.instruction?.VehicleRegNo }}</td>
                         <td class="border px-4 py-2">{{ item?.commodity?.Name }}</td>
+                        <td class="border px-4 py-2">{{ item?.Remarks }}</td>
                         <td class="border px-4 py-2">
                           {{ item?.Quantity }} {{ item.commodity.commodityTypeId == 1 ? "MT" : "Units" }}
                         </td>

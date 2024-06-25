@@ -5,7 +5,7 @@ const receivedCommoditiesService = new ReceivedCommoditiesService();
 export const useReceivedCommoditiesStore = defineStore({
   id: 'ReceivedCommodities',
   state: () => ({
-     ReceivedCommodities: [],
+    ReceivedCommodities: [],
   }),
   getters: {
 
@@ -20,22 +20,27 @@ export const useReceivedCommoditiesStore = defineStore({
       });
     },
 
+    async getdispatchDamageSummary() {
+      return await receivedCommoditiesService.getdispatchDamageSummary().then((result) => {
+        if (result) {
+          var response = result;
+          return response
+        }
+      });
+    },
 
- 
-
-    
     async getByReference(data) {
       return await receivedCommoditiesService.getByReference(data).then((result => {
-          if (result) {
-              return result
-          }
+        if (result) {
+          return result
+        }
       })).catch(error => {
-          switch (error.statusCode) {
-              default:
-                  throw error.message
-          }
+        switch (error.statusCode) {
+          default:
+            throw error.message
+        }
       });
-  },
+    },
 
     async getOne(id) {
       return await receivedCommoditiesService

@@ -69,14 +69,16 @@
 
                     <div class="mt-1 flex justify-right gap-x-2 sm:mt-0">
                       <button @click="exportToExcel"
-                        v-if="currentView !== 'dashboard' && currentView !== 'leanSeasonDashboard'  && currentView !== 'Donations'" type="button"
+                        v-if="currentView !== 'dashboard' && currentView !== 'leanSeasonDashboard' && currentView !== 'Donations'"
+                        type="button"
                         class="tab-button font-body inline-flex items-center px-6 py-2.5 font-medium text-xs leading-tight rounded shadow-md transition duration-100 ease-in-out capitalize"
                         :class="{ 'active-tab': false }">
                         <DocumentDownloadIcon class="h-5 w-5 mr-2" />
                         Export to Excel
                       </button>
 
-                      <button @click="takeScreenshot" v-if="currentView !== 'dashboard' && currentView !== 'Donations'" type="button"
+                      <button @click="takeScreenshot" v-if="currentView !== 'dashboard' && currentView !== 'Donations'"
+                        type="button"
                         class="tab-button font-body inline-flex items-center px-6 py-2.5 font-medium text-xs leading-tight rounded shadow-md transition duration-100 ease-in-out capitalize"
                         :class="{ 'active-tab': false }">
                         <CameraIcon class="h-5 w-5 mr-2" />
@@ -92,13 +94,12 @@
               <!-- Chart and image container -->
 
               <div class="bg-gray-100 p-5" v-show="currentView === 'Donations'">
-             
+
                 <div class="bg-gray-100 p-5">
-                <!-- Commodity distribution table view -->
-                <donations-table :data="donations"
-                  :screenshotMode="screenshotMode" />
-                <!-- Other components for stats, etc... -->
-              </div>
+                  <!-- Commodity distribution table view -->
+                  <donations-table :data="donations" :screenshotMode="screenshotMode" />
+                  <!-- Other components for stats, etc... -->
+                </div>
               </div>
 
 
@@ -177,8 +178,9 @@
                   <div class="mx-3">
                     <distribution-by-commodity v-if="filteredCommodityDistributionData.length > 0"
                       :commodityDistributionData="filteredCommodityDistributionData" />
-                   
-                    <div v-else class="flex items-center justify-center border border-gray-300 rounded-md h-64 text-gray-500 text-lg mt-4">
+
+                    <div v-else
+                      class="flex items-center justify-center border border-gray-300 rounded-md h-64 text-gray-500 text-lg mt-4">
                       No Data
                     </div>
                   </div>
@@ -186,14 +188,16 @@
                   <div class="mx-3">
                     <distribution-by-district v-if="filteredCommodityDistributionData.length > 0"
                       :commodityDistributionData="filteredCommodityDistributionData" />
-                    <div v-else class="flex items-center justify-center border border-gray-300 rounded-md h-64 text-gray-500 text-lg">
+                    <div v-else
+                      class="flex items-center justify-center border border-gray-300 rounded-md h-64 text-gray-500 text-lg">
                       No Data
                     </div>
                   </div>
                   <div class="mx-3">
                     <distribution-percentage v-if="filteredCommodityDistributionData.length > 0"
                       :commodityDistributionData="filteredCommodityDistributionData" />
-                    <div v-else class="flex items-center justify-center border border-gray-300 rounded-md h-64 text-gray-500 text-lg">
+                    <div v-else
+                      class="flex items-center justify-center border border-gray-300 rounded-md h-64 text-gray-500 text-lg">
                       No Data
                     </div>
                   </div>
@@ -253,7 +257,8 @@
                   <div class="mx-3">
                     <damage-summary-leans v-if="filteredLeanCommodityDispatchData.length > 0"
                       :commodityDispatchData="filteredLeanCommodityDispatchData" />
-                    <div v-else class="flex items-center justify-center border border-gray-300 rounded-md h-64 text-gray-500 text-lg">
+                    <div v-else
+                      class="flex items-center justify-center border border-gray-300 rounded-md h-64 text-gray-500 text-lg">
                       No Data
                     </div>
                   </div>
@@ -261,14 +266,16 @@
                   <div class="mx-3">
                     <damage-summary-lean v-if="filteredLeanCommodityDispatchData.length > 0"
                       :commodityDispatchData="filteredLeanCommodityDispatchData" />
-                    <div v-else class="flex items-center justify-center border border-gray-300 rounded-md h-64 text-gray-500 text-lg">
+                    <div v-else
+                      class="flex items-center justify-center border border-gray-300 rounded-md h-64 text-gray-500 text-lg">
                       No Data
                     </div>
                   </div>
                   <div class="mx-3">
                     <stock-summary-lean v-if="filteredLeanStockSummary.length > 0"
                       :leanStockSummary="filteredLeanStockSummary" />
-                    <div v-else class="flex items-center justify-center border border-gray-300 rounded-md h-64 text-gray-500 text-lg">
+                    <div v-else
+                      class="flex items-center justify-center border border-gray-300 rounded-md h-64 text-gray-500 text-lg">
                       No Data
                     </div>
                   </div>
@@ -313,35 +320,36 @@
                         View Details
                       </router-link>
 
-                        <div class="relative flex justify-left mt-3" v-if="stat.label == 'Total Stocks Planned (Lean Season Response)'">
-                      <span class="cursor-pointer text-blue-400 text-xs" @mouseover="showTooltip = true"
-                        @mouseleave="showTooltip = false">
-                        <InformationCircleIcon class="h-6 w-6 text-blue-500 inline-block align-middle mr-1" />
-                        <span class="align-middle">More Info</span>
-                      </span>
+                      <div class="relative flex justify-left mt-3"
+                        v-if="stat.label == 'Total Stocks Planned (Lean Season Response)'">
+                        <span class="cursor-pointer text-blue-400 text-xs" @mouseover="showTooltip = true"
+                          @mouseleave="showTooltip = false">
+                          <InformationCircleIcon class="h-6 w-6 text-blue-500 inline-block align-middle mr-1" />
+                          <span class="align-middle">More Info</span>
+                        </span>
 
-                      <div v-if="showTooltip"
-                        class="absolute bottom-full mb-2 w-64 p-4 bg-white border border-gray-200 rounded shadow-lg z-10">
+                        <div v-if="showTooltip"
+                          class="absolute bottom-full mb-2 w-64 p-4 bg-white border border-gray-200 rounded shadow-lg z-10">
 
-                        <div v-for="(summary, index) in loadingPlanSummary" :key="index" class="mb-4 last:mb-0">
-                          <h5 class="font-bold text-lg text-capitalize flex text-gray-600 items-center">
-                            {{ summary.commodityName }}
-                          </h5>
-                          <div class="font-medium text-sm mt-2">
-                            <div>
-                              <ClipboardListIcon class="h-4 w-4 text-green-500 inline-block mr-1 align-text-top" />
-                              <b>Total Stock Planned:</b> <br> &nbsp; &nbsp; &nbsp; &nbsp;{{
+                          <div v-for="(summary, index) in loadingPlanSummary" :key="index" class="mb-4 last:mb-0">
+                            <h5 class="font-bold text-lg text-capitalize flex text-gray-600 items-center">
+                              {{ summary.commodityName }}
+                            </h5>
+                            <div class="font-medium text-sm mt-2">
+                              <div>
+                                <ClipboardListIcon class="h-4 w-4 text-green-500 inline-block mr-1 align-text-top" />
+                                <b>Total Stock Planned:</b> <br> &nbsp; &nbsp; &nbsp; &nbsp;{{
           summary.totalStockPlanned.toLocaleString() }} MT
-                            </div>
-                            <div>
-                              <ExclamationCircleIcon class="h-4 w-4 text-red-500 inline-block mr-1 align-text-top" />
-                              <b> Total Balance: </b><br> &nbsp; &nbsp; &nbsp; &nbsp;{{
+                              </div>
+                              <div>
+                                <ExclamationCircleIcon class="h-4 w-4 text-red-500 inline-block mr-1 align-text-top" />
+                                <b> Total Balance: </b><br> &nbsp; &nbsp; &nbsp; &nbsp;{{
           summary.totalBalance.toLocaleString() }} MT
+                              </div>
                             </div>
                           </div>
                         </div>
                       </div>
-                    </div>
                     </div>
                   </div>
                   <div v-if="stat.percentageText" class="mt-4">
@@ -357,7 +365,7 @@
                         :style="{ width: stat.progress + '%' }"></div>
                     </div>
                   </div>
-                
+
                 </div>
                 <!-- Damaged Stock Stats -->
                 <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-3">
@@ -365,6 +373,24 @@
                   <div class="text-sm font-bold text-gray-500 mb-4">Lean Season Response </div>
 
                   <div v-for="(stat, index) in damagedStockStats " :key="index"
+                    class="flex items-center justify-between py-2 border-b last:border-b-0">
+                    <div class="flex items-center">
+                      <div :style="{ backgroundColor: stat.color }" class="w-4 h-4 rounded-full mr-2"></div>
+                      <div>
+                        <div class="text-lg font-medium text-gray-800">{{ stat.commodity }}</div>
+                        <div class="text-sm text-gray-500">
+                          <router-link to="/commissioner/Lean-season-losses" class="text-blue-500 hover:underline">
+                            View Details
+                          </router-link>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="text-lg font-bold text-red-600">{{ stat.percentage }}%</div>
+                  </div>
+
+                  <div class="text-sm font-bold text-gray-500 mb-4">Emergency Response </div>
+
+                  <div v-for="(stat, index) in damagedStockStatsEmergency " :key="index"
                     class="flex items-center justify-between py-2 border-b last:border-b-0">
                     <div class="flex items-center">
                       <div :style="{ backgroundColor: stat.color }" class="w-4 h-4 rounded-full mr-2"></div>
@@ -414,6 +440,7 @@ import stockSummaryLean from '../../../components/pages/charts/stocksummarylean.
 
 import { useListingStore } from "../../../stores/catalogue.store";
 import { usebookingstore } from "../../../stores/booking.store";
+import { useReceivedCommoditiesStore } from "../../../stores/receivedCommodities.store";
 
 import DonationsTable from './DonationsTable.vue';
 
@@ -481,6 +508,7 @@ const screenshotMode = ref(false);
 // Example data structure for maize distribution
 const commodityDistributionData = ref([]);
 const commodityDispatchData = ref([]);
+const commodityEmergencyDispatchData = ref([]);
 
 const currentView = ref('dashboard'); // The initial view can be 'dashboard' or 'charts'
 
@@ -497,6 +525,8 @@ const donationstore = usedonationstore();
 
 const disasterStore = useDisasterstore();
 const commoditytypestore = usecommoditytypestore();
+
+const receivedcommoditiesstore = useReceivedCommoditiesStore();
 const districts = reactive([]);
 const disasters = reactive([]);
 const commodities = reactive([]);
@@ -611,11 +641,13 @@ onMounted(async () => {
   try {
     const data = await requisitionStore.getCommodityDistributionSummary();
     const dispatchdata = await dispatchesStore.getdispatchDamageSummary();
+    const dispatchEmergencydata = await receivedcommoditiesstore.getdispatchDamageSummary();
     const leanstocks = await loadingPlanStore.getloadingplansSummaryByCommodity();
     commodityDispatchData.value.length = 0
+    commodityEmergencyDispatchData.value.length = 0
     leanStockSummary.value = [...leanstocks]
     commodityDispatchData.value.push({ ...dispatchdata })
-
+    commodityEmergencyDispatchData.value.push({ ...dispatchEmergencydata })
     commodityDistributionData.value = [...data];
   } catch (error) {
     console.error("Failed to load commodity data:", error);
@@ -807,7 +839,7 @@ const getLoadingPlansPending = async () => {
     })
 }
 
-const getdispatchSummary = async () => {
+/* const getdispatchSummary = async () => {
   dispatchStore
     .getdispatchSummary()
     .then(result => {
@@ -816,7 +848,7 @@ const getdispatchSummary = async () => {
       receivedPercentageFormated.value = result.dispatchPercentage.toFixed(2) + '% received'
       receivedPercentage.value = result.dispatchPercentage.toFixed(2)
     })
-}
+} */
 
 const getloadingplansSummary = async () => {
   loadingPlanStore
@@ -909,7 +941,7 @@ const stats2 = ref([
     textColor: 'green-500',
     showProgress: false,
     moreInfo: true,
-    
+
     extraInfo: true,
   },
   {
@@ -965,7 +997,7 @@ const damagedStockStats = computed(() => {
     return [];
   }
   const commodities = [...new Set(commodityDispatchData.value[0].commoditySummary.map(item => item.commodity))];
-  
+
   return commodities.map((commodity, index) => {
     const totalForCommodity = commodityDispatchData.value[0].commoditySummary
       .filter(item => item.commodity === commodity)
@@ -976,6 +1008,25 @@ const damagedStockStats = computed(() => {
     };
   });
 });
+
+const damagedStockStatsEmergency = computed(() => {
+  if (commodityEmergencyDispatchData.value.length === 0 || !commodityEmergencyDispatchData.value[0].commoditySummary) {
+    return [];
+  }
+  const commodities = [...new Set(commodityEmergencyDispatchData.value[0].commoditySummary.map(item => item.commodity))];
+
+  return commodities.map((commodity, index) => {
+    const totalForCommodity = commodityEmergencyDispatchData.value[0].commoditySummary
+      .filter(item => item.commodity === commodity)
+    return {
+      commodity,
+      percentage: totalForCommodity[0].damagePercentage.toFixed(2),
+      color: colors[index % colors.length]
+    };
+  });
+});
+
+
 
 // Filters
 const selectedDistrict = ref('');
