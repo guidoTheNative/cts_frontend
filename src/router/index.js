@@ -335,6 +335,11 @@ const routes = [
       },
 
       {
+        path: "/manager/Emergency-season-losses",
+        name: "manager-emergency-season-damage-management",
+        component: () => import("../pages/manager/damages/er-damages.page.vue"),
+      },
+      {
         path: "/manager/dispatches",
         name: "manager-dispatches",
         component: () => import("../pages/manager/dispatch/dispatches.page.vue"),
@@ -1048,6 +1053,12 @@ const routes = [
       },
 
       {
+        path: "/dodma/Emergency-season-losses",
+        name: "dodma-emergency-season-damage-management",
+        component: () => import("../pages/dodma/damages/er-damages.page.vue"),
+      },
+
+      {
         path: "/dodma/required-leanseason",
         name: "dodma-required-leanseason-management",
         component: () => import("../pages/dodma/requested/requested-commodities.page.vue"),
@@ -1382,12 +1393,17 @@ const routes = [
         name: "commissioner-users",
         component: () => import("../pages/commissioner/users/index.page.vue"),
       },
-
       
       {
         path: "/commissioner/Lean-season-losses",
         name: "commissioner-lean-season-damage-management",
         component: () => import("../pages/commissioner/damages/damages.page.vue"),
+      },
+
+      {
+        path: "/commissioner/Emergency-season-losses",
+        name: "commissioner-emergency-season-damage-management",
+        component: () => import("../pages/commissioner/damages/er-damages.page.vue"),
       },
       {
         path: "/commissioner/users/manage/:id",

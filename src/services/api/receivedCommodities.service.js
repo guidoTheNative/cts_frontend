@@ -141,15 +141,21 @@ export default class ReceivedCommoditiesService {
   getdispatchDamageSummary(id) {
     if (id == null) {
       return axios
-        .get(resource + '/damaged-summary' + `?filter={}`, {
-          headers: {
-            "Access-Control-Allow-Origin": "*",
-            "Content-type": "Application/json",
-            Authorization: `Bearer ${sessionStorage.getItem("JWT")}`,
-          },
-        })
+        .get(
+          resource + `/damage-summary` +
+          `?filter=
+          {"include":["commodity", "instructedReceipt"]}`,
+          {
+            headers: {
+              "Access-Control-Allow-Origin": "*",
+              "Content-type": "Application/json",
+              Authorization: `Bearer ${sessionStorage.getItem("JWT")}`,
+            },
+          }
+        )
         .then((response) => {
           var result = response.data;
+
           return result;
         })
         .catch((error) => {
@@ -159,7 +165,7 @@ export default class ReceivedCommoditiesService {
         });
     } else if (id != null) {
       return axios
-        .get(resource + `/` + id + `?filter={}`, {
+        .get(resource + `/` + id + `?filter={"include":["commodity", "instructedReceipt"]}`, {
           headers: {
             "Access-Control-Allow-Origin": "*",
             "Content-type": "Application/json",
@@ -177,6 +183,7 @@ export default class ReceivedCommoditiesService {
         });
     }
   }
+
 
 
   remove(id) {

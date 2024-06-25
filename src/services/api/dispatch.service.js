@@ -168,9 +168,8 @@ export default class DispatcherService {
   }
 
 
-  getdispatchDamageSummary(id) {
-    if (id == null) {
-      return axios
+  getdispatchDamageSummary() {
+     return axios
         .get(resource + '/damaged-summary' + `?filter={"include": [
         {
           "relation": "loadingPlan",
@@ -218,25 +217,7 @@ export default class DispatcherService {
             throw error.response.data.error;
           }
         });
-    } else if (id != null) {
-      return axios
-        .get(resource + `/` + id + `?filter={"include":  ["loadingPlan", "Dispatcher"]}`, {
-          headers: {
-            "Access-Control-Allow-Origin": "*",
-            "Content-type": "Application/json",
-            Authorization: `Bearer ${sessionStorage.getItem("JWT")}`,
-          },
-        })
-        .then((response) => {
-          var result = response.data;
-          return result;
-        })
-        .catch((error) => {
-          if (error.response) {
-            throw error.response.data.error;
-          }
-        });
-    }
+    
   }
 
 

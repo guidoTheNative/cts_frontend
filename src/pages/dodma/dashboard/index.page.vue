@@ -165,8 +165,9 @@
                   <div class="mx-3">
                     <distribution-by-commodity v-if="filteredCommodityDistributionData.length > 0"
                       :commodityDistributionData="filteredCommodityDistributionData" />
-                   
-                    <div v-else class="flex items-center justify-center border border-gray-300 rounded-md h-64 text-gray-500 text-lg mt-4">
+
+                    <div v-else
+                      class="flex items-center justify-center border border-gray-300 rounded-md h-64 text-gray-500 text-lg mt-4">
                       No Data
                     </div>
                   </div>
@@ -174,14 +175,16 @@
                   <div class="mx-3">
                     <distribution-by-district v-if="filteredCommodityDistributionData.length > 0"
                       :commodityDistributionData="filteredCommodityDistributionData" />
-                    <div v-else class="flex items-center justify-center border border-gray-300 rounded-md h-64 text-gray-500 text-lg">
+                    <div v-else
+                      class="flex items-center justify-center border border-gray-300 rounded-md h-64 text-gray-500 text-lg">
                       No Data
                     </div>
                   </div>
                   <div class="mx-3">
                     <distribution-percentage v-if="filteredCommodityDistributionData.length > 0"
                       :commodityDistributionData="filteredCommodityDistributionData" />
-                    <div v-else class="flex items-center justify-center border border-gray-300 rounded-md h-64 text-gray-500 text-lg">
+                    <div v-else
+                      class="flex items-center justify-center border border-gray-300 rounded-md h-64 text-gray-500 text-lg">
                       No Data
                     </div>
                   </div>
@@ -241,7 +244,8 @@
                   <div class="mx-3">
                     <damage-summary-leans v-if="filteredLeanCommodityDispatchData.length > 0"
                       :commodityDispatchData="filteredLeanCommodityDispatchData" />
-                    <div v-else class="flex items-center justify-center border border-gray-300 rounded-md h-64 text-gray-500 text-lg">
+                    <div v-else
+                      class="flex items-center justify-center border border-gray-300 rounded-md h-64 text-gray-500 text-lg">
                       No Data
                     </div>
                   </div>
@@ -249,14 +253,16 @@
                   <div class="mx-3">
                     <damage-summary-lean v-if="filteredLeanCommodityDispatchData.length > 0"
                       :commodityDispatchData="filteredLeanCommodityDispatchData" />
-                    <div v-else class="flex items-center justify-center border border-gray-300 rounded-md h-64 text-gray-500 text-lg">
+                    <div v-else
+                      class="flex items-center justify-center border border-gray-300 rounded-md h-64 text-gray-500 text-lg">
                       No Data
                     </div>
                   </div>
                   <div class="mx-3">
                     <stock-summary-lean v-if="filteredLeanStockSummary.length > 0"
                       :leanStockSummary="filteredLeanStockSummary" />
-                    <div v-else class="flex items-center justify-center border border-gray-300 rounded-md h-64 text-gray-500 text-lg">
+                    <div v-else
+                      class="flex items-center justify-center border border-gray-300 rounded-md h-64 text-gray-500 text-lg">
                       No Data
                     </div>
                   </div>
@@ -317,26 +323,54 @@
                   </div>
                 </div>
                 <!-- Damaged Stock Stats -->
+                <!-- Damaged Stock Stats -->
                 <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-3">
-                  <div class="text-xl font-bold text-gray-600 mb-1">Stock Loss Statistics </div>
-                  <div class="text-sm font-bold text-gray-500 mb-4">Lean Season Response </div>
+                  <div class="text-xl font-bold text-gray-600 mb-1">Stock Loss Statistics</div>
 
-                  <div v-for="(stat, index) in damagedStockStats " :key="index"
-                    class="flex items-center justify-between py-2 border-b last:border-b-0">
-                    <div class="flex items-center">
-                      <div :style="{ backgroundColor: stat.color }" class="w-4 h-4 rounded-full mr-2"></div>
-                      <div>
-                        <div class="text-lg font-medium text-gray-800">{{ stat.commodity }}</div>
-                        <div class="text-sm text-gray-500">
-                          <router-link to="/dodma/Lean-season-losses" class="text-blue-500 hover:underline">
-                            View Details
-                          </router-link>
+                  <div class="text-sm font-bold text-gray-500 mb-1">Lean Season Response</div>
+                  <div v-if="damagedStockStats.length === 0" class="text-gray-500 text-sm mb-3 font-medium">No Data
+                  </div>
+                  <div v-else>
+                    <div v-for="(stat, index) in damagedStockStats" :key="index"
+                      class="flex items-center justify-between py-2 border-b last:border-b-0">
+                      <div class="flex items-center">
+                        <div :style="{ backgroundColor: stat.color }" class="w-4 h-4 rounded-full mr-2"></div>
+                        <div>
+                          <div class="text-lg font-medium text-gray-800">{{ stat.commodity }}</div>
+                          <div class="text-sm text-gray-500">
+                            <router-link to="/dodma/Lean-season-losses" class="text-blue-500 hover:underline">
+                              View Details
+                            </router-link>
+                          </div>
                         </div>
                       </div>
+                      <div class="text-lg font-bold text-red-600">{{ stat.percentage }}%</div>
                     </div>
-                    <div class="text-lg font-bold text-red-600">{{ stat.percentage }}%</div>
+                  </div>
+
+                  <div class="text-sm font-bold text-gray-500 mb-4">Emergency Response</div>
+                  <div v-if="damagedStockStatsEmergency.length === 0" class="text-gray-500 text-sm mb-3 font-medium">No
+                    Data</div>
+                  <div v-else>
+                    <div v-for="(stat, index) in damagedStockStatsEmergency" :key="index"
+                      class="flex items-center justify-between py-2 border-b last:border-b-0">
+                      <div class="flex items-center">
+                        <div :style="{ backgroundColor: stat.color }" class="w-4 h-4 rounded-full mr-2"></div>
+                        <div>
+                          <div class="text-lg font-medium text-gray-800">{{ stat.commodity }}</div>
+                          <div class="text-sm text-gray-500">
+                            <router-link to="/dodma/Emergency-season-losses"
+                              class="text-blue-500 hover:underline">
+                              View Details
+                            </router-link>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="text-lg font-bold text-red-600">{{ stat.percentage }}%</div>
+                    </div>
                   </div>
                 </div>
+
               </div>
             </div>
           </div>
@@ -509,6 +543,9 @@ const columns = ref([
 
 import { userequisitionstore } from "../../../stores/requisition.store";
 import { useDispatcherStore } from "../../../stores/dispatch.store";
+
+import { useReceivedCommoditiesStore } from "../../../stores/receivedCommodities.store";
+
 const requisitionsStore = userequisitionstore();
 const requisitions = reactive([]);
 const dispatchesStore = useDispatcherStore();
@@ -520,6 +557,7 @@ const requisitionStore = userequisitionstore();
 const recieptStore = usereceiptstore();
 const receipts = reactive([]);
 
+const receivedcommoditiesstore = useReceivedCommoditiesStore();
 const $router = useRouter();
 //INJENCTIONS
 const moment = inject("moment");
@@ -554,16 +592,20 @@ let bookingCount = ref(0);
 const newRequisitionsCount = ref(0);
 const receiptcount = ref(0)
 const dispatchcount = ref(0)
-
+const commodityEmergencyDispatchData = ref([])
 //MOUNTEDgetCatalogue
 onMounted(async () => {
   try {
     const data = await requisitionStore.getCommodityDistributionSummary();
     const dispatchdata = await dispatchesStore.getdispatchDamageSummary();
+    const dispatchEmergencydata = await receivedcommoditiesstore.getdispatchDamageSummary();
     const leanstocks = await loadingPlanStore.getloadingplansSummaryByCommodity();
     commodityDispatchData.value.length = 0
+    commodityEmergencyDispatchData.value.length = 0
+
     leanStockSummary.value = [...leanstocks]
     commodityDispatchData.value.push({ ...dispatchdata })
+    commodityEmergencyDispatchData.value.push({ ...dispatchEmergencydata })
 
     commodityDistributionData.value = [...data];
   } catch (error) {
@@ -795,6 +837,22 @@ const getBookings = async () => {
   });
 };
 
+const damagedStockStatsEmergency = computed(() => {
+  if (commodityEmergencyDispatchData.value.length === 0 || !commodityEmergencyDispatchData.value[0].commoditySummary) {
+    return [];
+  }
+  const commodities = [...new Set(commodityEmergencyDispatchData.value[0].commoditySummary.map(item => item.commodity))];
+
+  return commodities.map((commodity, index) => {
+    const totalForCommodity = commodityEmergencyDispatchData.value[0].commoditySummary
+      .filter(item => item.commodity === commodity)
+    return {
+      commodity,
+      percentage: totalForCommodity[0].damagePercentage.toFixed(2),
+      color: colors[index % colors.length]
+    };
+  });
+});
 const createReport = async (model) => {
   isLoading.value = true;
   model.userId = user.value.id
@@ -901,7 +959,7 @@ const damagedStockStats = computed(() => {
     return [];
   }
   const commodities = [...new Set(commodityDispatchData.value[0].commoditySummary.map(item => item.commodity))];
-  
+
   return commodities.map((commodity, index) => {
     const totalForCommodity = commodityDispatchData.value[0].commoditySummary
       .filter(item => item.commodity === commodity)

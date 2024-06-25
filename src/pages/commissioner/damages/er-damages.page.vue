@@ -10,7 +10,7 @@
       <div class="md:flex md:items-center md:justify-between">
         <div class="flex-1 min-w-0">
           <h2 class="font-bold leading-7 text-white sm:text-2xl sm:truncate">
-            Lean Season Commodity Losses
+            Emergency Commodity Losses
           </h2>
         </div>
         <button type="button"
@@ -19,7 +19,6 @@
           Export Data
         </button>
       </div>
-
 
       <!-- table  -->
       <div class="align-middle inline-block min-w-full mt-5 shadow-xl rounded-table">
@@ -52,13 +51,7 @@ import {
 //COMPONENTS
 import spinnerWidget from "../../../components/widgets/spinners/default.spinner.vue";
 import breadcrumbWidget from "../../../components/widgets/breadcrumbs/admin.breadcrumb.vue";
-
-
-
 import * as XLSX from 'xlsx';
-
-
-
 import { useSessionStore } from "../../../stores/session.store";
 //INJENCTIONS
 const $router = useRouter();
@@ -68,18 +61,13 @@ const Swal = inject("Swal");
 const isLoading = ref(false);
 const breadcrumbs = [
   { name: "Home", href: "/dodma/dashboard", current: false },
-  { name: "Lean Season Losses", href: "#", current: true },
+  { name: "Emergency Response Losses", href: "#", current: true },
 ];
 
+import { useReceivedCommoditiesStore } from "../../../stores/receivedCommodities.store";
 
-import { useDispatcherStore } from "../../../stores/dispatch.store";
-
-
-
-const damageStore = useDispatcherStore();
+const damageStore = useReceivedCommoditiesStore();
 const damages = reactive([]);
-
-
 
 const sessionStore = useSessionStore();
 
@@ -111,9 +99,8 @@ const columns = ref([
   {
     label: "Details",
     hidden: false,
-    field: row => `<span >L.P#: ${row.loadingPlanNumber}</span><br>`
-      +
-      `<span>District: ${row.district}</span><br>`,
+    field: row => `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-green-100 text-green-800">District: ${row.district}</span><br>` + 
+    `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-orange-100 text-orange-800">Type Of Loss: ${row.typeOfLoss}</span><br>` ,
     sortable: true,
     firstSortType: "asc",
     html: true, // Important for rendering HTML
@@ -137,15 +124,6 @@ const columns = ref([
 
 
 
-  {
-    label: "Transporter",
-    field: row => `
-    <span class="by-color"> ${row.transporter + " MT" || "Unknown"}</span>`,
-    sortable: true,
-    firstSortType: "asc",
-    html: true, // This is important to render HTML
-    tdClass: "capitalize"
-  },
 
   {
     label: "Percentage of Damage",
@@ -172,18 +150,14 @@ const columns = ref([
 
 const generateExcel = () => {
   const wb = XLSX.utils.book_new();
-  const wsName = 'Lean-season-losses';
+  const wsName = 'Emergency-losses';
   // Create a worksheet from the flattened data array
-
 
   const dataToExport = damages;
 
-
   const flattenedData = dataToExport.map(damage => ({
     Commodity: damage.commodity,
-    'Loading Plan #': damage.loadingPlanNumber,
     District: damage.district,
-    "Transporter": damage.transporter,
     "Quantity Dispatched (MT)": damage.originQuantity,
     "Quantity Damaged (MT)": damage.totalQuantity,
     "Type of Loss": damage.typeOfLoss,
@@ -195,7 +169,7 @@ const generateExcel = () => {
   const ws = XLSX.utils.json_to_sheet(flattenedData);
   XLSX.utils.book_append_sheet(wb, ws, wsName);
   // Export the workbook
-  XLSX.writeFile(wb, 'Lean-season-losses.xlsx');
+  XLSX.writeFile(wb, 'Emergency-losses.xlsx');
 };
 
 
@@ -217,7 +191,6 @@ const getdamages = async () => {
     .getdispatchDamageSummary()
     .then(result => {
 
-      console.log(result, "paster")
       // for (let i = 0; i < 100; i++) {
       //   users.push(...result);
       // }

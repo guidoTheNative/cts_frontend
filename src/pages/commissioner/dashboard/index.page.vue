@@ -369,43 +369,49 @@
                 </div>
                 <!-- Damaged Stock Stats -->
                 <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-3">
-                  <div class="text-xl font-bold text-gray-600 mb-1">Stock Loss Statistics </div>
-                  <div class="text-sm font-bold text-gray-500 mb-4">Lean Season Response </div>
+                  <div class="text-xl font-bold text-gray-600 mb-1">Stock Loss Statistics</div>
 
-                  <div v-for="(stat, index) in damagedStockStats " :key="index"
-                    class="flex items-center justify-between py-2 border-b last:border-b-0">
-                    <div class="flex items-center">
-                      <div :style="{ backgroundColor: stat.color }" class="w-4 h-4 rounded-full mr-2"></div>
-                      <div>
-                        <div class="text-lg font-medium text-gray-800">{{ stat.commodity }}</div>
-                        <div class="text-sm text-gray-500">
-                          <router-link to="/commissioner/Lean-season-losses" class="text-blue-500 hover:underline">
-                            View Details
-                          </router-link>
+                  <div class="text-sm font-bold text-gray-500 mb-1">Lean Season Response</div>
+                  <div v-if="damagedStockStats.length === 0" class="text-gray-500 text-sm mb-3 font-medium">No Data</div>
+                  <div v-else>
+                    <div v-for="(stat, index) in damagedStockStats" :key="index"
+                      class="flex items-center justify-between py-2 border-b last:border-b-0">
+                      <div class="flex items-center">
+                        <div :style="{ backgroundColor: stat.color }" class="w-4 h-4 rounded-full mr-2"></div>
+                        <div>
+                          <div class="text-lg font-medium text-gray-800">{{ stat.commodity }}</div>
+                          <div class="text-sm text-gray-500">
+                            <router-link to="/commissioner/Lean-season-losses" class="text-blue-500 hover:underline">
+                              View Details
+                            </router-link>
+                          </div>
                         </div>
                       </div>
+                      <div class="text-lg font-bold text-red-600">{{ stat.percentage }}%</div>
                     </div>
-                    <div class="text-lg font-bold text-red-600">{{ stat.percentage }}%</div>
                   </div>
 
-                  <div class="text-sm font-bold text-gray-500 mb-4">Emergency Response </div>
-
-                  <div v-for="(stat, index) in damagedStockStatsEmergency " :key="index"
-                    class="flex items-center justify-between py-2 border-b last:border-b-0">
-                    <div class="flex items-center">
-                      <div :style="{ backgroundColor: stat.color }" class="w-4 h-4 rounded-full mr-2"></div>
-                      <div>
-                        <div class="text-lg font-medium text-gray-800">{{ stat.commodity }}</div>
-                        <div class="text-sm text-gray-500">
-                          <router-link to="/commissioner/Lean-season-losses" class="text-blue-500 hover:underline">
-                            View Details
-                          </router-link>
+                  <div class="text-sm font-bold text-gray-500 mb-4">Emergency Response</div>
+                  <div v-if="damagedStockStatsEmergency.length === 0" class="text-gray-500 text-sm mb-3 font-medium">No Data</div>
+                  <div v-else>
+                    <div v-for="(stat, index) in damagedStockStatsEmergency" :key="index"
+                      class="flex items-center justify-between py-2 border-b last:border-b-0">
+                      <div class="flex items-center">
+                        <div :style="{ backgroundColor: stat.color }" class="w-4 h-4 rounded-full mr-2"></div>
+                        <div>
+                          <div class="text-lg font-medium text-gray-800">{{ stat.commodity }}</div>
+                          <div class="text-sm text-gray-500">
+                            <router-link to="/commissioner/Emergency-season-losses" class="text-blue-500 hover:underline">
+                              View Details
+                            </router-link>
+                          </div>
                         </div>
                       </div>
+                      <div class="text-lg font-bold text-red-600">{{ stat.percentage }}%</div>
                     </div>
-                    <div class="text-lg font-bold text-red-600">{{ stat.percentage }}%</div>
                   </div>
                 </div>
+
               </div>
             </div>
           </div>
@@ -909,7 +915,7 @@ const createReport = async (model) => {
         confirmButtonText: "Ok"
       });
 
-      $router.push('/admin/loadingplans');
+      $router.push('/commissioner/loadingplans');
     })
     .catch(error => {
       console.error("Failed to create loading plan:", error);

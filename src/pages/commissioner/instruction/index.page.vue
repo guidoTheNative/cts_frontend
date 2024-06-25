@@ -269,7 +269,7 @@ const getLoadingPlans = async () => {
     .catch(error => {
       Swal.fire({
         title: "User Retrieval Failed",
-        text: "failed to get Rmergency Response Instructions (Please refresh to try again)",
+        text: "failed to get Emergency Response Instructions (Please refresh to try again)",
         icon: "error",
         confirmButtonText: "Ok"
       });

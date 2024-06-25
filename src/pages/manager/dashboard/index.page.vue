@@ -323,23 +323,49 @@
                 </div>
                 <!-- Damaged Stock Stats -->
                 <div class="bg-white border border-gray-200 rounded-lg shadow-sm p-3">
-                  <div class="text-xl font-bold text-gray-600 mb-1">Stock Loss Statistics </div>
-                  <div class="text-sm font-bold text-gray-500 mb-4">Lean Season Response </div>
+                  <div class="text-xl font-bold text-gray-600 mb-1">Stock Loss Statistics</div>
 
-                  <div v-for="(stat, index) in damagedStockStats " :key="index"
-                    class="flex items-center justify-between py-2 border-b last:border-b-0">
-                    <div class="flex items-center">
-                      <div :style="{ backgroundColor: stat.color }" class="w-4 h-4 rounded-full mr-2"></div>
-                      <div>
-                        <div class="text-lg font-medium text-gray-800">{{ stat.commodity }}</div>
-                        <div class="text-sm text-gray-500">
-                          <router-link to="/manager/Lean-season-losses" class="text-blue-500 hover:underline">
-                            View Details
-                          </router-link>
+                  <div class="text-sm font-bold text-gray-500 mb-1">Lean Season Response</div>
+                  <div v-if="damagedStockStats.length === 0" class="text-gray-500 text-sm mb-3 font-medium">No Data
+                  </div>
+                  <div v-else>
+                    <div v-for="(stat, index) in damagedStockStats" :key="index"
+                      class="flex items-center justify-between py-2 border-b last:border-b-0">
+                      <div class="flex items-center">
+                        <div :style="{ backgroundColor: stat.color }" class="w-4 h-4 rounded-full mr-2"></div>
+                        <div>
+                          <div class="text-lg font-medium text-gray-800">{{ stat.commodity }}</div>
+                          <div class="text-sm text-gray-500">
+                            <router-link to="/manager/Lean-season-losses" class="text-blue-500 hover:underline">
+                              View Details
+                            </router-link>
+                          </div>
                         </div>
                       </div>
+                      <div class="text-lg font-bold text-red-600">{{ stat.percentage }}%</div>
                     </div>
-                    <div class="text-lg font-bold text-red-600">{{ stat.percentage }}%</div>
+                  </div>
+
+                  <div class="text-sm font-bold text-gray-500 mb-4">Emergency Response</div>
+                  <div v-if="damagedStockStatsEmergency.length === 0" class="text-gray-500 text-sm mb-3 font-medium">No
+                    Data</div>
+                  <div v-else>
+                    <div v-for="(stat, index) in damagedStockStatsEmergency" :key="index"
+                      class="flex items-center justify-between py-2 border-b last:border-b-0">
+                      <div class="flex items-center">
+                        <div :style="{ backgroundColor: stat.color }" class="w-4 h-4 rounded-full mr-2"></div>
+                        <div>
+                          <div class="text-lg font-medium text-gray-800">{{ stat.commodity }}</div>
+                          <div class="text-sm text-gray-500">
+                            <router-link to="/manager/Emergency-season-losses"
+                              class="text-blue-500 hover:underline">
+                              View Details
+                            </router-link>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="text-lg font-bold text-red-600">{{ stat.percentage }}%</div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -394,6 +420,9 @@ import { useDisasterstore } from "../../../stores/disaster.store";
 import { usecommoditiestore } from "../../../stores/commodity.store";
 import { usecommoditytypestore } from "../../../stores/commodity-type.store";
 
+import { useReceivedCommoditiesStore } from "../../../stores/receivedCommodities.store";
+
+const receivedcommoditiesstore = useReceivedCommoditiesStore();
 import createReportForm from "../../../components/pages/reports/create.component.vue";
 import {
   Menu,
@@ -445,6 +474,8 @@ const screenshotMode = ref(false);
 // Example data structure for maize distribution
 const commodityDistributionData = ref([]);
 const commodityDispatchData = ref([]);
+
+const commodityEmergencyDispatchData = ref([])
 
 const donations = reactive([]);
 const currentView = ref('dashboard'); // The initial view can be 'dashboard' or 'charts'
@@ -584,10 +615,14 @@ onMounted(async () => {
   try {
     const data = await requisitionStore.getCommodityDistributionSummary();
     const dispatchdata = await dispatchesStore.getdispatchDamageSummary();
+    const dispatchEmergencydata = await receivedcommoditiesstore.getdispatchDamageSummary();
     const leanstocks = await loadingPlanStore.getloadingplansSummaryByCommodity();
     commodityDispatchData.value.length = 0
+    commodityEmergencyDispatchData.value.length = 0
+
     leanStockSummary.value = [...leanstocks]
     commodityDispatchData.value.push({ ...dispatchdata })
+    commodityEmergencyDispatchData.value.push({ ...dispatchEmergencydata })
 
     commodityDistributionData.value = [...data];
   } catch (error) {
@@ -714,6 +749,23 @@ const getloadingplansSummaryByCommodity = async () => {
       loadingPlanSummary.push(...result);
     })
 }
+
+const damagedStockStatsEmergency = computed(() => {
+  if (commodityEmergencyDispatchData.value.length === 0 || !commodityEmergencyDispatchData.value[0].commoditySummary) {
+    return [];
+  }
+  const commodities = [...new Set(commodityEmergencyDispatchData.value[0].commoditySummary.map(item => item.commodity))];
+
+  return commodities.map((commodity, index) => {
+    const totalForCommodity = commodityEmergencyDispatchData.value[0].commoditySummary
+      .filter(item => item.commodity === commodity)
+    return {
+      commodity,
+      percentage: totalForCommodity[0].damagePercentage.toFixed(2),
+      color: colors[index % colors.length]
+    };
+  });
+});
 
 const completedDispatch = ref(0)
 const getDispatches = async () => {
