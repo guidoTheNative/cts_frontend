@@ -7,7 +7,11 @@
       <div>
         <breadcrumb-widget v-bind:breadcrumbs="breadcrumbs" />
       </div>
+
+
+
       <div class="md:flex md:items-center md:justify-between">
+
         <div class="flex-1 min-w-0">
           <h2 class="font-bold leading-7 text-white sm:text-2xl sm:truncate">
             Loading Plans
@@ -24,13 +28,28 @@
 
 
 
+
+
         <div class="mt-5 flex ml-4 justify-center sm:mt-0">
+
           <create-report-form v-on:create="createReport" />
         </div>
 
       </div>
       <!-- table  -->
       <div class="align-middle inline-block min-w-full mt-5 shadow-xl rounded-lg bg-white rounded-table">
+        <!-- Online/Offline Status -->
+        <div class="flex items-center justify-end mb-2">
+          <div class="flex items-center">
+            <GlobeAltIcon :class="{ 'bg-white text-green-600': isOnline, 'bg-white text-red-600': !isOnline }"
+              class="h-5 w-5 text-gray-600" /> <!-- Globe icon -->
+            <div :class="{ 'bg-white text-green-600': isOnline, 'bg-white text-red-600': !isOnline }"
+              class="p-4 rounded-lg">
+              <p>{{ onlineStatusMessage }}</p>
+            </div>
+          </div>
+        </div>
+
         <vue-good-table :columns="columns" :rows="loadingplans" :search-options="{ enabled: true }"
           style="font-weight: bold; color: #096eb4;" :pagination-options="{ enabled: true }" theme="polar-bear"
           styleClass="vgt-table striped" compactMode>
@@ -38,38 +57,36 @@
           <template #table-row="props">
 
             <span v-if="props.column.label === 'Status'">
-                <div>
-                  <span v-if="props.row.IsApproved"
-                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-800">
-                    Approved
-                  </span>
-                  <span v-else
-                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-red-100 text-red-800">
-                    Not Approved
-                  </span>
-                </div>
-              </span>
+              <div>
+                <span v-if="props.row.IsApproved"
+                  class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-800">
+                  Approved
+                </span>
+                <span v-else
+                  class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-red-100 text-red-800">
+                  Not Approved
+                </span>
+              </div>
+            </span>
             <div v-if="props.column.label == 'Options'" class="flex space-x-2">
 
-
-
-            
-
-            <button @click="openEditDialog(props.row)"
+              <button @click="openEditDialog(props.row)" v-if="isOnline"
                 class="text-green-500 hover:text-green-700 transition duration-300">
                 <PencilIcon class="h-5 w-5 inline-block mr-1" />
                 Edit
-              </button> 
+              </button>
 
-              <button @click="openAttachmentDialog(props.row)" class="text-blue-500 hover:text-blue-500 transition duration-300">
+              <button @click="openAttachmentDialog(props.row)" v-if="isOnline"
+                class="text-blue-500 hover:text-blue-500 transition duration-300">
                 <PaperclipIcon class="h-5 w-5 inline-block mr-1" />
                 Attachments
               </button>
 
               <!-- Delete Button with Trash Icon -->
-              <button v-if="props.row.Balance > 0" @click="deleteItem(props.row.id)" class="text-red-500 hover:text-red-700 transition duration-300">
+              <button v-if="props.row.Balance > 0" @click="deleteItem(props.row.id)"
+                class="text-red-500 hover:text-red-700 transition duration-300">
                 <TrashIcon class="h-5 w-5 inline-block mr-1" />
-                Delete 
+                Delete
               </button>
 
             </div>
@@ -84,8 +101,9 @@
           @close="closeDispatchDialog" v-on:update="reloadPage" />
 
 
-          <AttachDocumentsDialog :isOpen="isAttachmentDialogOpen" :loadingPlan="selectedLoadingPlan" @close="closeAttachmentForm" @submit="submitAttachments" />
-      
+        <AttachDocumentsDialog :isOpen="isAttachmentDialogOpen" :loadingPlan="selectedLoadingPlan"
+          @close="closeAttachmentForm" @submit="submitAttachments" />
+
       </div>
 
     </div>
@@ -95,12 +113,13 @@
 <script setup>
 // import the styles
 
-import { inject, ref, reactive, onMounted } from "vue";
+import { inject, ref, reactive, onMounted, computed, watchEffect } from "vue";
 import { useRouter } from "vue-router";
 import {
   SearchIcon,
   ChevronLeftIcon,
   ChevronRightIcon,
+  GlobeAltIcon,
   PaperclipIcon,
   PencilIcon, TrashIcon, TruckIcon
 } from "@heroicons/vue/solid";
@@ -116,6 +135,10 @@ import createDispatchForm from "../../../components/pages/dispatch/create.compon
 import createReportForm from "../../../components/pages/reports/create.component.vue";
 
 
+import { saveDataOffline, getDataOffline, getOfflineLoadingPlans, removeDataOffline } from '@/services/localbase';
+
+import { checkOnlineStatus } from '@/services/utils/network';
+
 import EditLoadingPlanDialog from "../../../components/pages/reports/edit-loading-plan.component.vue";
 
 import AttachDocumentsDialog from "../../../components/pages/reports/attach-documents.component.vue"; // Import your AttachDocumentsDialog component
@@ -124,12 +147,13 @@ import AttachDocumentsDialog from "../../../components/pages/reports/attach-docu
 import DispatchLoadingPlanDialog from "../../../components/pages/reports/create.dispatch-planner.component.vue";
 
 import { useSessionStore } from "../../../stores/session.store";
+const onlineStatusMessage = ref("Checking status..."); // Ref for online status message
+
 //INJENCTIONS
 const $router = useRouter();
 const moment = inject("moment");
 const Swal = inject("Swal");
 //VARIABLES
-const isLoading = ref(false);
 const breadcrumbs = [
   { name: "Home", href: "/admin/dashboard", current: false },
   { name: "Loading Plans", href: "#", current: true },
@@ -143,10 +167,6 @@ import * as XLSX from 'xlsx';
 
 
 const loadingPlanStore = useloadingplanstore();
-const loadingplans = reactive([]);
-
-
-
 
 const sessionStore = useSessionStore();
 
@@ -208,6 +228,10 @@ const columns = ref([
 
 ]);
 
+const isLoading = ref(false);
+const isOnline = ref(false);
+const loadingplans = reactive([]);
+
 const isEditDialogOpen = ref(false);
 
 const selectedLoadingPlan = ref(null);
@@ -256,12 +280,34 @@ const openAttachmentDialog = (loadingPlan) => {
   isAttachmentDialogOpen.value = true;
 };
 
+// Function to periodically update online status
+const startOnlineStatusCheck = () => {
+  setInterval(updateOnlineStatusMessage, 3000); // Update every 60 seconds (adjust as needed)
+
+};
+
 //MOUNTED
-onMounted(() => {
-  getLoadingplans();
-  // getLatest()
+onMounted(async () => {
+  startOnlineStatusCheck(); // Start periodic online status check
+  await updateOnlineStatusMessage();
+  await getLoadingplans();
+
 });
 //FUNCTIONS
+
+// Function to check the online status and update the message
+const updateOnlineStatusMessage = async () => {
+  try {
+    const onlineval = await checkOnlineStatus();
+    isOnline.value = onlineval;
+    onlineStatusMessage.value = onlineval ? "You are online" : "You are offline";
+  } catch (error) {
+    console.error("Error checking online status:", error);
+    onlineStatusMessage.value = "Error checking online status";
+  }
+};
+
+
 
 
 const reloadPage = async () => {
@@ -273,24 +319,99 @@ const reloadPage = async () => {
 }
 
 
+// Functions to get the loading plans
 const getLoadingplans = async () => {
-  isLoading.value = true;
-
   try {
-    const result = await loadingPlanStore.get();
+    isLoading.value = true;
+    let data = [];
 
-    // Reverse the order of the results
-    const reversedLoadingPlans = result.reverse();
+    if (isOnline.value) {
+      data = await loadingPlanStore.get();
+    } else {
+      data = await getOfflineLoadingPlans();
+    }
 
-    // Empty the loadingplans array and then push the reversed results
-    loadingplans.length = 0;
-    loadingplans.push(...reversedLoadingPlans);
-
+    // Clear existing data and push new data
+    loadingplans.splice(0, loadingplans.length, ...data);
   } catch (error) {
-    // Handle any errors that occur during the get or reverse
-    console.error('Failed to fetch and reverse loading plans:', error);
+    console.error("Error fetching loading plans:", error);
   } finally {
     isLoading.value = false;
+  }
+};
+
+
+
+// Automatically update online status message whenever `isOnline` changes
+watchEffect(async () => {
+  updateOnlineStatusMessage();
+  getLoadingplans(); // Refresh data whenever online status changes
+  if (isOnline.value) {
+    syncOfflineData(); // Trigger synchronization when back online
+  }
+});
+
+const createReport = async (reportData) => {
+  try {
+    isLoading.value = true;
+
+    const data = {
+      ...reportData,
+      Balance: reportData.Quantity  // Set Quantity to Balance if offline
+    };
+
+
+    if (isOnline.value) {
+      await loadingPlanStore.create(reportData); // Save directly to server
+    } else {
+      await saveDataOffline('loading-plans', data); // Save offline with syncstatus
+    }
+
+    await getLoadingplans(); // Refresh loading plans after creating report
+  } catch (error) {
+    console.error("Error creating report:", error);
+  } finally {
+    isLoading.value = false;
+  }
+};
+
+
+// Function to handle synchronization when back online
+const syncOfflineData = async () => {
+  try {
+    // Check if there are offline plans to sync
+    const offlinePlans = await getOfflineLoadingPlans();
+
+    if (offlinePlans.length === 0) {
+      return;
+    }
+
+    for (const plan of offlinePlans) {
+      // Remove specified fields before sync
+      const { id, key, transporter, commodity, district, project, warehouse, ...planToSync } = plan;
+
+      // Ensure StartDate and EndDate follow date-time format
+      planToSync.StartDate = new Date(planToSync.StartDate).toISOString();
+      planToSync.EndDate = new Date(planToSync.EndDate).toISOString();
+
+      try {
+        // Create loading plan on server
+        await loadingPlanStore.create(planToSync);
+
+        // Remove from offline storage only if server creation is successful
+        await removeDataOffline('loading-plans', id);
+      } catch (error) {
+        console.error(`Failed to sync plan with id ${id} to server:`, error);
+        // Handle specific error or log it for debugging
+        // You can choose to retry or leave the item in offline storage
+      }
+    }
+
+    await getLoadingplans(); // Refresh data after synchronization
+    Swal.fire('Sync Success', 'Offline data synced successfully!', 'success');
+  } catch (error) {
+    console.error('Error syncing offline data:', error);
+    Swal.fire('Sync Error', 'Failed to sync offline data.', 'error');
   }
 };
 
@@ -320,42 +441,6 @@ const generateExcel = () => {
 
   // Export the workbook
   XLSX.writeFile(wb, 'LoadingPlans.xlsx');
-};
-
-
-const createReport = async (model) => {
-  isLoading.value = true;
-
-  // Format the StartDate and EndDate using moment.js
-  model.userId = user.value.id
-  model.Balance = model.Quantity
-  if (model.StartDate) {
-    model.StartDate = moment(model.StartDate).toISOString();
-  }
-  if (model.EndDate) {
-    model.EndDate = moment(model.EndDate).toISOString();
-  }
-
-  loadingPlanStore
-    .create(model)
-    .then(result => {
-      Swal.fire({
-        title: "Success",
-        text: "Created a new loading plan successfully",
-        icon: "success",
-        confirmButtonText: "Ok"
-      });
-
-      $router.push('/dodma/loadingplans'); // Use the router's push method to navigate
-
-    })
-    .catch(error => {
-      // Handling error
-    })
-    .finally(() => {
-      isLoading.value = false;
-      getLoadingplans();
-    });
 };
 
 
@@ -393,10 +478,16 @@ const deleteItem = async (id) => {
         reason: result.value
       };
 
-      await loadingPlanStore.removeWithComments(deletePayload);
+      // Check online status
+      if (isOnline.value) {
+        await loadingPlanStore.removeWithComments(deletePayload);
+      } else {
+        // Call local offline delete function
+        await removeDataOffline("loading-plans", id); // Adjust this function according to your service
+      }
 
       // Show success message
-      await Swal.fire("Deleted!", "Your loading plan has been deleted.", "success");
+      await Swal.fire("Deleted!", "Your Offline loading plan has been deleted.", "success");
 
       // Refresh the dispatches
       await getLoadingplans();
@@ -413,6 +504,7 @@ const deleteItem = async (id) => {
     isLoading.value = false;
   }
 };
+
 
 
 </script>
