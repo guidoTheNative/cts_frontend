@@ -54,67 +54,52 @@
       </div>
       <!-- table  -->
 
-
-      <div class="align-middle inline-block min-w-full mt-5 shadow-xl rounded-table">
-        <vue-good-table :columns="columns" :rows="requisitions" :search-options="{ enabled: true }"
-          style="font-weight: bold; color: #096eb4;" :pagination-options="{ enabled: true }" theme="polar-bear"
-          styleClass="vgt-table striped" compactMode>
-          <template #table-row="props">
-
-            <span v-if="props.column.label === 'Status'">
-              <div>
-                <span v-if="props.row.IsArchived"
-                  class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-800">
-                  Approved
-                </span>
-                <span v-else
-                  class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-red-100 text-red-800">
-                  In progress
-                </span>
-              </div>
+      <div class="align-middle inline-block min-w-full mt-5 shadow-xl rounded-table container">
+        <div class="overflow-x-auto container">
+    <vue-good-table 
+      :columns="columns" 
+      :rows="requisitions" 
+      :search-options="{ enabled: true }"
+      style="font-weight: bold; color: #096eb4;" 
+      :pagination-options="{ enabled: true }" 
+      theme="polar-bear"
+      styleClass="vgt-table striped" 
+      compactMode>
+      <template #table-row="props">
+        <span v-if="props.column.label === 'Status'">
+          <div class="flex justify-center md:justify-start">
+            <span v-if="props.row.IsArchived"
+              class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-800">
+              Approved
             </span>
-
-            <span v-if="props.column.label === 'Options'">
-              <div class="flex space-x-2">
-                <!-- Manage Button -->
-                <button @click.prevent="openRequisitionDetails(props.row)" class="
-                    inline-flex
-                    items-center
-                    px-3
-                    py-2
-                    text-sm
-                    font-medium
-                    text-green-500
-                    hover:text-green-900
-                    bg-white
-                    rounded-md
-                    border
-                    border-gray-200
-                    hover:bg-gray-100
-                  ">
-                  <!-- Heroicon Pencil (Manage) -->
-                  <EyeIcon class="h-5 w-5 mr-1" />
-
-                  View Requisition
-
-
-                </button>
-
-
-
-              </div>
+            <span v-else
+              class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-red-100 text-red-800">
+              In progress
             </span>
-          </template>
-        </vue-good-table>
+          </div>
+        </span>
+        <span v-if="props.column.label === 'Options'">
+          <div class="flex justify-center md:justify-start space-x-2">
+            <button @click.prevent="openRequisitionDetails(props.row)"
+              class="inline-flex items-center px-3 py-2 text-sm font-medium text-green-500 hover:text-green-900 bg-white rounded-md border border-gray-200 hover:bg-gray-100">
+              <EyeIcon class="h-5 w-5 mr-1" />
+              View Requisition
+            </button>
+          </div>
+        </span>
+      </template>
+    </vue-good-table>
+  </div>
+
         <TransitionRoot as="template" :show="isModalOpen">
-          <Dialog as="div" class="fixed inset-0 z-10 flex items-center justify-center overflow-y-auto"
-            @close="closeModal">
+          <Dialog as="div"
+            class="fixed inset-0 z-10 flex items-center justify-center overflow-y-auto">
             <!-- Background overlay -->
-            <TransitionChild as="template" enter="ease-out duration-300" enter-from="opacity-0" enter-to="opacity-100"
-              leave="ease-in duration-200" leave-from="opacity-100" leave-to="opacity-0">
+            <TransitionChild as="template" enter="ease-out duration-300" enter-from="opacity-0"
+              enter-to="opacity-100" leave="ease-in duration-200" leave-from="opacity-100"
+              leave-to="opacity-0">
               <DialogOverlay class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" />
             </TransitionChild>
-
             <!-- Modal content -->
             <TransitionChild as="template" enter="ease-out duration-300"
               enter-from="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
@@ -139,25 +124,20 @@
                     <p><strong>Affected Areas:</strong> {{ selectedRequisition?.AffectedAreas }}</p>
                     <p><strong>Affected Households:</strong> {{ selectedRequisition?.AffectedHouseholds }}</p>
                   </div>
-
                   <!-- Requested Commodities Table -->
                   <div class="mt-4">
                     <h3 class="text-lg font-semibold text-blue-500 mb-2">Requested Commodities</h3>
                     <table class="min-w-full bg-white border border-gray-200 rounded-lg">
                       <thead class="bg-blue-100">
                         <tr>
-                          <th
-                            class="py-2 px-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-b">
+                          <th class="py-2 px-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-b">
                             #
                           </th>
-                          <th
-                            class="py-2 px-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-b">
+                          <th class="py-2 px-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-b">
                             Commodity</th>
-                          <th
-                            class="py-2 px-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-b">
+                          <th class="py-2 px-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-b">
                             Quantity</th>
-                          <th
-                            class="py-2 px-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-b">
+                          <th class="py-2 px-4 text-left text-xs font-medium text-gray-700 uppercase tracking-wider border-b">
                             Unit</th>
                         </tr>
                       </thead>
@@ -181,9 +161,7 @@
             </TransitionChild>
           </Dialog>
         </TransitionRoot>
-
       </div>
-
     </div>
   </main>
 </template>
@@ -492,4 +470,37 @@ const closeModal = () => {
   overflow: hidden;
   /* This is important to apply rounded corners to child elements */
 }
+
+
+.container {
+  max-width: 100%;
+}
+
+.tab-button {
+  flex: 1;
+  padding: 10px;
+  margin: 0 2px;
+  background-color: #f1f1f1;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.active-tab {
+  background-color: #096eb4;
+  color: white;
+}
+
+  @media (min-width: 1024px) {
+    .container {
+      width: 60%;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .container {
+      width: 100%;
+    }
+  }
+
 </style>

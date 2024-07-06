@@ -316,4 +316,18 @@ const exportToExcel = () => {
 .bg-gray-600 {
     background-color: #4b5563;
 }
+
+
+@media (min-width: 1024px) {
+    .container {
+      width: 60%;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .container {
+      width: 100%;
+    }
+  }
+
 </style>

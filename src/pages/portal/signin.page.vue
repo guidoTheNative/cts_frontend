@@ -1,51 +1,44 @@
 <template>
-  <div class="min-h-full flex" style="height: 100vh">
-    <spinner-widget v-bind:open="isLoading" />
+  <div class="min-h-full flex flex-col lg:flex-row" style="height: 100vh">
+    <spinner-widget :open="isLoading" />
 
-
-
-
-    <div class="hidden lg:block relative w-0 flex-1 flex flex-col col-span-6"
-      style="display: flex; justify-content: center; align-items: center; flex-direction: column; background-color: #096eb4; text-align: center; padding: 20px;">
-      <div style="display: flex; justify-content: center; align-items: center;">
-        <img class="img-fluid" style="height: 100px; margin-right: 10px;" src="../../assets/images/images.png"
-          alt="MW-Govt" />
-        <img class="img-fluid" style="height: 100px;" src="../../assets/images/wfp-logo-emblem-white.png" alt="WFP" />
+    <!-- Left Section (Hidden on mobile) -->
+    <div class="hidden lg:flex lg:flex-col lg:justify-center lg:items-center lg:w-1/2" style="background-color: #096eb4; text-align: center; padding: 20px;">
+      <div class="flex justify-center items-center mb-4">
+        <img class="h-24 mr-4" src="../../assets/images/images.png" alt="MW-Govt" />
+        <img class="h-24" src="../../assets/images/wfp-logo-emblem-white.png" alt="WFP" />
       </div>
       <h2 class="mt-6 text-3xl font-extrabold text-white">
         DoDMA Commodity Tracking System
         <span class="text-sm font-normal">(v2.0)</span>
-
-
       </h2>
     </div>
 
-
-
-
-
-    <div class="flex-1 flex flex-col col-span-6 justify-center py-12 px-4 sm:px-6 lg:flex-none lg:px-20 xl:px-24">
+    <!-- Right Section (Sign In Form) -->
+    <div class="flex-1 flex flex-col justify-center py-12 px-4 sm:px-6 lg:px-20 xl:px-24" style="background-color: #ffffff;">
       <div class="mx-auto w-full max-w-sm lg:w-96">
         <div>
-
+          <div style="background-color: #096eb4;" class="flex justify-center items-center mb-4 lg:hidden rounded-md p-4" >
+        <img class="h-24 mr-4" src="../../assets/images/images.png" alt="MW-Govt" />
+        <img class="h-24" src="../../assets/images/wfp-logo-emblem-white.png" alt="WFP" />
+      </div>
+      <h2 class="mt-6 text-md font-extrabold text-gray-700 text-center lg:hidden">
+        DoDMA Commodity Tracking System
+        <span class="text-sm font-normal">(v2.0)</span>
+      </h2>
           <h2 class="mt-6 text-3xl font-extrabold text-gray-900">
             Sign in to your account
           </h2>
-
         </div>
-
         <div class="mt-8">
-          <div>
-            <div class="mt-6 relative">
-              <div class="absolute inset-0 flex items-center" aria-hidden="true">
-                <div class="w-full border-t border-gray-300" />
-              </div>
-              <div class="relative flex justify-center text-sm">
-                <span class="px-2 bg-white text-gray-500"> </span>
-              </div>
+          <div class="mt-6 relative">
+            <div class="absolute inset-0 flex items-center" aria-hidden="true">
+              <div class="w-full border-t border-gray-300" />
+            </div>
+            <div class="relative flex justify-center text-sm">
+              <span class="px-2 bg-white text-gray-500"></span>
             </div>
           </div>
-
           <div class="mt-6">
             <form @submit="onSubmit" :validation-schema="schema" class="space-y-6">
               <div>
@@ -60,7 +53,6 @@
                   </p>
                 </div>
               </div>
-
               <div class="space-y-1">
                 <label for="password" class="block text-sm font-medium text-gray-700">
                   Password
@@ -74,7 +66,6 @@
                   </p>
                 </div>
               </div>
-
               <div class="flex items-center justify-between">
                 <div class="flex items-center">
                   <input id="hide-password" name="hide-password" v-model="isPwd" type="checkbox" style="color: #096eb4"
@@ -83,7 +74,6 @@
                     Show password
                   </label>
                 </div>
-
                 <div class="text-sm">
                   <router-link :to="{ name: 'portal-forgot-password' }">
                     <a style="color: #096eb4" class="font-medium hover:text-blue-400">
@@ -92,7 +82,6 @@
                   </router-link>
                 </div>
               </div>
-
               <div>
                 <button type="submit" style="background-color: #096eb4"
                   class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white hover:bg-blue-400 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-400">
@@ -100,9 +89,8 @@
                 </button>
               </div>
             </form>
-
             <div class="mt-10">
-              <p class="text-sm text-gray-600 text-re">
+              <p class="text-sm text-gray-600 text-center">
                 &copy; {{ moment().format('YYYY') }} {{ system.name }}
               </p>
             </div>
@@ -110,14 +98,13 @@
         </div>
       </div>
     </div>
-
   </div>
 </template>
 
 <script setup>
 import { ChevronLeftIcon } from '@heroicons/vue/solid';
 import { useField, useForm, useSubmitForm } from 'vee-validate';
-import { inject, onMounted, reactive, ref } from 'vue';
+import { inject, onMounted, reactive, ref, nextTick  } from 'vue';
 import { useRouter } from 'vue-router';
 import * as yup from 'yup';
 import { useSessionStore } from '../../stores/session.store';
@@ -129,7 +116,6 @@ import { usecommoditiestore } from "../../stores/commodity.store";
 import { usecommoditytypestore } from "../../stores/commodity-type.store";
 
 import { usedistrictstore } from "../../stores/districts.store";
-
 
 import { useorganisationstore } from "../../stores/organisations.store";
 import { useprojectstore } from "../../stores/project.store";
@@ -183,9 +169,12 @@ const { value: email, errorMessage: emailError } = useField('email');
 const { value: password, errorMessage: passwordError } = useField('password');
 import { checkOnlineStatus } from '@/services/utils/network';
 
+const storedRole = sessionStorage.getItem('RLE');
 //MOUNTED
 //Mounted
 onMounted(async () => {
+  await nextTick();
+  checkSession();
   try {
     const isOnline = await checkOnlineStatus();
     if (isOnline) {
@@ -296,6 +285,8 @@ onMounted(async () => {
 
 });
 //FUNCTIONS
+
+const sessionObject = ref(null)
 const onSubmit = useSubmitForm((values, actions) => {
   isLoading.value = true;
   let model = {
@@ -304,7 +295,7 @@ const onSubmit = useSubmitForm((values, actions) => {
   };
   sessionStore
     .signIn(model)
-    .then(result => {
+    .then(async result => {
       // Display success toast
       Swal.fire({
         text: 'Successfully signed in',
@@ -315,13 +306,17 @@ const onSubmit = useSubmitForm((values, actions) => {
         timer: 1500,
         timerProgressBar: true,
       });
+    
+      // Store session in localbase
+      await saveDataOffline('session', { email: email.value, role: result.role });
+      await saveDataOffline('user', JSON.parse(result.session?.USR));
 
       // Check the role and redirect accordingly
       if (result.role === 'district officer') {
         // Specific redirection for warehouse officer
         $router.push({ path: '/warehouse' });
       }
-      else if (result.role === 'central user (DoDMA)') {
+      else if (result.role === 'Central User (DoDMA)') {
         // Specific redirection for warehouse officer
         $router.push({ path: '/dodma' });
       }
@@ -357,19 +352,19 @@ const onSubmit = useSubmitForm((values, actions) => {
 });
 
 
-function checkSession() {
-  sessionStore.check().then(result => {
-    Swal.fire({
-      text: 'Welcome back ',
-      icon: 'success',
-      toast: true,
-      position: 'top-right',
-      showConfirmButton: false,
-      timer: 1500,
-      timerProgressBar: true,
-    });
-    // redirect
-    $router.push({ path: '/' + result });
-  });
-}
+const checkSession = async () => {
+  const session = await getDataOffline('session');
+
+  if (session.length > 0) {
+    if (session[0].role === 'district officer') {
+      await $router.push({ name: 'warehouse-dashboard' });
+    } else if (session[0].role === 'central user (DoDMA)') {
+      await $router.push({ name: 'dodma-dashboard' });
+    } else if (session[0].role === 'field officer') {
+      await $router.push({ name: 'field-dashboard' });
+    } else if (session[0].role === 'Commissioner (DODMA)') {
+      await $router.push({ name: 'commissioner-dashboard' });
+    }
+  }
+};
 </script>

@@ -1,4 +1,5 @@
 module.exports = {
+  publicPath: process.env.NODE_ENV === 'production' ? '' : '/',
   css: {
     loaderOptions: {
       sass: {
@@ -6,6 +7,11 @@ module.exports = {
         `
       }
     }
+  },
+
+  publicPath: '',
+
+  pluginOptions: {
+    cordovaPath: 'src-cordova'
   }
- 
 };

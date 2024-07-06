@@ -177,6 +177,7 @@ import {
   SearchIcon,
   SelectorIcon,
 } from "@heroicons/vue/solid";
+import { saveDataOffline, getDataOffline,clearDataOffline } from '@/services/localbase';
 
 //DECLARATIONS
 const system = reactive({
@@ -281,6 +282,8 @@ const itemClasses = (item) => [
 const onSignout = async () => {
   try {
     await sessionStore.signOut();
+    await clearDataOffline("session");
+
     sessionStore.$reset();
 
     await $router.push({ path: "/portal/signin" }).then((res) => {

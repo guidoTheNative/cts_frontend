@@ -16,52 +16,43 @@
       </div>
       <!-- tabs -->
       <div class="align-middle inline-block min-w-full">
-        <ul class="nav nav-tabs flex flex-col md:flex-row flex-wrap pl-0 mb-4 border-b border-blue-300" id="tabs-menu"
+        <ul class="nav nav-tabs flex flex-col md:flex-row flex-wrap pl-0 mb-4 border-b border-blue-300 lg:w-full md:w-40 sm:w-40" id="tabs-menu"
           role="tablist">
-          <li class="nav-item mr-1" role="presentation">
+          <li class="nav-item md:mr-1" role="presentation">
             <a href="#user-relief"
-              class="nav-link block font-bold text-xs leading-tight capitalize border-x-0 border-t-0 border-b-2 border-transparent px-6 py-3 my-1hover:border-transparent hover:bg-blue-100 focus:border-transparent active"
+              class="nav-link block font-bold text-xs leading-tight capitalize border-x-0 border-t-0 border-b-2 border-transparent px-6 py-3 my-1 hover:border-transparent hover:bg-blue-100 focus:border-transparent active"
               id="tabs-user-relief" data-bs-toggle="pill" data-bs-target="#user-relief" role="tab"
               aria-controls="user-relief" aria-selected="true">Stock Position</a>
           </li>
-          <li class="nav-item mr-1" role="presentation">
+          <li class="nav-item md:mr-1" role="presentation">
             <a href="#user-settings"
-              class="nav-link block font-bold text-xs leading-tight capitalize border-x-0 border-t-0 border-b-2 border-transparent px-6 py-3 my-1hover:border-transparent hover:bg-blue-100 focus:border-transparent"
+              class="nav-link block font-bold text-xs leading-tight capitalize border-x-0 border-t-0 border-b-2 border-transparent px-6 py-3 my-1 hover:border-transparent hover:bg-blue-100 focus:border-transparent"
               id="tabs-user-settings" data-bs-toggle="pill" data-bs-target="#user-settings" role="tab"
               aria-controls="user-settings" aria-selected="false">Commodity Distribution Report</a>
           </li>
-
-          <li class="nav-item mr-1" role="presentation">
+          <li class="nav-item md:mr-1" role="presentation">
             <a href="#user-lean"
-              class="nav-link block font-bold text-xs leading-tight capitalize border-x-0 border-t-0 border-b-2 border-transparent px-6 py-3 my-1hover:border-transparent hover:bg-blue-100 focus:border-transparent"
+              class="nav-link block font-bold text-xs leading-tight capitalize border-x-0 border-t-0 border-b-2 border-transparent px-6 py-3 my-1 hover:border-transparent hover:bg-blue-100 focus:border-transparent"
               id="tabs-user-lean" data-bs-toggle="pill" data-bs-target="#user-lean" role="tab"
               aria-controls="user-settings" aria-selected="false">Lean Season Dispatch Reports</a>
           </li>
-
-
         </ul>
         <div class="tab-content" id="tabs-user-options">
           <div class="tab-pane fade show active mt-3" id="user-relief" role="tabpanel"
             aria-labelledby="tabs-user-relief">
             <user-relief :data="warehousesinventory" v-on:update="updateOrCreateReliefItems" />
           </div>
-          <div class="tab-pane fade" id="user-settings" role="tabpanel" aria-labelledby="tabs-user-settings">
-
+          <div class="tab-pane fade contain" id="user-settings" role="tabpanel" aria-labelledby="tabs-user-settings">
             <commodity-distribution-table :data="commodityDistributionData" :screenshotMode="screenshotMode" />
-
           </div>
           <div class="tab-pane fade" id="user-lean" role="tabpanel" aria-labelledby="tabs-user-lean">
-
             <user-lean :screenshotMode="screenshotMode" />
-
           </div>
-
         </div>
       </div>
     </div>
   </main>
 </template>
-
 
 <script setup>
 import { inject, ref, reactive, onMounted } from "vue";
@@ -416,4 +407,6 @@ const logoBase64 = " data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAN0AAADkCAMAA
   overflow: hidden;
   /* This is important to apply rounded corners to child elements */
 }
+
+
 </style>

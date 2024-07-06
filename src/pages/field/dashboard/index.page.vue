@@ -31,12 +31,12 @@
                       </p>
                       <p class="text-xl font-bold text-gray-900 sm:text-2xl capitalize">
 
-                        {{ user.username.replace(/\./g, ' ') }}
+                        {{ user?.username.replace(/\./g, ' ') }}
 
 
                       </p>
                       <p class="text-sm font-medium text-gray-600 md:text-1xl pt-2 uppercase">
-                        {{ role.name }}
+                        {{ role?.name }}
                       </p>
                     </div>
                   </div>
@@ -89,29 +89,42 @@
             </div>
           </section>
 
-          <!-- Actions panel -->
-          <section aria-labelledby="quick-links-title" class="shadow-2xl bg-white rounded-table">
-            <p class="text-center text-gray-600 mt-4 font-bold mb-2"> Recent Dispatches</p>
+        <!-- Actions panel -->
+        <section aria-labelledby="quick-links-title" class="shadow-2xl bg-white rounded-table">
+          <div class="container mx-auto p-4">
+    <div class="bg-white rounded-lg shadow-md p-4">
+ 
+          <p class="text-center text-gray-600 mt-4 font-bold mb-2">Recent Dispatches</p>
 
-            <div class="align-middle inline-block min-w-full mt-1 rounded-md">
-              <div class="tabs">
-                <button :class="{ 'active-tab rounded-md mx-3 rounded-md': activeTab === 'lean' }"
-                  @click="activeTab = 'lean'">
-                  Lean Season
-                  <span v-if="leanSeasonCount > 0" class="badge badge-red">{{ leanSeasonCount }}</span>
-                </button>
-                <button :class="{ 'active-tab rounded-md mx-3 rounded-md': activeTab === 'emergency' }"
-                  @click="activeTab = 'emergency'">
-                  Emergency Response
-                  <span v-if="emergencyCount > 0" class="badge badge-red">{{ emergencyCount }}</span>
-                </button>
-
-              </div>
-
+            <div class="align-middle inline-block min-w-full mt-1 rounded-lg">
+       <div class="flex justify-center mb-4">
+        <button
+          class="tab-button"
+          :class="{ 'active-tab': activeTab === 'lean' }"
+          @click="activeTab = 'lean'"
+        >
+          Lean Season
+        </button>
+        <button
+          class="tab-button"
+          :class="{ 'active-tab': activeTab === 'emergency' }"
+          @click="activeTab = 'emergency'"
+        >
+          Emergency Response
+        </button>
+      </div>
+    </div>
+  </div>
               <div v-if="activeTab === 'lean'">
-                <vue-good-table :columns="columns" :rows="expectedDispatches" :search-options="{ enabled: true }"
-                  style="font-weight: bold; color: #096eb4;" :pagination-options="{ enabled: true }" theme="polar-bear"
-                  styleClass="vgt-table striped" compactMode>
+                <vue-good-table 
+                  :columns="columns" 
+                  :rows="expectedDispatches" 
+                  :search-options="{ enabled: true }"
+                  style="font-weight: bold; color: #096eb4;" 
+                  :pagination-options="{ enabled: true }" 
+                  theme="polar-bear"
+                  styleClass="vgt-table striped" 
+                  compactMode>
                   <template #table-actions> </template>
                   <template #table-row="props">
                     <span v-if="props.column.label == 'Options'">
@@ -120,35 +133,35 @@
                         <DocumentTextIcon class="h-5 w-5 mr-2" />
                         Receive
                       </button>
-
                     </span>
                   </template>
                 </vue-good-table>
 
-                <ReceiptLoadingPlanDialog :isOpen="isReceiptDialogOpen" :dispatch="selectedDispatch"
-                  @close="closeReceiptDialog" v-on:update="reloadPage" />
-
-
+                <ReceiptLoadingPlanDialog 
+                  :isOpen="isReceiptDialogOpen" 
+                  :dispatch="selectedDispatch"
+                  @close="closeReceiptDialog" 
+                  v-on:update="reloadPage" />
               </div>
 
               <div v-if="activeTab === 'emergency'">
-                <vue-good-table :columns="columns2" :rows="dispaches" :search-options="{ enabled: true }"
-                  style="font-weight: bold; color: #096eb4;" :pagination-options="{ enabled: true }" theme="polar-bear"
-                  styleClass="vgt-table striped" compactMode>
+                <vue-good-table 
+                  :columns="columns2" 
+                  :rows="dispaches" 
+                  :search-options="{ enabled: true }"
+                  style="font-weight: bold; color: #096eb4;" 
+                  :pagination-options="{ enabled: true }" 
+                  theme="polar-bear"
+                  styleClass="vgt-table striped" 
+                  compactMode>
                   <template #table-actions> </template>
-
                   <template #table-row="props">
                     <span v-if="props.column.label == 'Options'">
-
                       <div class="flex space-x-2">
-
-                        <!-- Create Instruction Button -->
-
-                        <create-instruction-receipt-form :row-id="props.row.id" v-on:create="createReceipt"
+                        <create-instruction-receipt-form 
+                          :row-id="props.row.id" 
+                          v-on:create="createReceipt"
                           :dispatch="props.row" />
-
-
-
                       </div>
                     </span>
                   </template>
@@ -238,6 +251,7 @@ import {
   DocumentIcon, ClipboardListIcon, ExclamationCircleIcon, ExclamationIcon, ArrowUpIcon, ArrowDownIcon
 } from "@heroicons/vue/outline";
 import { SearchIcon } from "@heroicons/vue/solid";
+import { saveDataOffline, getDataOffline, clearDataOffline } from '@/services/localbase';
 
 const screenshotMode = ref(false);
 
@@ -516,9 +530,25 @@ const receiptcount = ref(0)
 const expectedDispatchCount = ref(0);
 
 
+const fetchUser = async () => {
+  
+  try {
+    const offlineUserData = await getDataOffline("user");
+    
+    if (offlineUserData.length > 0) {
+      user.value = offlineUserData[0];
+    } else {
+      user.value = sessionStore.getUser;
+    }
+    role.value = sessionStore.getRole;
+  } catch (error) {
+    console.error("Error fetching user data:", error);
+  }
+};
 const dispatchcount = ref(0)
 //MOUNTEDgetCatalogue
-onMounted(() => {
+onMounted(async() => {
+  await fetchUser()
   getCatalogue();
   getExpectedDispatches()
   getUsers();
@@ -813,8 +843,6 @@ const formatDate = (date) => {
 
 // Dummy data for stats
 const stats = ref([
-
-
   {
     label: 'Total Disasters Recorded',
     value: disasterCount,
@@ -926,5 +954,46 @@ img.img-fluid {
 .badge-red {
   background-color: rgba(255, 0, 0, 0.874);
   color: white;
+}
+
+
+.active-tab {
+  background-color: #096eb4;
+  color: white;
+}
+
+.badge {
+  background-color: red;
+  color: white;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
+  margin-left: 0.5rem;
+}
+.container {
+  max-width: 100%;
+}
+
+.tab-button {
+  flex: 1;
+  padding: 10px;
+  margin: 0 2px;
+  background-color: #f1f1f1;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.active-tab {
+  background-color: #096eb4;
+  color: white;
+}
+
+.good-table {
+  overflow-x: auto;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 10px;
 }
 </style>

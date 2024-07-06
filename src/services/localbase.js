@@ -13,7 +13,7 @@ export const saveDataOffline = async (collection, document) => {
 
     // Save document with numeric key
     await db.collection(collection).add(document, uniqueId);
-    console.log('Document saved with ID:', uniqueId);
+ //   console.log('Document saved with ID:', uniqueId);
   } catch (err) {
     console.error('Error saving data to Localbase', err);
   }
@@ -95,3 +95,5 @@ export const getDataOfflineWithKeys = async (collection) => {
     return [];
   }
 };
+
+

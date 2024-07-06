@@ -1,4 +1,5 @@
-import { createRouter, createWebHistory } from "vue-router";
+import { createRouter, createWebHistory, createWebHashHistory } from "vue-router";
+import { saveDataOffline, getDataOffline } from '../services/localbase';
 
 const routes = [
   //Landing
@@ -558,7 +559,7 @@ const routes = [
         component: () => import("../pages/dispatcher/dispatch/dispatches.page.vue"),
       },
 
-      
+
       {
         path: "/dispatcher/about-system",
         name: "dispatcher-about-system",
@@ -920,8 +921,8 @@ const routes = [
         name: "warehouse-receipt-management",
         component: () => import("../pages/warehouse/receipts/index.page.vue"),
       },
-   
-      
+
+
       {
         path: "/warehouse/receipts/emergency",
         name: "warehouse-receipts-emergency",
@@ -1170,7 +1171,7 @@ const routes = [
     beforeEnter: (to, from, next) => {
       let role = JSON.parse(sessionStorage.getItem("RLE"));
       if (role != null && typeof role.name != "undefined") {
-        if (role.name == "central user (DoDMA)") {
+        if (role.name == "Central User (DoDMA)") {
           next();
         } else {
           next({ name: "portal-signin" });
@@ -1223,7 +1224,7 @@ const routes = [
         component: () => import("../pages/field/dispatch/emergencydispatches.page.vue"),
       },
 
-     
+
 
       {
         path: "/field/dispatches",
@@ -1355,18 +1356,21 @@ const routes = [
 
 
     ],
-    beforeEnter: (to, from, next) => {
+
+    beforeEnter: async (to, from, next) => {
+      // Check sessionStorage for existing session
       let role = JSON.parse(sessionStorage.getItem("RLE"));
-      if (role != null && typeof role.name != "undefined") {
-        if (role.name == "field officer") {
-          next();
-        } else {
-          next({ name: "portal-signin" });
-        }
+      const localSession = await getDataOffline('session');
+
+      if ((localSession[0] && localSession[0].role === "field officer")) {
+        // Role found in sessionStorage and it's an admin
+        next();
       } else {
-        next({ name: "portal-signin" });
+        next({ name: 'portal-signin' });
+
       }
-    },
+    }
+
   },
 
 
@@ -1393,7 +1397,7 @@ const routes = [
         name: "commissioner-users",
         component: () => import("../pages/commissioner/users/index.page.vue"),
       },
-      
+
       {
         path: "/commissioner/Lean-season-losses",
         name: "commissioner-lean-season-damage-management",
@@ -1511,6 +1515,12 @@ const routes = [
         component: () => import("../pages/commissioner/reports/index.page.vue"),
       },
 
+      {
+        path: "/commissioner/about-system",
+        name: "commissioner-about-system",
+        component: () => import("../pages/about/index.page.vue"),
+      },
+
 
     ],
     beforeEnter: (to, from, next) => {
@@ -1536,7 +1546,7 @@ const routes = [
 ];
 
 const router = createRouter({
-  history: createWebHistory(process.env.BASE_URL),
+  history: createWebHashHistory(process.env.BASE_URL),
   routes,
 });
 

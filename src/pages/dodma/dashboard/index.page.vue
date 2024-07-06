@@ -621,7 +621,7 @@ onMounted(async () => {
   getDispatchesCount();
   getLoadingPlansPending();
   getloadingplansSummary();
-  getdispatchSummary();
+ // getdispatchSummary();
   getloadingplansSummaryByCommodity();
   getInstructions();
   getRequisitions();
@@ -787,7 +787,7 @@ const getLoadingPlansPending = async () => {
     })
 }
 
-const getdispatchSummary = async () => {
+/* const getdispatchSummary = async () => {
   dispatchStore
     .getdispatchSummary()
     .then(result => {
@@ -797,7 +797,7 @@ const getdispatchSummary = async () => {
       receivedPercentage.value = result.dispatchPercentage.toFixed(2)
     })
 }
-
+ */
 const getloadingplansSummary = async () => {
   loadingPlanStore
     .getloadingplansSummary()
