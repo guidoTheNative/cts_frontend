@@ -12,10 +12,10 @@ const chartRef = ref(null);
 const processedChartData = computed(() => {
   const commodities = [...new Set(props.commodityDistributionData.map(item => item.commodity))];
   const totalDistributed = props.commodityDistributionData.reduce((acc, item) => acc + item.distributed, 0);
-  
+
   const distributionPercentages = commodities.map(commodity => {
     const totalForCommodity = props.commodityDistributionData.filter(item => item.commodity === commodity)
-                         .reduce((acc, item) => acc + item.distributed, 0);
+      .reduce((acc, item) => acc + item.distributed, 0);
     return (totalForCommodity / totalDistributed * 100).toFixed(2); // Convert to percentage
   });
 
@@ -37,6 +37,7 @@ onMounted(() => {
     data: processedChartData.value,
     options: {
       responsive: true,
+      animation: false, // Disable animation
       plugins: {
         legend: {
           position: 'top',
@@ -49,7 +50,7 @@ onMounted(() => {
         },
         tooltip: {
           callbacks: {
-            label: function(tooltipItem) {
+            label: function (tooltipItem) {
               return `${tooltipItem.label}: ${tooltipItem.raw}%`;
             }
           }
@@ -65,19 +66,31 @@ onMounted(() => {
             bottom: 30
           }
         },
-        
+
         datalabels: {
-          color: '#fff',
+          color: function (context) {
+            const value = context.dataset.data[context.dataIndex];
+            return value > 0 ? '#666' : 'rgba(0,0,0,0)'; // Gray text for non-zero values, transparent for zero values
+          },
+          backgroundColor: '#fff', // White background
+          borderColor: '#ccc', // Gray border color
+          borderWidth: 1, // Border width (adjust as needed)
+          borderRadius: 10, // Border radius to make it round
           formatter: (value, context) => {
-            return `${value}%`;
+            return value > 0 ? `${value}%` : null; // Display percentage for non-zero values, null for zero values
           },
           font: {
             weight: 'bold',
-            size: 14
+            size: 12
           },
           align: 'center',
-          anchor: 'center'
+          anchor: 'center',
+          padding: {
+            top: 2,
+            bottom: 2
+          }
         }
+
       }
     }
   });

@@ -46,52 +46,66 @@
             </div>
                 </div>
             </div>
-
             <table class="min-w-full divide-y divide-gray-200 mt-8">
-                <thead class="bg-blue-50">
-                    <tr>
-                        <th scope="col"
-                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Emergency/Disaster
-                        </th>
-                        <th scope="col"
-                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            District
-                        </th>
-                        <th scope="col"
-                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Commodity
-                        </th>
-                        <th scope="col"
-                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Required (Mt)
-                        </th>
-                        <th scope="col"
-                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Distributed (Mt)
-                        </th>
-                        <th scope="col"
-                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            Balance (Mt)
-                        </th>
-                        <th scope="col"
-                            class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                            % Distributed
-                        </th>
-                    </tr>
-                </thead>
-                <tbody class="bg-white divide-y divide-gray-200">
-                    <tr v-for="(row, index) in filteredData" :key="index">
-                        <td class="px-6 py-4 whitespace-nowrap">{{ row.disaster }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap">{{ row.district }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap">{{ row.commodity }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap">{{ row.required }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap">{{ row.distributed }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap">{{ row.balance }}</td>
-                        <td class="px-6 py-4 whitespace-nowrap">{{ row.percentage }}%</td>
-                    </tr>
-                </tbody>
-            </table>
+            <thead class="bg-gray-50">
+                <tr>
+                    <th scope="col"
+                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        District
+                    </th>
+                    <th scope="col"
+                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Commodity
+                    </th>
+                    <th scope="col"
+                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Required (Mt)
+                    </th>
+                    <th scope="col"
+                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Distributed (Mt)
+                    </th>
+                    <th scope="col"
+                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        Balance (Mt)
+                    </th>
+                    <th scope="col"
+                        class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        % Distributed
+                    </th>
+                </tr>
+            </thead>
+            <tbody class="bg-white divide-y divide-gray-200">
+    <tr v-for="(row, index) in filteredData" :key="index">
+        <td class="px-6 py-4 whitespace-nowrap">{{ row.district }}</td>
+        <td class="px-6 py-4 whitespace-nowrap">{{ row.commodity }}</td>
+        <td class="px-6 py-4 whitespace-nowrap">{{ row.required }}</td>
+        <td class="px-6 py-4 whitespace-nowrap">{{ row.distributed }}</td>
+        <td class="px-6 py-4 whitespace-nowrap">{{ row.balance }}</td>
+        <td class="px-6 py-4 whitespace-nowrap">
+            <span v-if="row.percentage > 100" class="relative group">
+                100%
+                <span style="color: red;">&#9650;</span>
+                <span
+                    class="absolute left-0 ml-8 hidden group-hover:block bg-gray-700 text-white text-xs rounded py-1 px-2 z-10">
+                    Exceeded allocation
+                </span>
+            </span>
+            <span v-else-if="row.percentage === 100" class="relative group">
+                100%
+                <span style="color: green;">&#9679;</span>
+            </span>
+            <span v-else>
+                {{ row.percentage }}%
+            </span>
+        </td>
+    </tr>
+</tbody>
+
+
+
+
+        </table>
 
             <!-- Pagination Controls -->
             <div class="flex justify-center mt-4" :class="{ 'hidden': screenshotMode }">

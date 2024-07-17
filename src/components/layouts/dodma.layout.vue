@@ -17,7 +17,7 @@
             <MenuIcon class="h-6 w-6 text-white" />
           </button>
           <!-- Admin Text and Location Info -->
-          <span class="font-bold text-white mx-4 hidden lg:block">DODMA CTS | Central Officer
+          <span class="font-bold text-white mx-4 hidden lg:block">DODMA CTS | Planner
             <span class="text-xs font-normal">(v2.0)</span>
           </span>
           <div class="flex items-center ml-2 hidden lg:flex">
@@ -28,7 +28,7 @@
           </div>
         </div>
         <!-- Mobile Admin Text -->
-        <span class="font-bold text-white mx-4 block lg:hidden">DODMA CTS | Central Officer
+        <span class="font-bold text-white mx-4 block lg:hidden">DODMA CTS | Planner
           <span class="text-xs font-normal">(v2.0)</span>
         </span>
         <!-- Navigation Items for Desktop -->
@@ -59,7 +59,7 @@
             </span>
           </button>
           <div v-if="isNotificationsOpen" class="absolute right-0 mt-2 w-64 bg-white rounded-md shadow-lg z-10">
-            <div class="py-2 px-4 text-xs text-gray-700">
+            <div class="py-2 px-4 text-xs text-gray-700"  @mouseleave="toggleNotifications">
               <p v-if="notifications.length === 0">No new notifications</p>
               <ul v-else>
                 <li v-for="(notification, index) in notifications" :key="index" class="py-1 border-b border-gray-200">

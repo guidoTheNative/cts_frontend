@@ -17,7 +17,7 @@
             <MenuIcon class="h-6 w-6 text-white" />
           </button>
           <!-- Admin Text and Location Info -->
-          <span class="font-bold text-white mx-4 hidden lg:block">DODMA CTS | Field Officer
+          <span class="font-bold text-white mx-4 hidden lg:block">DODMA CTS | Recipient
             <span class="text-xs font-normal">(v2.0)</span>
           </span>
           <div class="flex items-center ml-2 hidden lg:flex">
@@ -28,7 +28,7 @@
           </div>
         </div>
         <!-- Mobile Admin Text -->
-        <span class="font-bold text-white mx-4 block lg:hidden">DODMA CTS | Field Officer
+        <span class="font-bold text-white mx-4 block lg:hidden">DODMA CTS | Recipient
           <span class="text-xs font-normal">(v2.0)</span>
         </span>
         <!-- Navigation Items for Desktop -->
@@ -289,7 +289,6 @@ const fetchUser = async () => {
   
   try {
     const offlineUserData = await getDataOffline("user");
-    
     if (offlineUserData.length > 0) {
       user.value = offlineUserData[0];
     } else {

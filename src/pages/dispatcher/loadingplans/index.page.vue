@@ -21,10 +21,6 @@
           <i class="fas fa-file-export mr-2"></i> <!-- Icon (Font Awesome used as an example) -->
           Export Data
         </button>
-
-
-
-
       </div>
       <!-- table  -->
       <div class="align-middle inline-block min-w-full mt-5 shadow-xl rounded-lg bg-white rounded-table">
@@ -34,18 +30,19 @@
           <template #table-actions> </template>
           <template #table-row="props">
             <div v-if="props.column.label == 'Options'" class="flex space-x-2">
-
-
-
-
-              <button type="button" @click="openDispatchDialog(props.row)"
-                class="font-heading inline-flex items-center px-6 py-2.5 border border-blue-400 text-blue-400 font-bold text-xs rounded shadow-md hover:bg-blue-300 hover:text-white hover:shadow-lg focus:outline-none focus:ring-0 active:border-blue-400 active:shadow-lg transition duration-100 ease-in-out capitalize">
-                <TruckIcon class="h-5 w-5 mr-2" />
-                Dispatch
-              </button>
-
-
-
+              <template v-if="props.row.Balance > 0">
+                <button type="button" @click="openDispatchDialog(props.row)"
+                  class="font-heading inline-flex items-center px-6 py-2.5 border border-blue-400 text-blue-400 font-bold text-xs rounded shadow-md hover:bg-blue-300 hover:text-white hover:shadow-lg focus:outline-none focus:ring-0 active:border-blue-400 active:shadow-lg transition duration-100 ease-in-out capitalize">
+                  <TruckIcon class="h-5 w-5 mr-2" />
+                  Dispatch
+                </button>
+              </template>
+              <template v-else>
+                <span
+                  class="inline-flex items-center px-3 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                  Completed
+                </span>
+              </template>
             </div>
           </template>
         </vue-good-table>
@@ -56,10 +53,7 @@
 
         <DispatchLoadingPlanDialog :isOpen="isDispatchDialogOpen" :loadingPlan="selectedLoadingPlan"
           @close="closeDispatchDialog" v-on:update="reloadPage" />
-
-
       </div>
-
     </div>
   </main>
 </template>
@@ -91,6 +85,7 @@ import EditLoadingPlanDialog from "../../../components/pages/reports/edit-loadin
 
 
 import DispatchLoadingPlanDialog from "../../../components/pages/reports/create.dispatch-dispatcher.component.vue";
+import eventBus from '../../../services/events/eventbus';
 
 import { useSessionStore } from "../../../stores/session.store";
 //INJENCTIONS
@@ -100,10 +95,11 @@ const Swal = inject("Swal");
 //VARIABLES
 const isLoading = ref(false);
 const breadcrumbs = [
-  { name: "Home", href: "/admin/dashboard", current: false },
+  { name: "Home", href: "/dispatcher/dashboard", current: false },
   { name: "Loading Plans", href: "#", current: true },
-];
+  { name: "Lean Season Response", href: "#", current: true },
 
+];
 
 import { useloadingplanstore } from "../../../stores/loadingplans.store";
 
@@ -112,9 +108,6 @@ import * as XLSX from 'xlsx';
 
 const loadingPlanStore = useloadingplanstore();
 const loadingplans = reactive([]);
-
-
-
 
 const sessionStore = useSessionStore();
 
@@ -135,11 +128,12 @@ const columns = ref([
     firstSortType: "asc",
     tdClass: "capitalize"
   },
+  
   {
     label: "Details",
-    field: row => `<span class="from-color">From: ${row.warehouse?.Name}</span><br>` +
-      `<span class="to-color">To: ${row.district?.Name}</span><br>` +
-      `<span class="by-color">By: ${row.transporter?.Name}</span>`,
+    field: row => `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-orange-100 text-orange-800">From: ${row.warehouse?.Name}</span><br>` +
+      `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-blue-100 text-blue-800">To: ${row.district?.Name}</span><br>` +
+      `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-800">By: ${row.transporter?.Name}</span>`,
     sortable: true,
     firstSortType: "asc",
     html: true, // This is important to render HTML
@@ -149,22 +143,18 @@ const columns = ref([
   {
     label: "Stocks",
     hidden: false,
-    field: row => `<span class="from-color">Qty: ${row.Quantity} MT</span><br>` +
-      `<span class="to-color">Bal: ${row.Balance !== null ? row.Balance + " MT" : "Pending"}</span>`,
+    field: row => `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-100 text-blue-800">Qty: ${row.Quantity} MT</span><br>` +
+      `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-green-100 text-green-800">Bal: ${row.Balance !== null ? row.Balance + " MT" : "Pending"}</span>`,
     sortable: true,
     firstSortType: "asc",
     html: true, // Important for rendering HTML
     tdClass: "capitalize"
   },
-
-
   {
     label: "Options",
     field: row => row,
     sortable: false
   }
-
-
 ]);
 
 const isEditDialogOpen = ref(false);
@@ -181,8 +171,6 @@ const openEditDialog = (loadingPlan) => {
 const closeEditDialog = () => {
   isEditDialogOpen.value = false;
 };
-
-
 
 const isDispatchDialogOpen = ref(false);
 
@@ -202,8 +190,8 @@ onMounted(() => {
   getLoadingplans();
   // getLatest()
 });
-//FUNCTIONS
 
+//FUNCTIONS
 
 const reloadPage = async () => {
   // Wait for getLoadingplans to complete its data fetching
@@ -211,8 +199,7 @@ const reloadPage = async () => {
 
   // Navigate to the route after the data has been updated
   $router.push('/dispatcher/loadingplans');
-}
-
+};
 
 const getLoadingplans = async () => {
   isLoading.value = true;
@@ -221,22 +208,19 @@ const getLoadingplans = async () => {
     const result = await loadingPlanStore.get();
 
     // Filter out loading plans without districtId and projectId
-
-    const filteredLoadingPlans = result.filter(plan => plan.districtId && plan.projectId);
+    const filteredLoadingPlans = result;
 
     // Reverse the order of the filtered results
     const reversedFilteredLoadingPlans = filteredLoadingPlans.reverse();
 
-
-
     // Empty the loadingplans array and then push the reversed and filtered results
     loadingplans.length = 0;
 
+   // const filterByDistrict = reversedFilteredLoadingPlans.filter(plan => (plan.district?.Name == user.value.district) && plan.IsApproved);
 
-    const filterByDistrict = reversedFilteredLoadingPlans.filter(plan => plan.district?.Name == user.value.district)
-
-    loadingplans.push(...filterByDistrict);
-
+    loadingplans.push(...filteredLoadingPlans);
+    eventBus.emit('loadingplanArchived', result.id);
+   
   } catch (error) {
     // Handle any errors that occur during the get, filter, or reverse
     console.error('Failed to fetch, filter, and reverse loading plans:', error);
@@ -244,7 +228,6 @@ const getLoadingplans = async () => {
     isLoading.value = false;
   }
 };
-
 
 const generateExcel = () => {
   const wb = XLSX.utils.book_new();
@@ -274,12 +257,11 @@ const generateExcel = () => {
   XLSX.writeFile(wb, 'LoadingPlans.xlsx');
 };
 
-
 const createReport = async (model) => {
   isLoading.value = true;
 
   // Format the StartDate and EndDate using moment.js
-  model.userId = user.value.id
+  model.userId = user.value.id;
   if (model.StartDate) {
     model.StartDate = moment(model.StartDate).toISOString();
   }
@@ -297,8 +279,7 @@ const createReport = async (model) => {
         confirmButtonText: "Ok"
       });
 
-      $router.push('/admin/loadingplans'); // Use the router's push method to navigate
-
+      $router.push('/dispatcher/loadingplans'); // Use the router's push method to navigate
     })
     .catch(error => {
       // Handling error
@@ -308,17 +289,6 @@ const createReport = async (model) => {
       getLoadingplans();
     });
 };
-
-
-
-
-
-
-
-
-
-
-
 </script>
 
 <style>

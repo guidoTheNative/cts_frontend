@@ -50,17 +50,27 @@
             </a>
           </router-link>
 
-          <!-- Dropdown for the rest of the items -->
-          <div v-if="remainingItems.length > 0" class="relative block lg:inline-block mt-2 lg:mt-0">
-            <button @click="toggleDropdown" @mouseenter="toggleDropdown" class="text-gray-50 hover:text-gray-50 hover:bg-blue-400 px-2 py-2 text-xs font-medium rounded-md">
+
+
+          <div class="relative">
+            <button @click="toggleDropdown" @mouseenter="toggleDropdown"
+              class="text-gray-50 hover:text-gray-50 hover:bg-blue-400 px-2 py-2 text-xs font-medium rounded-md">
               More...
             </button>
-            <div v-if="isDropdownOpen" @mouseleave="closeDropdown" @focusout="closeDropdown" class="absolute right-0 mt-2 py-1 w-48 bg-white rounded-md shadow-lg">
-              <router-link v-for="item in remainingItems" :key="item.name" :to="item.href" class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-100">
+            <div v-if="isDropdownOpen" @mouseleave="closeDropdown" @focusout="closeDropdown"
+              class="absolute right-0 mt-2 py-1 w-48 bg-white rounded-md shadow-lg">
+              <router-link v-for="item in dropdownItems" :key="item.name" :to="item.href"
+                class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-100">
+                {{ item.name }}
+              </router-link>
+              <router-link v-for="item in remainingItems" :key="item.name" :to="item.href"
+                class="block px-4 py-2 text-sm text-gray-700 hover:bg-blue-100">
                 {{ item.name }}
               </router-link>
             </div>
           </div>
+
+        
         </div>
         <!-- Notification Button -->
         <div class="relative hidden lg:block">
@@ -133,7 +143,7 @@
             </span>
           </button>
           <div v-if="isNotificationsOpen" class="absolute right-0 mt-2 w-64 bg-white rounded-md shadow-lg z-10">
-            <div class="py-2 px-4 text-xs text-gray-700">
+            <div class="py-2 px-4 text-xs text-gray-700"  @mouseleave="toggleNotifications">
               <p v-if="notifications.length === 0">No new notifications</p>
               <ul v-else>
                 <li v-for="(notification, index) in notifications" :key="index" class="py-1 border-b border-gray-200">
@@ -360,7 +370,6 @@ const updateNotifications = () => {
 
 
 };
-
 function navigation() {
   let navList = [
     { name: "Home", href: "/warehouse/dashboard", icon: HomeIcon, current: false },
@@ -383,6 +392,7 @@ function navigation() {
 
   return navList;
 }
+
 
 const notificationsCount = computed(() => notifications.value.length);
 const isNotificationsOpen = ref(false);

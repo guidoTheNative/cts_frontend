@@ -34,6 +34,7 @@ onMounted(() => {
         type: 'bar',
         data: processedChartData.value,
         options: {
+            animation: false, // Disable animation
             scales: {
                 y: {
                     beginAtZero: true,
@@ -83,7 +84,6 @@ onMounted(() => {
                         style: 'bold'
                     }
                 },
-
                 title: {
                     display: true,
                     text: 'Quantity Distributed (MT)',
@@ -96,26 +96,40 @@ onMounted(() => {
                     }
                 },
                 datalabels: {
-                    color: '#fff',
-                    formatter: (value, context) => {
-                        return `${value} MT`;
-                    },
-                    font: {
-                        weight: 'bold',
-                        size: 14
-                    },
-                    align: 'center',
-                    anchor: 'center'
-                }
+          color: function (context) {
+            const value = context.dataset.data[context.dataIndex];
+            return value > 0 ? '#666' : 'rgba(0,0,0,0)'; // Gray text for non-zero values, transparent for zero values
+          },
+          backgroundColor: '#fff', // White background
+          borderColor: '#ccc', // Gray border color
+          borderWidth: 1, // Border width (adjust as needed)
+          borderRadius: 10, // Border radius to make it round
+          formatter: (value, context) => {
+            return value > 0 ? `${value}` : null; // Display percentage for non-zero values, null for zero values
+          },
+          font: {
+            weight: 'bold',
+            size: 12
+          },
+          align: 'center',
+          anchor: 'center',
+          padding: {
+            top: 2,
+            bottom: 2
+          }
+        }
+
             }
         }
     });
 });
 </script>
+
 <template>
     <!-- Adjusted canvas size via inline styling for better visibility -->
     <canvas ref="chartRef" style="width: 100%; height: 400px;"></canvas>
 </template>
+
 <style scoped>
 canvas {
     max-width: 100%;

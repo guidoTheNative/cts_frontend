@@ -308,24 +308,24 @@ const onSubmit = useSubmitForm((values, actions) => {
       });
     
       // Store session in localbase
-      await saveDataOffline('session', { email: email.value, role: result.role });
-      await saveDataOffline('user', JSON.parse(result.session?.USR));
+      //await saveDataOffline('session', { email: email.value, role: result.role });
+     // await saveDataOffline('user', JSON.parse(result.session?.USR));
 
       // Check the role and redirect accordingly
-      if (result.role === 'district officer') {
+      if (result.role === 'dispatcher') {
         // Specific redirection for warehouse officer
-        $router.push({ path: '/warehouse' });
+        $router.push({ path: '/dispatcher' });
       }
-      else if (result.role === 'Central User (DoDMA)') {
+      else if (result.role === 'planner') {
         // Specific redirection for warehouse officer
         $router.push({ path: '/dodma' });
       }
-      else if (result.role === 'field officer') {
+      else if (result.role === 'recipient') {
         // Specific redirection for warehouse officer
         $router.push({ path: '/field' });
       }
 
-      else if (result.role === 'Commissioner (DODMA)') {
+      else if (result.role === 'commissioner') {
         // Specific redirection for warehouse officer
         $router.push({ path: '/commissioner' });
       }

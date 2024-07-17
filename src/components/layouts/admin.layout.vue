@@ -82,7 +82,7 @@
       <!-- Mobile Menu -->
       <div v-if="isMobileMenuOpen" class="lg:hidden">
         <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-          <router-link v-for="item in navItems" :key="item.name" :to="item.href" class="block px-3 py-2 rounded-md text-base font-medium text-white hover:bg-blue-400">
+          <router-link v-for="item in navItems"  @click="toggleMobileMenu()" :key="item.name" :to="item.href" class="block px-3 py-2 rounded-md text-base font-medium text-white hover:bg-blue-400">
             {{ item.name }}
           </router-link>
         </div>

@@ -60,6 +60,7 @@ onMounted(() => {
                 }
             },
             responsive: true,
+            animation: false, // Disable animation
             plugins: {
                 legend: {
                     position: 'top'
@@ -68,8 +69,6 @@ onMounted(() => {
                     mode: 'index',
                     intersect: false
                 },
-            
-
                 title: {
                     display: true,
                     text: 'Required Vs Distributed (MT)',
@@ -81,31 +80,42 @@ onMounted(() => {
                         bottom: 30
                     }
                 },
-
-                
-        datalabels: {
-          color: '#fff',
+                datalabels: {
+          color: function (context) {
+            const value = context.dataset.data[context.dataIndex];
+            return value > 0 ? '#666' : 'rgba(0,0,0,0)'; // Gray text for non-zero values, transparent for zero values
+          },
+          backgroundColor: '#fff', // White background
+          borderColor: '#ccc', // Gray border color
+          borderWidth: 1, // Border width (adjust as needed)
+          borderRadius: 10, // Border radius to make it round
           formatter: (value, context) => {
-            return `${value} MT`;
+            return value > 0 ? `${value}MT` : null; // Display percentage for non-zero values, null for zero values
           },
           font: {
             weight: 'bold',
-            size: 14
+            size: 12
           },
           align: 'center',
-          anchor: 'center'
+          anchor: 'center',
+          padding: {
+            top: 2,
+            bottom: 2
+          }
         }
+
             },
-            
             maintainAspectRatio: false
         }
     });
 });
 </script>
+
 <template>
     <!-- Increased canvas size via inline styling -->
     <canvas ref="chartRef" style="width: 100%; height: 400px;"></canvas>
 </template>
+
 <style scoped>
 canvas {
     max-width: 100%;

@@ -104,6 +104,8 @@
           @click="activeTab = 'lean'"
         >
           Lean Season
+          <span v-if="leanSeasonCount > 0" class="badge badge-red">{{ leanSeasonCount }}</span>
+       
         </button>
         <button
           class="tab-button"
@@ -111,7 +113,11 @@
           @click="activeTab = 'emergency'"
         >
           Emergency Response
+          <span v-if="emergencyCount > 0" class="badge badge-red">{{ emergencyCount }}</span>
+     
         </button>
+
+      
       </div>
     </div>
   </div>

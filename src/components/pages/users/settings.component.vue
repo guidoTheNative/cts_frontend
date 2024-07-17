@@ -104,7 +104,7 @@
                     </p>
                   </div>
 
-                       <div class="col-span-12 sm:col-span-12" v-if="roleId == 'ADMIN9'">
+                       <div class="col-span-12 sm:col-span-12" v-if="roleId == 'ADMIN2'">
                       <label for="privileges" class="block text-sm font-medium text-gray-700">
                         Account Delegations
                       </label>

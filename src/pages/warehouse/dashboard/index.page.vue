@@ -447,14 +447,14 @@ const formatDate = (date) => {
 };
 // Dummy data for stats
 const stats = ref([
-  {
+  /* {
     label: computed(() => `Number of Warehouses in ${user.value.district}`),
     value: warehouseCount,
     icon: ClipboardListIcon,
     iconColor: 'green-500',
     percentageText: null,
     moreInfo: true,
-  },
+  }, */
   {
     label: 'Pending Instructions (Emergency Response)',
     value: newInstructionsCount,

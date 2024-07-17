@@ -325,11 +325,7 @@ const getRoles = async () => {
   roleStore
     .get()
     .then((result) => {
-      if (user.value.roleId == "ADMIN2") {
-        roles.push(...result.filter((item) => item.id !== "ADMIN1"));
-      } else {
-        roles.push(...result.filter((item) => !item.isArchived));
-      }
+        roles.push(...result);
     })
     .catch((error) => {
       // Handle error

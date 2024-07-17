@@ -98,7 +98,9 @@ const Swal = inject("Swal");
 const isLoading = ref(false);
 const breadcrumbs = [
   { name: "Home", href: "/dodma/dashboard", current: false },
-  { name: "Instructions", href: "#", current: true }
+  { name: "Instructions", href: "#", current: true },
+  { name: "Emergency Response", href: "#", current: true }
+
 ];
 const instructionsStore = useinstructionstore();
 const instructions = reactive([]);

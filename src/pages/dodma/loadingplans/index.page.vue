@@ -355,14 +355,17 @@ const createReport = async (reportData) => {
   try {
     isLoading.value = true;
 
+    
     const data = {
       ...reportData,
+      userId: user.value.id,
+      IsApproved: false,
       Balance: reportData.Quantity  // Set Quantity to Balance if offline
     };
 
 
     if (isOnline.value) {
-      await loadingPlanStore.create(reportData); // Save directly to server
+      await loadingPlanStore.create(data); // Save directly to server
     } else {
       await saveDataOffline('loading-plans', data); // Save offline with syncstatus
     }

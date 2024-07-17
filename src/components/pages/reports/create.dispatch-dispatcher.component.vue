@@ -311,10 +311,10 @@ const submitDispatch = async () => {
       closeDialog();
       if (result.isConfirmed) {
         closeDialog();
-        $router.push('/warehouse/dispatches');
+        $router.push('/dispatcher/dispatches');
       } else if (result.dismiss === Swal.DismissReason.cancel) {
         closeDialog();
-        $router.push('/warehouse/loadingplans');
+        $router.push('/dispatcher/loadingplans');
       }
     });
   } catch (error) {

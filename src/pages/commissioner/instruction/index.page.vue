@@ -21,17 +21,18 @@
 
       <!-- Tabs -->
       <div class="tabs">
-        <button @click="currentTab = 'leanSeason'" class="rounded-md"
-          :class="{ active: currentTab === 'leanSeason' }">
+        <button @click="currentTab = 'leanSeason'" class="rounded-md" :class="{ active: currentTab === 'leanSeason' }">
           Lean Season Instructions
-          <span v-if="emergencyResponseInstructions.length > 0" class="badge badge-red">{{ emergencyResponseInstructions.length }}</span>
+          <span v-if="emergencyResponseInstructions.length > 0" class="badge badge-red">{{
+      emergencyResponseInstructions.length }}</span>
         </button>
         <button @click="currentTab = 'emergencyResponse'" class="rounded-md"
           :class="{ active: currentTab === 'emergencyResponse' }">
           Emergency Response Instructions
-          <span v-if="leanSeasonInstructions.length > 0" class="badge badge-red">{{ leanSeasonInstructions.length }}</span>
+          <span v-if="leanSeasonInstructions.length > 0" class="badge badge-red">{{ leanSeasonInstructions.length
+            }}</span>
         </button>
-       </div>
+      </div>
 
       <!-- Content for Tabs -->
       <div v-if="currentTab === 'emergencyResponse'">
@@ -44,13 +45,25 @@
             <template #table-row="props">
               <span v-if="props.column.label === 'Status'">
                 <div>
-                  <span v-if="props.row.IsApproved"
-                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-800">
-                    Approved
-                  </span>
-                  <span v-else
-                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-red-100 text-red-800">
-                    Not Approved
+                 <!--  <span v-if="props.row.IsRejected !== null">
+                    <span v-if="props.row.IsRejected"
+                      class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-red-100 text-red-800">
+                      Rejected
+                    </span>
+                    <span v-else
+                      class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-800">
+                      Approved
+                    </span>
+                  </span> -->
+                  <span>
+                    <span v-if="props.row.IsApproved"
+                      class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-800">
+                      Approved
+                    </span>
+                    <span v-else
+                      class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-red-100 text-red-800">
+                      Pending
+                    </span>
                   </span>
                 </div>
               </span>
@@ -61,7 +74,8 @@
                   <!-- Create Instruction Button -->
 
                   <create-instruction-dispatch-form :row-id="props.row.id" v-on:create="updateInstruction"
-                    :instruction="props.row" :commodities="filteredCommodities(props.row.id)" :commodity="commodity" />
+                    :instruction="props.row" :commodities="filteredCommodities(props.row.id)" :commodity="commodity"
+                    v-on:reject="rejectInstruction" />
 
                 </div>
               </span>
@@ -70,7 +84,7 @@
         </div>
       </div>
 
-      <div v-if="currentTab === 'leanSeason'" >
+      <div v-if="currentTab === 'leanSeason'">
         <div class="align-middle inline-block min-w-full mt-5 shadow-xl rounded-table">
           <vue-good-table :columns="columns2" :rows="emergencyResponseInstructions" :search-options="{ enabled: true }"
             style="font-weight: bold; color: #096eb4;" :pagination-options="{ enabled: true }" theme="polar-bear"
@@ -80,13 +94,16 @@
             <template #table-row="props">
               <span v-if="props.column.label === 'Status'">
                 <div>
-                  <span v-if="props.row.IsApproved"
-                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-800">
-                    Approved
-                  </span>
-                  <span v-else
-                    class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-red-100 text-red-800">
-                    Not Approved
+                 
+                  <span>
+                    <span v-if="props.row.IsApproved"
+                      class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-800">
+                      Approved
+                    </span>
+                    <span v-else
+                      class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-red-100 text-red-800">
+                      Pending
+                    </span>
                   </span>
                 </div>
               </span>
@@ -99,7 +116,7 @@
 
                   <create-approval-loadingplan :row-id="props.row.id" v-on:create="updateApproval"
                     :emergencyResponseInstructions="props.row" :commodities="filteredCommodities(props.row.id)"
-                    :commodity="commodity" />
+                    :commodity="commodity" v-on:reject="rejectLoadingPlan" />
 
                 </div>
               </span>
@@ -298,6 +315,8 @@ const getInstructedCommodities = async () => {
     });
 };
 
+
+
 const updateInstruction = async (newValues) => {
   isLoading.value = true;
   instructionsStore.update(newValues)
@@ -326,6 +345,34 @@ const updateInstruction = async (newValues) => {
 };
 
 
+const rejectInstruction = async (newValues) => {
+  isLoading.value = true;
+  instructionsStore.update(newValues)
+    .then(result => {
+      Swal.fire({
+        title: "Success",
+        text: "Instruction Rejected!",
+        icon: "success",
+      });
+
+      eventBus.emit('instructionArchived', newValues.id);
+
+      getInstructions();
+    })
+    .catch(error => {
+      Swal.fire({
+        title: "Failed",
+        text: "Failed to update instruction (" + error + ")",
+        icon: "error",
+        confirmButtonText: "Ok",
+      });
+    })
+    .finally(() => {
+      isLoading.value = false;
+    });
+};
+
+
 const updateApproval = async (newValues) => {
   isLoading.value = true;
   loadingplansStore.update(newValues)
@@ -333,6 +380,33 @@ const updateApproval = async (newValues) => {
       Swal.fire({
         title: "Success",
         text: "Successfully approved loading plan",
+        icon: "success",
+      });
+
+      eventBus.emit('loadingplanArchived', newValues.id);
+
+      getLoadingPlans();
+    })
+    .catch(error => {
+      Swal.fire({
+        title: "Failed",
+        text: "Failed to approve loading plan (" + error + ")",
+        icon: "error",
+        confirmButtonText: "Ok",
+      });
+    })
+    .finally(() => {
+      isLoading.value = false;
+    });
+};
+
+const rejectLoadingPlan = async (newValues) => {
+  isLoading.value = true;
+  loadingplansStore.update(newValues)
+    .then(result => {
+      Swal.fire({
+        title: "Success",
+        text: "Loading Plan rejected!",
         icon: "success",
       });
 

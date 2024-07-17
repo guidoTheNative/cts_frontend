@@ -69,6 +69,7 @@ onMounted(() => {
     data: processedBarChartData.value,
     options: {
       responsive: true,
+      animation: false, // Disable animation
       plugins: {
         legend: {
           position: 'top',
@@ -91,18 +92,29 @@ onMounted(() => {
           }
         },
         datalabels: {
-          color: '#808080', // White color for labels
+          color: function (context) {
+            const value = context.dataset.data[context.dataIndex];
+            return value > 0 ? '#666' : 'rgba(0,0,0,0)'; // Gray text for non-zero values, transparent for zero values
+          },
+          backgroundColor: '#fff', // White background
+          borderColor: '#ccc', // Gray border color
+          borderWidth: 1, // Border width (adjust as needed)
+          borderRadius: 10, // Border radius to make it round
           formatter: (value, context) => {
-            return value > 0 ? `${value} MT` : '';
+            return value > 0 ? `${value}MT` : null; // Display percentage for non-zero values, null for zero values
           },
           font: {
             weight: 'bold',
-            size: 14
+            size: 12
           },
-          anchor: 'end',
-          align: 'end',
-          offset: 4,
+          align: 'center',
+          anchor: 'center',
+          padding: {
+            top: 2,
+            bottom: 2
+          }
         }
+
       },
       scales: {
         y: {
